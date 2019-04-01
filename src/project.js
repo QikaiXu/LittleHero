@@ -5744,7 +5744,6 @@ window.__require = function e(t, a, n) {
                 var t = n.Config.ServerIP, a = new WebSocket(t);
                 console.log("开始连接：", t), a.onopen = function(t) {
                     console.log("Websocket连接成功");
-                    o.default.instance.token = "oWT_j5MWsnnGjKqJ8X_1vHmL3gqc"; // 设置登录账号
                     var a = {
                         Token: o.default.instance.token
                     };
