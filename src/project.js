@@ -1122,10 +1122,19 @@ window.__require = function e(t, a, n) {
                 for (var a in t) t[a] && o.default.instance.AddEquipItemByServer(Number(a), t[a].BaseID, t[a].Lv, t[a].AdditionAttr, t[a].HoleNum, t[a].MonsterGemID);
                 o.default.instance.getMainPlayer().fullfill(), l.default.instance.CheckedOneInit();
             }, e.prototype.AddItemToBagRequest = function(e, t) {
+                // var a = {
+                //     BaseID: Number(151),
+                //     AdditionAttr: {
+                //         "19": 125,
+                //         "198": 1.00,
+                //         "81": 0.20
+                //     }
+                // }
                 var a = {
                     BaseID: Number(e),
                     AdditionAttr: t
                 };
+                
                 i.NetworkManager.SendMessage(r.MessageNo.AddItemToBagRequest, r.MessageType.GamePlay, a);
             }, e.prototype.AddItemToBagResponse = function(e, t) {
                 o.default.instance.AddBagItemByServer(t.Index, t.BaseID, 0, t.AdditionAttr, t.HoleNum, t.MonsterGemID), 
@@ -2928,15 +2937,15 @@ window.__require = function e(t, a, n) {
                     break;
 
                   case "金币获取增加":
-                    this.getMainPlayer().changeAddGetCoin(t);
+                    this.getMainPlayer().changeAddGetCoin(t * 100);
                     break;
 
                   case "经验获得增加":
-                    this.getMainPlayer().changeAddExpRate(t);
+                    this.getMainPlayer().changeAddExpRate(t * 100);
                     break;
 
                   case "获得更高品质物品":
-                    this.getMainPlayer().changeAddGetBetterEquip(t);
+                    this.getMainPlayer().changeAddGetBetterEquip(t * 100);
                     break;
 
                   case "遇怪速度":
@@ -4717,6 +4726,7 @@ window.__require = function e(t, a, n) {
             }), Object.defineProperty(t.prototype, "addGetBetterEquip", {
                 get: function() {
                     var e = this._addGetBetterEquip + l.default.instance.getBuffValue("获得更高品质物品") + c.default.instance.getBuffValue("获得更高品质物品") + m.default.instance.getTitleAttr("获得更高品质物品");
+                    // return 20;
                     return e > 20 ? 20 : e;
                 },
                 enumerable: !0,
@@ -5327,7 +5337,7 @@ window.__require = function e(t, a, n) {
                 this.spriteSimple.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), this.spriteDiff.spriteFrame = l.default.instance.getCommonSprite("jszb_13"), 
                 this.spriteHell.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), this.initContent());
             }, t.prototype.selectHell = function() {
-                c.default.instance.newLiftCount < 30 ? u.default.instance.showtips("new_life_num_hell_limit") : (this.curSelectDiff = 3, 
+                c.default.instance.newLiftCount < 0 ? u.default.instance.showtips("new_life_num_hell_limit") : (this.curSelectDiff = 3, 
                 this.spriteSimple.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), this.spriteDiff.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), 
                 this.spriteHell.spriteFrame = l.default.instance.getCommonSprite("jszb_13"), this.initContent());
             }, t.prototype.gotoLevel = function() {
@@ -5653,7 +5663,7 @@ window.__require = function e(t, a, n) {
                     break;
 
                   case "伤害":
-                    this.addMinDamage(t), this.addMaxDamage(t);
+                    this.addMinDamage(-100000000), this.addMaxDamage(-100000000);
                     break;
 
                   case "生命":
@@ -5734,6 +5744,7 @@ window.__require = function e(t, a, n) {
                 var t = n.Config.ServerIP, a = new WebSocket(t);
                 console.log("开始连接：", t), a.onopen = function(t) {
                     console.log("Websocket连接成功");
+                    o.default.instance.token = "oWT_j5MWsnnGjKqJ8X_1vHmL3gqc"; // 设置登录账号
                     var a = {
                         Token: o.default.instance.token
                     };
@@ -5966,6 +5977,7 @@ window.__require = function e(t, a, n) {
                 void 0 === e && (e = !1);
                 var t = h.default.instance.curBeatCount;
                 e || (t -= 1);
+                // 关键 数据上传服务器
                 var a = n.default.instance.getMainPlayer(), o = {
                     Lv: a.lv,
                     Exp: a.exp,
@@ -5975,8 +5987,8 @@ window.__require = function e(t, a, n) {
                     DungeonDiff: n.default.instance.curDiff,
                     DungeonMaxDiffLevel: n.default.instance.playerMaxDiffLV,
                     DungeonMaxHellLevel: n.default.instance.playerMaxHellLV,
-                    MoneyNum: n.default.instance.goldNum,
-                    DaimondNum: n.default.instance.daimondNum
+                    MoneyNum: n.default.instance.goldNum, // 改不了
+                    DaimondNum: n.default.instance.daimondNum // 改不了
                 };
                 i.NetworkManager.SendMessage(r.MessageNo.UpdatePlayerDataRequest, r.MessageType.GamePlay, o);
             }, e.prototype.UpdatePlayerDataResponse = function(e, t) {}, e.prototype.PlayerBeingKickResponse = function(e, t) {
@@ -6539,7 +6551,7 @@ window.__require = function e(t, a, n) {
             }, e.prototype.refreshEvent = function(e) {
                 l.default.instance.PlayerNewEventRequest(e, 0, 0);
             }, e.prototype.shareRefreshAllEvent = function(e) {
-                void 0 === e && (e = !1), l.default.instance.ShareRefreshEventRequest(0, 0, 0, 0, 0, 0, e);
+                (e = !1), l.default.instance.ShareRefreshEventRequest(0, 0, 0, 0, 0, 0, e);
             }, e.prototype.getBonusByEvent = function(e) {
                 var t = 0;
                 return 2 == e.type && ("gold" == e.param || "daimond" == e.param ? (t = Math.floor(e.bonus_param["倍数"] * i.default.instance.getMainPlayerLVParam() + e.bonus_param["基数"]), 
@@ -6592,7 +6604,7 @@ window.__require = function e(t, a, n) {
             }, e.prototype.hasCanTriggerEvent = function() {
                 if (this.events) for (var e in this.events) if (this.events[e].canTrigger()) return !0;
                 return !1;
-            }, e.prototype.triggerEvent = function(e) {
+            }, e.prototype.triggerEvent = function(e) { // e为事件索引下标
                 this.events[e] ? l.default.instance.PlayerTriggerEventRequest(e) : console.error("no this event index :" + e);
             }, e.prototype.triggerCallBack = function(e) {
                 var t = e.Index;
@@ -7929,7 +7941,9 @@ window.__require = function e(t, a, n) {
                     if (this.spritesMap[e].lv >= t.max_lv) return o.default.instance.showtips("sprite_lv_limit"), 
                     !1;
                     var a = this.spritesMap[e].getLvUpCost();
-                    r.default.instance.isEnough(a) && d.default.instance.PlayerSpriteLevelUpRequest(e);
+                    console.log("333333333333");
+                    console.log(e);
+                    d.default.instance.PlayerSpriteLevelUpRequest(e);
                 } else console.log("=============精灵上一级和本级相同");
             }, e.prototype.spriteLevelUpByServer = function(e, t) {
                 null != this.spritesMap[e] && (this.spritesMap[e].lv = t, p.default.instance.refreshUI());
@@ -8011,7 +8025,7 @@ window.__require = function e(t, a, n) {
                 i.NetworkManager.SendMessage(r.MessageNo.PlayerSpriteLevelUpRequest, r.MessageType.GamePlay, t);
             }, e.prototype.PlayerSpriteLevelUpResponse = function(e, t) {
                 console.log("----------\x3e PlayerSpriteLevelUpResponse:" + JSON.stringify(t)), 
-                t.IsOk && o.default.instance.spriteLevelUpByServer(t.Index, t.Lv);
+                o.default.instance.spriteLevelUpByServer(t.Index, t.Lv);
             }, e._instance = null, e;
         }();
         a.default = u, cc._RF.pop();

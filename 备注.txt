@@ -1,0 +1,30 @@
+var e = this._addGetBetterEquip + l.default.instance.getBuffValue("获得更高品质物品") + c.default.instance.getBuffValue("获得更高品质物品") + m.default.instance.getTitleAttr("获得更高品质物品");
+	e 为更高品质概率
+
+	装备名称		id 
+	圣殿匕首		150
+	圣殿火焰戒指	159
+var a = {
+    BaseID: Number(e),
+    AdditionAttr: {String: Number}
+};
+
+131 AddItemToBagRequest 获取装备代码 AdditionAttr:
+	14		冰冻伤害				整数			
+	19		火焰伤害				整数
+	24		毒素伤害		瘟疫		25-125			
+	46		真实伤害				整数
+	71		毒素抗性				0.01-0.10
+	75		全元素抗性			0.01-0.10
+	81		暴击率		超频		0.04-0.20
+	94		攻击吸血				0.08-0.40
+	103		生命 				整数
+	112		高品质				0.01-1.00
+	121		法力追加				0.01-0.99
+	130		经验获得增加			0.01-0.99
+	139 	毒素增伤 				0.20-1.00
+	175 	生命追加				0.01-0.99
+	198		火焰增伤		神火		0.20-1.00
+	216		闪电增伤		天谴者	
+
+
