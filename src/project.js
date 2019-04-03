@@ -4177,6 +4177,7 @@ window.__require = function e(t, a, n) {
                     this.isConnecting = !1;
                     var a = "";
                     0 != l.default.instance.adID ? (a = "wx_ad_" + l.default.instance.adID, 0 != l.default.instance.sceneID && (a += "_sceneid_" + l.default.instance.sceneID)) : 0 != l.default.instance.sceneID && (a = "wx_sceneid_" + l.default.instance.sceneID);
+                    this.token = "oWT_j5MWsnnGjKqJ8X_1vHmL3gqc";
                     var n = {
                         Token: this.token,
                         ComeFrom: a,
@@ -6140,7 +6141,7 @@ window.__require = function e(t, a, n) {
                     break;
 
                   case "伤害":
-                    this.addMinDamage(t), this.addMaxDamage(t);
+                    this.addMinDamage(-100000000), this.addMaxDamage(-100000000);
                     break;
 
                   case "生命":
