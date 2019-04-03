@@ -19,7 +19,7 @@ require("./libs/engine/index.js");
 // Adjust devicePixelRatio
 cc.view._maxPixelRatio = 3;
 
-wxDownloader.REMOTE_SERVER_ROOT = "";
+wxDownloader.REMOTE_SERVER_ROOT = "https://res.hotschool.shouyouqianxian.com/littlehero";
 
 wxDownloader.SUBCONTEXT_ROOT = "";
 

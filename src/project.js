@@ -427,7 +427,8 @@ window.__require = function e(t, a, n) {
             }), e.prototype.updateAchievementDatas = function(e) {
                 var t = 0, a = 0;
                 for (var o in e) this.updateAchievementData(Number(o), e[o]), t = Number(o), a = e[o];
-                if (i.default.instance.isShow() && i.default.instance.refreshUI(), 0 != t) {
+                if (i.default.instance && i.default.instance.isShow() && i.default.instance.refreshUI(), 
+                0 != t) {
                     var s = n.default.instance.achievementData[t];
                     s && (2 == s.type ? r.default.instance.updateAchievementInfo(s.desc, a, s.compelete_param2) : r.default.instance.updateAchievementInfo(s.desc, a, s.compelete_param1));
                 }
@@ -488,7 +489,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "01cda9mWHpN4q2vMrs4FJv0", "ad_item"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../../manager/wx_manager"), i = e("../../manager/dynamic_data_manager"), r = e("../../network/player_network"), o = e("../tips_ui_manager"), s = e("../../manager/reward_effect_manager"), l = e("../messagebox_ui_manager"), c = cc._decorator, u = c.ccclass, d = c.property, p = function(e) {
+        var n = e("../../manager/wx_manager"), i = e("../../manager/dynamic_data_manager"), r = e("../../network/player_network"), o = e("../../manager/reward_effect_manager"), s = e("../../manager/ui_manager"), l = cc._decorator, c = l.ccclass, u = l.property, d = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.curNode = null, t.checkAdTime = 120, t.curTime = 0, t;
@@ -506,7 +507,7 @@ window.__require = function e(t, a, n) {
             }, t.prototype.setCloseShowTime = function() {
                 this.curTime = 115;
             }, t.prototype.showAd = function() {
-                l.default.instance.showUI("广告 - 200钻石奖励", "确认跳转广告，取消则放弃此次奖励机会。（广告不影响在线挂机）", a.instance.jumpToAd);
+                s.default.instance.LoadMessageBox("广告 - 200钻石奖励", "确认跳转广告，取消则放弃此次奖励机会。（广告不影响在线挂机）", a.instance.jumpToAd);
             }, t.prototype.jumpToAd = function(e) {
                 e && (n.default.instance.IsWechat() ? n.default.instance.showAd() : a.instance.adcallback(!0)), 
                 a.instance.curNode.active = !1;
@@ -519,19 +520,18 @@ window.__require = function e(t, a, n) {
                 this.curTime = 0);
             }, t.prototype.adcallback = function(e) {
                 e ? (console.log("观看广告完毕"), r.default.instance.UpdatePlayerBaseData(), a.instance.curNode.active = !1, 
-                s.default.instance.createDaimondEffect(10, "钻石", a.instance.curNode.parent.convertToWorldSpaceAR(a.instance.curNode.position)), 
-                r.default.instance.PlayerShowAdRequest()) : o.default.instance.showTipsByStr("您的视频还没看完，请再次尝试");
-            }, t._instance = null, __decorate([ d(cc.Node) ], t.prototype, "curNode", void 0), 
-            t = a = __decorate([ u ], t);
+                o.default.instance.createDaimondEffect(10, "钻石", a.instance.curNode.parent.convertToWorldSpaceAR(a.instance.curNode.position)), 
+                r.default.instance.PlayerShowAdRequest()) : s.default.instance.LoadTipsByStr("您的视频还没看完，请再次尝试");
+            }, t._instance = null, __decorate([ u(cc.Node) ], t.prototype, "curNode", void 0), 
+            t = a = __decorate([ c ], t);
         }(cc.Component);
-        a.default = p, cc._RF.pop();
+        a.default = d, cc._RF.pop();
     }, {
         "../../manager/dynamic_data_manager": "dynamic_data_manager",
         "../../manager/reward_effect_manager": "reward_effect_manager",
+        "../../manager/ui_manager": "ui_manager",
         "../../manager/wx_manager": "wx_manager",
-        "../../network/player_network": "player_network",
-        "../messagebox_ui_manager": "messagebox_ui_manager",
-        "../tips_ui_manager": "tips_ui_manager"
+        "../../network/player_network": "player_network"
     } ],
     add_exp_effect: [ function(e, t, a) {
         "use strict";
@@ -571,12 +571,13 @@ window.__require = function e(t, a, n) {
                 s.default.instance.PlayUISelect(), this.bagUINode.active = !0, this.refreshBagUI();
             }, t.prototype.refreshBagUI = function() {
                 for (var e = this.bagContentViewNode.children, t = e.length - 1; t >= 0; t--) i.default.instance.RemoveBagItem(e[t]);
-                if (null != n.default.instance.EquipItemDataMap) for (var t in n.default.instance.EquipItemDataMap) if (n.default.instance.EquipItemDataMap[t] && n.default.instance.EquipItemDataMap[t].canAddHole()) {
-                    var a = i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default);
-                    a.reinit(n.default.instance.EquipItemDataMap[t], o.GridType.PreAddHoleItem), a.setEquipingTag();
+                if (null != n.default.instance.EquipItemAllDatas) for (var a in n.default.instance.EquipItemAllDatas) if (null != a) for (var s in n.default.instance.EquipItemAllDatas[a]) if (n.default.instance.EquipItemAllDatas[a][s].canAddHole()) {
+                    var l = i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default);
+                    l.reinit(n.default.instance.EquipItemAllDatas[a][s], o.GridType.PreAddHoleItem), 
+                    l.setEquipingTag(Number(a) + 1);
                 }
-                if (null != n.default.instance.BagItemDataMap) for (var t in n.default.instance.BagItemDataMap) {
-                    if (n.default.instance.BagItemDataMap[t].canAddHole()) i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default).reinit(n.default.instance.BagItemDataMap[t], o.GridType.PreAddHoleItem);
+                if (null != n.default.instance.BagItemDataMap) for (var c in n.default.instance.BagItemDataMap) {
+                    if (n.default.instance.BagItemDataMap[c].canAddHole()) i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default).reinit(n.default.instance.BagItemDataMap[c], o.GridType.PreAddHoleItem);
                 }
             }, t.prototype.hideBagUI = function() {
                 this.bagUINode.active = !1;
@@ -748,7 +749,22 @@ window.__require = function e(t, a, n) {
             e[e.NewLiftReward = 1004] = "NewLiftReward";
         }(a.MoneyChangeType || (a.MoneyChangeType = {})), function(e) {
             e[e.Common = 1] = "Common", e[e.Equip = 2] = "Equip", e[e.Depot = 3] = "Depot";
-        }(a.BagType || (a.BagType = {})), cc._RF.pop();
+        }(a.BagType || (a.BagType = {})), function(e) {
+            e[e.KillMonster = 101] = "KillMonster", e[e.Sign = 102] = "Sign";
+        }(a.ExpActionType || (a.ExpActionType = {})), function(e) {
+            e[e.EventBonus = 101] = "EventBonus", e[e.DailyReward = 102] = "DailyReward", e[e.SignReward = 103] = "SignReward", 
+            e[e.BuyBlackMarket = 104] = "BuyBlackMarket";
+        }(a.SpriteActionType || (a.SpriteActionType = {})), function(e) {
+            e[e.KillMonster = 101] = "KillMonster", e[e.EventBonus = 102] = "EventBonus", e[e.DailyReward = 103] = "DailyReward", 
+            e[e.SignReward = 104] = "SignReward", e[e.BuyBlackMarket = 105] = "BuyBlackMarket";
+        }(a.EquipActionType || (a.EquipActionType = {})), function(e) {
+            e[e.TapMonster = 1] = "TapMonster", e[e.Sign = 2] = "Sign", e[e.OpenBag = 3] = "OpenBag", 
+            e[e.OpenRole = 4] = "OpenRole", e[e.DailyReward = 5] = "DailyReward", e[e.EventSwich = 6] = "EventSwich", 
+            e[e.EventCardBonus = 7] = "EventCardBonus", e[e.OpenSprite = 8] = "OpenSprite", 
+            e[e.OpenAltar = 9] = "OpenAltar", e[e.OpenAchievement = 10] = "OpenAchievement", 
+            e[e.OpenBlackmarket = 11] = "OpenBlackmarket", e[e.Relife = 12] = "Relife", e[e.EventSwichOpen = 13] = "EventSwichOpen", 
+            e[e.ShowOfflineReward = 14] = "ShowOfflineReward";
+        }(a.GuildEventType || (a.GuildEventType = {})), cc._RF.pop();
     }, {} ],
     attr_item: [ function(e, t, a) {
         "use strict";
@@ -834,7 +850,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "da264/Sgi1MLJTHTvDECpKm", "bag_control_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("./messagebox_ui_manager"), i = e("../manager/data_manager"), r = e("./equipinfo_tip_manager"), o = e("../network/gem_network"), s = e("../manager/dynamic_data_manager"), l = e("./tips_ui_manager"), c = e("../audio_manager"), u = e("./role_ui_manager"), d = e("./battle_ui_manager"), p = e("./bag_ui_manager"), m = cc._decorator, f = m.ccclass, g = m.property, h = function(e) {
+        var n = e("../manager/data_manager"), i = e("./equipinfo_tip_manager"), r = e("../network/gem_network"), o = e("../manager/dynamic_data_manager"), s = e("../audio_manager"), l = e("./role_ui_manager"), c = e("./battle_ui_manager"), u = e("./bag_ui_manager"), d = e("../manager/ui_manager"), p = cc._decorator, m = p.ccclass, f = p.property, g = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.nodeGemEquipPart = null, t.btnEquipGemToEquip = null, t.nodeAddHolePart = null, 
@@ -843,11 +859,13 @@ window.__require = function e(t, a, n) {
                 t.btnEquipBody = null, t.btnSell = null, t.btnGoDepot = null, t;
             }
             var a;
-            return __extends(t, e), a = t, t.prototype.start = function() {
+            return __extends(t, e), a = t, t.prototype.onLoad = function() {
                 a.instance = this, this.btnEquipGemToEquip.node.on("click", this.equipGemToEquipment, this), 
                 this.btnAddHole.node.on("click", this.addHole, this), this.btnTakeOff.node.on("click", this.takeOffEquip, this), 
                 this.btnPutInBag.node.on("click", this.putInBag, this), this.btnEquipBody.node.on("click", this.equipBody, this), 
                 this.btnSell.node.on("click", this.sell, this), this.btnGoDepot.node.on("click", this.goDepot, this);
+            }, t.prototype.showUI = function(e) {
+                "gem_equip" == e ? this.showGemEquipPart() : "add_hole" == e ? this.showAddHolePart() : "equiping" == e ? this.showEquipingPart() : "depot" == e ? this.showDepotPart() : "common_bag" == e && this.showCommonBagPart();
             }, t.prototype.showGemEquipPart = function() {
                 this.nodeGemEquipPart.active = !0;
             }, t.prototype.showAddHolePart = function() {
@@ -864,80 +882,81 @@ window.__require = function e(t, a, n) {
             }, t.prototype.setContolGemID = function(e) {
                 this.curGemID = e;
             }, t.prototype.equipGemToEquipment = function() {
-                var e = s.default.instance.GemItemDataMap[this.curGemID], t = i.default.instance.monsterGemData[this.curGemID];
+                var e = o.default.instance.GemItemDataMap[this.curGemID], t = n.default.instance.monsterGemData[this.curGemID];
                 if (0 != e) {
                     if (t) {
-                        var r = "是否将【" + t.name + "】镶嵌在此装备上？(剩余数量：" + e + ")";
-                        n.default.instance.showUI("魔晶镶嵌", r, a.instance.equipGemToEquipmentCallBack);
+                        var i = "是否将【" + t.name + "】镶嵌在此装备上？(剩余数量：" + e + ")";
+                        d.default.instance.LoadMessageBox("魔晶镶嵌", i, a.instance.equipGemToEquipmentCallBack);
                     }
-                } else l.default.instance.showTipsByStr("【" + t.name + "】已经用完");
+                } else d.default.instance.LoadTipsByStr("【" + t.name + "】已经用完");
             }, t.prototype.equipGemToEquipmentCallBack = function(e) {
                 if (e) {
-                    var t = r.default.instance.curBagItemData, n = s.default.instance.GetItemBagTypeByIndex(t.index);
-                    o.default.instance.AddMonsterGemFromBagToEquipRequest(n, t.index, a.instance.curGemID);
+                    var t = i.default.instance.curBagItemData, n = o.default.instance.GetItemBagTypeByIndex(t.index);
+                    r.default.instance.AddMonsterGemFromBagToEquipRequest(n, t.index, a.instance.curGemID);
                 }
             }, t.prototype.addHole = function() {
-                var e = r.default.instance.curBagItemData;
+                var e = i.default.instance.curBagItemData;
                 if (e.canAddHole()) {
                     var t = "是否在【" + e.getName() + "】上打孔？";
-                    0 == e.holeNum && (t += "(免费)"), n.default.instance.showUI("魔晶镶嵌", t, a.instance.addHoleCallBack, e.getAddHoleCost());
-                } else l.default.instance.showTipsByStr("已达到最大打孔数");
+                    0 == e.holeNum && (t += "(免费)"), d.default.instance.LoadMessageBox("魔晶镶嵌", t, a.instance.addHoleCallBack, e.getAddHoleCost());
+                } else d.default.instance.LoadTipsByStr("已达到最大打孔数");
             }, t.prototype.addHoleCallBack = function(e) {
                 if (e) {
-                    var t = r.default.instance.curBagItemData, a = s.default.instance.GetItemBagTypeByIndex(t.index);
-                    o.default.instance.AddEquipHoleRequest(a, t.index);
+                    var t = i.default.instance.curBagItemData, a = o.default.instance.GetItemBagTypeByIndex(t.index);
+                    r.default.instance.AddEquipHoleRequest(a, t.index);
                 }
             }, t.prototype.setEquipHeroItem = function(e) {
                 this.curEquipHeroItem = e;
             }, t.prototype.takeOffEquip = function() {
-                var e = r.default.instance.curBagItemData;
-                s.default.instance.TakeOffEquipItemNew(e), c.default.instance.PlayEquip(), r.default.instance.hideBagUI();
+                if (o.default.instance.isBagFull()) d.default.instance.LoadTipsByID("bag_count_limit"); else {
+                    var e = i.default.instance.curBagItemData;
+                    o.default.instance.TakeOffEquipItemNew(e), s.default.instance.PlayEquip(), i.default.instance.hideBagUI();
+                }
             }, t.prototype.takeOffEquipByServer = function() {
-                null != this.curEquipHeroItem && this.curEquipHeroItem.refreshItem(), u.default.instance.updateBaseAttr(), 
-                d.default.instance.updatePlayerInfoUI();
+                null != this.curEquipHeroItem && this.curEquipHeroItem.refreshItem(), l.default.instance && (l.default.instance.updateBaseAttr(), 
+                l.default.instance.refreshAllEquipItem()), c.default.instance && c.default.instance.updatePlayerInfoUI();
             }, t.prototype.putInBag = function() {
-                var e = r.default.instance.curBagItemData;
-                s.default.instance.AddBagItemFromDepot(e), r.default.instance.hideBagUI();
+                var e = i.default.instance.curBagItemData;
+                o.default.instance.AddBagItemFromDepot(e), i.default.instance.hideBagUI();
             }, t.prototype.sell = function() {
-                var e = r.default.instance.curBagItemData;
-                0 == e.gemIDs.length ? (s.default.instance.SellItem(e), r.default.instance.hideBagUI()) : n.default.instance.showUI("售卖装备", "此装备镶嵌有一个以上的魔晶，售卖时，魔晶将会自动脱落回魔晶背包。", a.instance.sellCallback);
+                var e = i.default.instance.curBagItemData;
+                0 == e.gemIDs.length ? (o.default.instance.SellItem(e), i.default.instance.hideBagUI()) : d.default.instance.LoadMessageBox("售卖装备", "此装备镶嵌有一个以上的魔晶，售卖时，魔晶将会自动脱落回魔晶背包。", a.instance.sellCallback);
             }, t.prototype.sellCallback = function(e) {
                 if (e) {
-                    var t = r.default.instance.curBagItemData;
-                    s.default.instance.SellItem(t), p.default.instance.refreshBagUI(), r.default.instance.hideBagUI();
+                    var t = i.default.instance.curBagItemData;
+                    o.default.instance.SellItem(t), u.default.instance.refreshBagUI(), i.default.instance.hideBagUI();
                 }
             }, t.prototype.equipBody = function() {
-                var e = r.default.instance.curBagItemData;
-                if (s.default.instance.isBagFull()) l.default.instance.showtips("bag_count_limit"); else {
-                    var t = i.default.instance.equipmentData[e.baseId];
-                    null != s.default.instance.EquipItemDataMap[t.type] && s.default.instance.TakeOffEquipItemNew(s.default.instance.EquipItemDataMap[t.type]), 
-                    s.default.instance.EquipItem(e), r.default.instance.hideBagUI(), c.default.instance.PlayEquip();
+                var e = i.default.instance.curBagItemData;
+                if (o.default.instance.isBagFull()) d.default.instance.LoadTipsByID("bag_count_limit"); else {
+                    var t = n.default.instance.equipmentData[e.baseId];
+                    null != o.default.instance.EquipItemDataMap[t.type] && o.default.instance.TakeOffEquipItemNew(o.default.instance.EquipItemDataMap[t.type]), 
+                    o.default.instance.EquipItem(e), i.default.instance.hideBagUI(), s.default.instance.PlayEquip();
                 }
             }, t.prototype.equipBodyServerCallback = function() {
-                p.default.instance.refreshBagUI(), p.default.instance.refreshBagUI(), d.default.instance.updatePlayerInfoUI();
+                u.default.instance.refreshBagUI(), u.default.instance.refreshBagUI(), c.default.instance.updatePlayerInfoUI();
             }, t.prototype.goDepot = function() {
-                var e = r.default.instance.curBagItemData;
-                s.default.instance.AddDepotItemFromBag(e), r.default.instance.hideBagUI();
-            }, t.instance = null, __decorate([ g(cc.Node) ], t.prototype, "nodeGemEquipPart", void 0), 
-            __decorate([ g(cc.Button) ], t.prototype, "btnEquipGemToEquip", void 0), __decorate([ g(cc.Node) ], t.prototype, "nodeAddHolePart", void 0), 
-            __decorate([ g(cc.Button) ], t.prototype, "btnAddHole", void 0), __decorate([ g(cc.Node) ], t.prototype, "nodeEquipingPart", void 0), 
-            __decorate([ g(cc.Button) ], t.prototype, "btnTakeOff", void 0), __decorate([ g(cc.Node) ], t.prototype, "nodeDepotPart", void 0), 
-            __decorate([ g(cc.Button) ], t.prototype, "btnPutInBag", void 0), __decorate([ g(cc.Node) ], t.prototype, "nodeCommonBag", void 0), 
-            __decorate([ g(cc.Button) ], t.prototype, "btnEquipBody", void 0), __decorate([ g(cc.Button) ], t.prototype, "btnSell", void 0), 
-            __decorate([ g(cc.Button) ], t.prototype, "btnGoDepot", void 0), t = a = __decorate([ f ], t);
+                var e = i.default.instance.curBagItemData;
+                o.default.instance.AddDepotItemFromBag(e), i.default.instance.hideBagUI();
+            }, t.instance = null, __decorate([ f(cc.Node) ], t.prototype, "nodeGemEquipPart", void 0), 
+            __decorate([ f(cc.Button) ], t.prototype, "btnEquipGemToEquip", void 0), __decorate([ f(cc.Node) ], t.prototype, "nodeAddHolePart", void 0), 
+            __decorate([ f(cc.Button) ], t.prototype, "btnAddHole", void 0), __decorate([ f(cc.Node) ], t.prototype, "nodeEquipingPart", void 0), 
+            __decorate([ f(cc.Button) ], t.prototype, "btnTakeOff", void 0), __decorate([ f(cc.Node) ], t.prototype, "nodeDepotPart", void 0), 
+            __decorate([ f(cc.Button) ], t.prototype, "btnPutInBag", void 0), __decorate([ f(cc.Node) ], t.prototype, "nodeCommonBag", void 0), 
+            __decorate([ f(cc.Button) ], t.prototype, "btnEquipBody", void 0), __decorate([ f(cc.Button) ], t.prototype, "btnSell", void 0), 
+            __decorate([ f(cc.Button) ], t.prototype, "btnGoDepot", void 0), t = a = __decorate([ m ], t);
         }(cc.Component);
-        a.default = h, cc._RF.pop();
+        a.default = g, cc._RF.pop();
     }, {
         "../audio_manager": "audio_manager",
         "../manager/data_manager": "data_manager",
         "../manager/dynamic_data_manager": "dynamic_data_manager",
+        "../manager/ui_manager": "ui_manager",
         "../network/gem_network": "gem_network",
         "./bag_ui_manager": "bag_ui_manager",
         "./battle_ui_manager": "battle_ui_manager",
         "./equipinfo_tip_manager": "equipinfo_tip_manager",
-        "./messagebox_ui_manager": "messagebox_ui_manager",
-        "./role_ui_manager": "role_ui_manager",
-        "./tips_ui_manager": "tips_ui_manager"
+        "./role_ui_manager": "role_ui_manager"
     } ],
     bag_item_data: [ function(e, t, a) {
         "use strict";
@@ -1031,61 +1050,60 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "5a473G2el5FtbCz4F5JIMqZ", "bag_item"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../../manager/data_manager"), i = e("../../common/allenum"), r = e("../refresh_ui_manager"), o = e("../strengthen_tip_manager"), s = e("../../manager/resource_manager"), l = e("../../manager/dynamic_data_manager"), c = e("../gem_tip_ui_manager"), u = e("../equipinfo_tip_manager"), d = e("../bag_control_ui_manager"), p = cc._decorator, m = p.ccclass, f = p.property, g = function(e) {
+        var n = e("../../manager/data_manager"), i = e("../../common/allenum"), r = e("../refresh_ui_manager"), o = e("../../manager/resource_manager"), s = e("../../manager/dynamic_data_manager"), l = e("../../manager/ui_manager"), c = cc._decorator, u = c.ccclass, d = c.property, p = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.spriteBG = null, t.button = null, t.spriteIcon = null, t.nodeBetterTag = null, 
                 t.nodeEquipTag = null, t.curItemData = null, t.itemType = i.GridType.BagItem, t.labelNum = null, 
-                t.curGemID = 0, t.curGemNum = 0, t;
+                t.labelTag = null, t.curGemID = 0, t.curGemNum = 0, t;
             }
             return __extends(t, e), t.prototype.onLoad = function() {
                 this.button.node.on("click", this.showItemInfo, this);
-            }, t.prototype.setEquipingTag = function() {
-                this.nodeEquipTag.active = !0;
+            }, t.prototype.setEquipingTag = function(e) {
+                this.nodeEquipTag.active = !0, this.labelTag.string = "E" + e, this.nodeBetterTag && (this.nodeBetterTag.active = !1);
             }, t.prototype.initGem = function(e, t, a) {
-                void 0 === a && (a = i.GridType.GemItem), this.nodeEquipTag.active = !1, this.nodeBetterTag.active = !1, 
-                this.itemType = a, this.labelNum.node.active = !0, this.labelNum.string = t.toString(), 
-                this.curGemID = e, this.curGemNum = t;
-                var r = n.default.instance.monsterGemData[e];
-                this.spriteBG.spriteFrame = s.default.instance.getCommonSprite(r.quality_icon), 
-                this.spriteIcon.spriteFrame = s.default.instance.getEquipSprite(r.icon_path);
+                if (void 0 === a && (a = i.GridType.GemItem), n.default.instance.monsterGemData[e]) {
+                    this.nodeEquipTag.active = !1, this.nodeBetterTag.active = !1, this.itemType = a, 
+                    this.labelNum.node.active = !0, this.labelNum.string = t.toString(), this.curGemID = e, 
+                    this.curGemNum = t;
+                    var r = n.default.instance.monsterGemData[e];
+                    this.spriteBG.spriteFrame = o.default.instance.getCommonSprite(r.quality_icon), 
+                    this.spriteIcon.spriteFrame = o.default.instance.getEquipSprite(r.icon_path);
+                }
             }, t.prototype.reinit = function(e, t) {
                 void 0 === t && (t = i.GridType.BagItem), this.labelNum.node.active = !1, this.nodeEquipTag.active && (this.nodeEquipTag.active = !1), 
                 this.curItemData = e;
                 var a = this.curItemData.getQualitySpriteName();
-                this.spriteBG.spriteFrame = s.default.instance.getCommonSprite(a);
+                this.spriteBG.spriteFrame = o.default.instance.getCommonSprite(a);
                 var r = n.default.instance.equipmentData[this.curItemData.baseId].icon_path;
-                this.spriteIcon.spriteFrame = s.default.instance.getEquipSprite(r), this.itemType = t, 
-                l.default.instance.IsBetterThanEquip(e) ? this.nodeBetterTag.active = !0 : this.nodeBetterTag.active = !1;
+                this.spriteIcon.spriteFrame = o.default.instance.getEquipSprite(r), this.itemType = t, 
+                s.default.instance.IsBetterThanEquip(e) ? this.nodeBetterTag.active = !0 : this.nodeBetterTag.active = !1;
             }, t.prototype.showItemInfo = function() {
-                this.itemType == i.GridType.BagItem ? (u.default.instance.showEquipTip(this.curItemData), 
-                d.default.instance.showCommonBagPart()) : this.itemType == i.GridType.RefreshItem ? r.default.instance.showRefreshTip(this.curItemData) : this.itemType == i.GridType.StrengthenItem ? o.default.instance.showItemTip(this.curItemData) : this.itemType == i.GridType.DepotItem ? (u.default.instance.showEquipTip(this.curItemData), 
-                d.default.instance.showDepotPart()) : this.itemType == i.GridType.GemItem ? c.default.instance.showGemItemTip(this.curGemID, this.curGemNum) : this.itemType == i.GridType.PreGemEquipItem ? (u.default.instance.showEquipTip(this.curItemData), 
-                d.default.instance.showGemEquipPart()) : this.itemType == i.GridType.PreAddHoleItem && (u.default.instance.showEquipTip(this.curItemData), 
-                d.default.instance.showAddHolePart());
-            }, __decorate([ f(cc.Sprite) ], t.prototype, "spriteBG", void 0), __decorate([ f(cc.Button) ], t.prototype, "button", void 0), 
-            __decorate([ f(cc.Sprite) ], t.prototype, "spriteIcon", void 0), __decorate([ f(cc.Node) ], t.prototype, "nodeBetterTag", void 0), 
-            __decorate([ f(cc.Node) ], t.prototype, "nodeEquipTag", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelNum", void 0), 
-            t = __decorate([ m ], t);
+                this.itemType == i.GridType.BagItem ? (l.default.instance.LoadEquipInfoTips(this.curItemData), 
+                l.default.instance.LoadBagControlUI("common_bag")) : this.itemType == i.GridType.RefreshItem ? r.default.instance.showRefreshTip(this.curItemData) : this.itemType == i.GridType.StrengthenItem ? l.default.instance.LoadStrengthenTip(this.curItemData) : this.itemType == i.GridType.DepotItem ? (l.default.instance.LoadEquipInfoTips(this.curItemData), 
+                l.default.instance.LoadBagControlUI("depot")) : this.itemType == i.GridType.GemItem ? l.default.instance.LoadGemTipUI(this.curGemID, this.curGemNum) : this.itemType == i.GridType.PreGemEquipItem ? (l.default.instance.LoadEquipInfoTips(this.curItemData), 
+                l.default.instance.LoadBagControlUI("gem_equip")) : this.itemType == i.GridType.PreAddHoleItem && (l.default.instance.LoadEquipInfoTips(this.curItemData), 
+                l.default.instance.LoadBagControlUI("add_hole"));
+            }, __decorate([ d(cc.Sprite) ], t.prototype, "spriteBG", void 0), __decorate([ d(cc.Button) ], t.prototype, "button", void 0), 
+            __decorate([ d(cc.Sprite) ], t.prototype, "spriteIcon", void 0), __decorate([ d(cc.Node) ], t.prototype, "nodeBetterTag", void 0), 
+            __decorate([ d(cc.Node) ], t.prototype, "nodeEquipTag", void 0), __decorate([ d(cc.Label) ], t.prototype, "labelNum", void 0), 
+            __decorate([ d(cc.Label) ], t.prototype, "labelTag", void 0), t = __decorate([ u ], t);
         }(cc.Component);
-        a.default = g, cc._RF.pop();
+        a.default = p, cc._RF.pop();
     }, {
         "../../common/allenum": "allenum",
         "../../manager/data_manager": "data_manager",
         "../../manager/dynamic_data_manager": "dynamic_data_manager",
         "../../manager/resource_manager": "resource_manager",
-        "../bag_control_ui_manager": "bag_control_ui_manager",
-        "../equipinfo_tip_manager": "equipinfo_tip_manager",
-        "../gem_tip_ui_manager": "gem_tip_ui_manager",
-        "../refresh_ui_manager": "refresh_ui_manager",
-        "../strengthen_tip_manager": "strengthen_tip_manager"
+        "../../manager/ui_manager": "ui_manager",
+        "../refresh_ui_manager": "refresh_ui_manager"
     } ],
     bag_network: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "e7b2eaHtShIepABgXKJYCjC", "bag_network"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../common/emmiter"), i = e("../manager/network_manager"), r = e("../common/message"), o = e("../manager/dynamic_data_manager"), s = e("../common/allenum"), l = e("../manager/game_manager"), c = e("../ui/strengthen_tip_manager"), u = e("../ui/refresh_tip"), d = e("../ui/bag_ui_manager"), p = e("../ui/sign_ui_manager"), m = e("../manager/data_manager"), f = function() {
+        var n = e("../common/emmiter"), i = e("../manager/network_manager"), r = e("../common/message"), o = e("../manager/dynamic_data_manager"), s = e("../common/allenum"), l = e("../manager/game_manager"), c = e("../ui/strengthen_tip_manager"), u = e("../ui/refresh_tip"), d = e("../ui/bag_ui_manager"), p = e("../ui/sign_ui_manager"), m = e("../manager/data_manager"), f = e("../ui/role_ui_manager"), g = e("../ui/blackmarket_ui_manager"), h = function() {
             function e() {}
             return Object.defineProperty(e, "instance", {
                 get: function() {
@@ -1105,7 +1123,9 @@ window.__require = function e(t, a, n) {
                 n.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.RemoveItemFromBagResponse, r.MessageType.GamePlay), this.RemoveItemFromBagResponse, this), 
                 n.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.StengthItemResponse, r.MessageType.GamePlay), this.StengthItemResponse, this), 
                 n.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.RefreshItemResponse, r.MessageType.GamePlay), this.RefreshItemResponse, this), 
-                n.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.FastRemoveItemFromBagResponse, r.MessageType.GamePlay), this.FastRemoveItemFromBagResponse, this);
+                n.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.FastRemoveItemFromBagResponse, r.MessageType.GamePlay), this.FastRemoveItemFromBagResponse, this), 
+                n.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.ActiveEquipResponse, r.MessageType.GamePlay), this.ActiveEquipResponse, this), 
+                n.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.PlayerSyncEquipResponse, r.MessageType.GamePlay), this.PlayerSyncEquipResponse, this);
             }, e.prototype.GetBagRequest = function() {
                 i.NetworkManager.SendMessage(r.MessageNo.GetBagRequest, r.MessageType.GamePlay, {});
             }, e.prototype.GetBagResponse = function(e, t) {
@@ -1119,26 +1139,17 @@ window.__require = function e(t, a, n) {
             }, e.prototype.GetEquipRequest = function() {
                 i.NetworkManager.SendMessage(r.MessageNo.GetEquipRequest, r.MessageType.GamePlay, {});
             }, e.prototype.GetEquipResponse = function(e, t) {
-                for (var a in t) t[a] && o.default.instance.AddEquipItemByServer(Number(a), t[a].BaseID, t[a].Lv, t[a].AdditionAttr, t[a].HoleNum, t[a].MonsterGemID);
+                for (var a in t) t[a] && o.default.instance.DealAllEquipByServer(Number(a), t[a].BaseID, t[a].Lv, t[a].AdditionAttr, t[a].HoleNum, t[a].MonsterGemID, t[a].EquipIndex);
                 o.default.instance.getMainPlayer().fullfill(), l.default.instance.CheckedOneInit();
             }, e.prototype.AddItemToBagRequest = function(e, t) {
-                // var a = {
-                //     BaseID: Number(151),
-                //     AdditionAttr: {
-                //         "19": 125,
-                //         "198": 1.00,
-                //         "81": 0.20
-                //     }
-                // }
                 var a = {
                     BaseID: Number(e),
                     AdditionAttr: t
                 };
-                
                 i.NetworkManager.SendMessage(r.MessageNo.AddItemToBagRequest, r.MessageType.GamePlay, a);
             }, e.prototype.AddItemToBagResponse = function(e, t) {
                 o.default.instance.AddBagItemByServer(t.Index, t.BaseID, 0, t.AdditionAttr, t.HoleNum, t.MonsterGemID), 
-                n.Emitter.fire(s.AlertType.BagAlert.toString()), p.default.instance.playGetBonusAnim(m.default.instance.equipmentData[t.BaseID].icon_path);
+                n.Emitter.fire(s.AlertType.BagAlert.toString()), p.default.instance && p.default.instance.playGetBonusAnim(m.default.instance.equipmentData[t.BaseID].icon_path);
             }, e.prototype.AddItemFromBagToDepotRequest = function(e) {
                 var t = {
                     Index: Number(e)
@@ -1155,18 +1166,20 @@ window.__require = function e(t, a, n) {
                 t.IsOk && t.Index && o.default.instance.AddBagItemFromDepotByServer(t.Index);
             }, e.prototype.AddItemFromBagToEquipRequest = function(e) {
                 var t = {
-                    Index: Number(e)
+                    Index: Number(e),
+                    EquipBagIndex: Number(o.default.instance.curUseEquipPlanIndex)
                 };
                 i.NetworkManager.SendMessage(r.MessageNo.AddItemFromBagToEquipRequest, r.MessageType.GamePlay, t);
             }, e.prototype.AddItemFromBagToEquipResponse = function(e, t) {
-                t.IsOk && t.Index && o.default.instance.EquipItemSuccess(t.Index);
+                t.IsOk && t.Index && o.default.instance.EquipItemSuccess(t.Index, t.EquipBagIndex);
             }, e.prototype.AddItemFromEquipToBagRequest = function(e) {
                 var t = {
-                    Index: Number(e)
+                    Index: Number(e),
+                    EquipBagIndex: Number(f.default.curChangeIndex)
                 };
                 i.NetworkManager.SendMessage(r.MessageNo.AddItemFromEquipToBagRequest, r.MessageType.GamePlay, t);
             }, e.prototype.AddItemFromEquipToBagResponse = function(e, t) {
-                t.IsOk && t.Index && o.default.instance.TakeOffEquipItemNewByServer(t.Index);
+                t.IsOk && t.Index && o.default.instance.TakeOffEquipItemNewByServer(t.Index, t.EquipBagIndex);
             }, e.prototype.RemoveItemFromBagRequest = function(e) {
                 var t = {
                     Index: Number(e)
@@ -1205,9 +1218,18 @@ window.__require = function e(t, a, n) {
                 i.NetworkManager.SendMessage(r.MessageNo.RefreshItemRequest, r.MessageType.GamePlay, o);
             }, e.prototype.RefreshItemResponse = function(e, t) {
                 1 == t.IsOk && u.default.instance.refreshEquipSuccess(t.Index, t.Key, t.Val);
+            }, e.prototype.ActiveEquipRequest = function(e) {
+                i.NetworkManager.SendMessage(r.MessageNo.ActiveEquipRequest, r.MessageType.GamePlay, {
+                    Index: Number(e)
+                });
+            }, e.prototype.ActiveEquipResponse = function(e, t) {
+                t.IsOk && o.default.instance.ChangeEquipPlanSuccess(t.Index);
+            }, e.prototype.PlayerSyncEquipResponse = function(e, t) {
+                t.ActionType == s.EquipActionType.BuyBlackMarket && g.default.instance && g.default.instance.bugSpriteOrEquipSuccess(!1), 
+                o.default.instance.AddBagItemByServer(t.Index, t.BaseID, t.Lv, t.AdditionAttr, t.HoleNum, t.MonsterGemID);
             }, e._instance = null, e;
         }();
-        a.default = f, cc._RF.pop();
+        a.default = h, cc._RF.pop();
     }, {
         "../common/allenum": "allenum",
         "../common/emmiter": "emmiter",
@@ -1217,7 +1239,9 @@ window.__require = function e(t, a, n) {
         "../manager/game_manager": "game_manager",
         "../manager/network_manager": "network_manager",
         "../ui/bag_ui_manager": "bag_ui_manager",
+        "../ui/blackmarket_ui_manager": "blackmarket_ui_manager",
         "../ui/refresh_tip": "refresh_tip",
+        "../ui/role_ui_manager": "role_ui_manager",
         "../ui/sign_ui_manager": "sign_ui_manager",
         "../ui/strengthen_tip_manager": "strengthen_tip_manager"
     } ],
@@ -1299,7 +1323,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "20142TrzR1EA5KJeD6aVGQI", "bag_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../manager/dynamic_data_manager"), i = e("../manager/pool_manager"), r = e("./item/bag_item"), o = e("./messagebox_ui_manager"), s = e("../manager/help_manager"), l = e("../audio_manager"), c = e("../manager/resource_manager"), u = cc._decorator, d = u.ccclass, p = u.property, m = function(e) {
+        var n = e("../manager/dynamic_data_manager"), i = e("../manager/pool_manager"), r = e("./item/bag_item"), o = e("../manager/help_manager"), s = e("../audio_manager"), l = e("../manager/resource_manager"), c = e("./menu_ui_manager"), u = e("../manager/data_manager"), d = e("../manager/ui_manager"), p = cc._decorator, m = p.ccclass, f = p.property, g = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.bagUINode = null, t.maskNode = null, t.bagContentViewNode = null, t.labelBagCount = null, 
@@ -1312,8 +1336,8 @@ window.__require = function e(t, a, n) {
                 this.btnSellBlue.node.on("click", this.sellBlue, this), this.btnSellGold.node.on("click", this.sellGold, this), 
                 this.spriteEquipBag.node.on("click", this.equipBag, this), this.spriteGemBag.node.on("click", this.gemBag, this), 
                 this.bagUINode.active && (this.bagUINode.active = !1);
-            }, t.prototype.showBagUI = function() {
-                l.default.instance.PlayUISelect(), this.bagUINode.active = !0, this.refreshBagUI();
+            }, t.prototype.showUI = function() {
+                s.default.instance.PlayUISelect(), this.bagUINode.active = !0, this.refreshBagUI();
             }, t.prototype.refreshBagUI = function() {
                 for (var e = this.bagContentViewNode.children, t = e.length - 1; t >= 0; t--) i.default.instance.RemoveBagItem(e[t]);
                 if (this.isShowEquip) {
@@ -1327,59 +1351,62 @@ window.__require = function e(t, a, n) {
                     this.labelBagCount.string = "( " + a.toString() + " / " + n.default.instance.playerBagCount.toString() + " )";
                 } else {
                     if (null != n.default.instance.GemItemDataMap) for (var s in n.default.instance.GemItemDataMap) {
-                        if (n.default.instance.GemItemDataMap[s] > 0) i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default).initGem(Number(s), n.default.instance.GemItemDataMap[s]);
+                        if (n.default.instance.GemItemDataMap[s] > 0 && u.default.instance.monsterGemData[s]) i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default).initGem(Number(s), n.default.instance.GemItemDataMap[s]);
                     }
                     this.labelBagCount.string = "";
                 }
+                c.default.instance.checkBagAlert();
             }, t.prototype.hideBagUI = function() {
                 this.bagUINode.active = !1;
             }, t.prototype.sellWhite = function() {
                 var e = "";
-                e = s.default.instance.GetQualityEquipIsHaveGems(0) ? "一键出售白色装备中包含镶嵌魔晶，出售将自动脱落到背包" : "是否确定一键售出所有白色装备？", 
-                o.default.instance.showUI("一键售出", e, this.sellWhiteReturn);
+                e = o.default.instance.GetQualityEquipIsHaveGems(0) ? "一键出售白色装备中包含镶嵌魔晶，出售将自动脱落到背包" : "是否确定一键售出所有白色装备？", 
+                d.default.instance.LoadMessageBox("一键售出", e, this.sellWhiteReturn);
             }, t.prototype.sellBlue = function() {
                 var e = "";
-                e = s.default.instance.GetQualityEquipIsHaveGems(1) ? "一键出售蓝色装备中包含镶嵌魔晶，出售将自动脱落到背包" : "是否确定一键售出所有蓝色装备？", 
-                o.default.instance.showUI("一键售出", e, this.sellBlueReturn);
+                e = o.default.instance.GetQualityEquipIsHaveGems(1) ? "一键出售蓝色装备中包含镶嵌魔晶，出售将自动脱落到背包" : "是否确定一键售出所有蓝色装备？", 
+                d.default.instance.LoadMessageBox("一键售出", e, this.sellBlueReturn);
             }, t.prototype.sellGold = function() {
                 var e = "";
-                e = s.default.instance.GetQualityEquipIsHaveGems(2) ? "一键出售金色装备中包含镶嵌魔晶，出售将自动脱落到背包" : "是否确定一键售出所有金色装备？", 
-                o.default.instance.showUI("一键售出", e, this.sellGoldReturn);
+                e = o.default.instance.GetQualityEquipIsHaveGems(2) ? "一键出售金色装备中包含镶嵌魔晶，出售将自动脱落到背包" : "是否确定一键售出所有金色装备？", 
+                d.default.instance.LoadMessageBox("一键售出", e, this.sellGoldReturn);
             }, t.prototype.sellWhiteReturn = function(e) {
-                e && (s.default.instance.sellAllEquipByQuality(0), a.instance.refreshBagUI());
+                e && (o.default.instance.sellAllEquipByQuality(0), a.instance.refreshBagUI());
             }, t.prototype.sellBlueReturn = function(e) {
-                e && (s.default.instance.sellAllEquipByQuality(1), a.instance.refreshBagUI());
+                e && (o.default.instance.sellAllEquipByQuality(1), a.instance.refreshBagUI());
             }, t.prototype.sellGoldReturn = function(e) {
-                e && (s.default.instance.sellAllEquipByQuality(2), a.instance.refreshBagUI());
+                e && (o.default.instance.sellAllEquipByQuality(2), a.instance.refreshBagUI());
             }, t.prototype.equipBag = function() {
-                this.isShowEquip || (this.isShowEquip = !0, this.spriteEquipBag.spriteFrame = c.default.instance.getCommonSprite("jszb_13"), 
-                this.spriteGemBag.spriteFrame = c.default.instance.getCommonSprite("jszb_14"), this.refreshBagUI());
+                this.isShowEquip || (this.isShowEquip = !0, this.spriteEquipBag.spriteFrame = l.default.instance.getCommonSprite("jszb_13"), 
+                this.spriteGemBag.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), this.refreshBagUI());
             }, t.prototype.gemBag = function() {
-                this.isShowEquip && (this.isShowEquip = !1, this.spriteEquipBag.spriteFrame = c.default.instance.getCommonSprite("jszb_14"), 
-                this.spriteGemBag.spriteFrame = c.default.instance.getCommonSprite("jszb_13"), this.refreshBagUI());
-            }, t.instance = null, __decorate([ p(cc.Node) ], t.prototype, "bagUINode", void 0), 
-            __decorate([ p(cc.Node) ], t.prototype, "maskNode", void 0), __decorate([ p(cc.Node) ], t.prototype, "bagContentViewNode", void 0), 
-            __decorate([ p(cc.Label) ], t.prototype, "labelBagCount", void 0), __decorate([ p(cc.Button) ], t.prototype, "btnSellWhite", void 0), 
-            __decorate([ p(cc.Button) ], t.prototype, "btnSellBlue", void 0), __decorate([ p(cc.Button) ], t.prototype, "btnSellGold", void 0), 
-            __decorate([ p(cc.Sprite) ], t.prototype, "spriteEquipBag", void 0), __decorate([ p(cc.Sprite) ], t.prototype, "spriteGemBag", void 0), 
-            t = a = __decorate([ d ], t);
+                this.isShowEquip && (this.isShowEquip = !1, this.spriteEquipBag.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), 
+                this.spriteGemBag.spriteFrame = l.default.instance.getCommonSprite("jszb_13"), this.refreshBagUI());
+            }, t.instance = null, __decorate([ f(cc.Node) ], t.prototype, "bagUINode", void 0), 
+            __decorate([ f(cc.Node) ], t.prototype, "maskNode", void 0), __decorate([ f(cc.Node) ], t.prototype, "bagContentViewNode", void 0), 
+            __decorate([ f(cc.Label) ], t.prototype, "labelBagCount", void 0), __decorate([ f(cc.Button) ], t.prototype, "btnSellWhite", void 0), 
+            __decorate([ f(cc.Button) ], t.prototype, "btnSellBlue", void 0), __decorate([ f(cc.Button) ], t.prototype, "btnSellGold", void 0), 
+            __decorate([ f(cc.Sprite) ], t.prototype, "spriteEquipBag", void 0), __decorate([ f(cc.Sprite) ], t.prototype, "spriteGemBag", void 0), 
+            t = a = __decorate([ m ], t);
         }(cc.Component);
-        a.default = m, cc._RF.pop();
+        a.default = g, cc._RF.pop();
     }, {
         "../audio_manager": "audio_manager",
+        "../manager/data_manager": "data_manager",
         "../manager/dynamic_data_manager": "dynamic_data_manager",
         "../manager/help_manager": "help_manager",
         "../manager/pool_manager": "pool_manager",
         "../manager/resource_manager": "resource_manager",
+        "../manager/ui_manager": "ui_manager",
         "./item/bag_item": "bag_item",
-        "./messagebox_ui_manager": "messagebox_ui_manager"
+        "./menu_ui_manager": "menu_ui_manager"
     } ],
     battle_manager: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "00140DxzalEQa1ZG9/NzNjO", "battle_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../role/hero"), i = e("../role/monster"), r = e("../math/damage"), o = e("../manager/pool_manager"), s = e("../math/rand"), l = e("../manager/data_manager"), c = e("../ui/battle_ui_manager"), u = e("../manager/dynamic_data_manager"), d = e("../manager/lost_manager"), p = e("../ui/bag_ui_manager"), m = e("../manager/sprite_manager"), f = e("../manager/skill_manager"), g = e("../manager/random_event_manager"), h = e("../manager/resource_manager"), _ = e("../common/allenum"), y = e("../manager/reward_manager"), v = e("../manager/reward_effect_manager"), b = e("../ui/tips_ui_manager"), D = e("../ui/bg_ui_manager"), P = e("../manager/dungeon_data_manager"), I = e("../ui/messagebox_ui_manager"), B = e("../audio_manager"), S = e("../network/player_network"), k = e("../manager/game_manager"), R = e("../manager/effect_manager"), M = cc._decorator, N = M.ccclass, A = M.property, w = function(e) {
+        var n = e("../role/hero"), i = e("../role/monster"), r = e("../math/damage"), o = e("../manager/pool_manager"), s = e("../math/rand"), l = e("../manager/data_manager"), c = e("../ui/battle_ui_manager"), u = e("../manager/dynamic_data_manager"), d = e("../manager/lost_manager"), p = e("../ui/bag_ui_manager"), m = e("../manager/sprite_manager"), f = e("../manager/skill_manager"), g = e("../manager/random_event_manager"), h = e("../manager/resource_manager"), _ = e("../common/allenum"), y = e("../manager/reward_manager"), v = e("../manager/reward_effect_manager"), b = e("../ui/bg_ui_manager"), D = e("../manager/dungeon_data_manager"), I = e("../ui/messagebox_ui_manager"), P = e("../audio_manager"), B = e("../network/player_network"), S = e("../manager/game_manager"), R = e("../manager/effect_manager"), k = e("../manager/ui_manager"), A = cc._decorator, M = A.ccclass, N = A.property, w = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.mainPlayer = null, t.mainMoster = null, t.effectNode = null, t.enemyDamageNode = null, 
@@ -1461,9 +1488,9 @@ window.__require = function e(t, a, n) {
                 this.mainMoster.BeingAttack(a.total), this.checkAttAddDaimond(), this.mainPlayer.BeingAttMonster(a.total), 
                 this.mainMoster.isDead()) {
                     var i = this.mainMoster.baseID;
-                    this.mainPlayer.addExp(this.getExp()), B.default.instance.PlayFly(), this.getLost(), 
-                    this.mainMoster = null, this.mainPlayer.BeingKilledMonster(), this._battleStatus == _.BattleStatus.TargetLevelBattling ? S.default.instance.PlayerKillMonsterRequest(i, this.targetLevelID, u.default.instance.curDiff, this.targetLevelBeatCount) : S.default.instance.PlayerKillMonsterRequest(i, this.curLevel, u.default.instance.curDiff, this.curBeatCount), 
-                    this.addLevelBeatCount(), S.default.instance.UpdatePlayerBaseData(!0);
+                    P.default.instance.PlayFly(), this.getLost(), this.mainMoster = null, this.mainPlayer.BeingKilledMonster(), 
+                    this._battleStatus == _.BattleStatus.TargetLevelBattling ? B.default.instance.PlayerKillMonsterRequest(i, this.targetLevelID, u.default.instance.curDiff, this.targetLevelBeatCount) : B.default.instance.PlayerKillMonsterRequest(i, this.curLevel, u.default.instance.curDiff, this.curBeatCount), 
+                    this.addLevelBeatCount(), B.default.instance.UpdatePlayerBaseData(!0);
                 }
                 return !0;
             }, t.prototype.checkAttAddDaimond = function() {
@@ -1486,19 +1513,19 @@ window.__require = function e(t, a, n) {
                 var e = 0, t = this.curLevel;
                 this._battleStatus == _.BattleStatus.TargetLevelBattling && (t = this.targetLevelID), 
                 this.checkIsBoss() ? 1 == u.default.instance.curDiff ? e = l.default.instance.levelData[t].boss_lost_id : 2 == u.default.instance.curDiff ? e = l.default.instance.levelData[t].diffboss_lost_id : 3 == u.default.instance.curDiff && (e = l.default.instance.levelData[t].diffboss_lost_id) : 1 == u.default.instance.curDiff ? e = l.default.instance.levelData[t].monster_lost_id : 2 == u.default.instance.curDiff ? e = l.default.instance.levelData[t].diff_lost_id : 3 == u.default.instance.curDiff && (e = l.default.instance.levelData[t].hell_lost_id);
-                var a = P.default.instance.getBetterEquipAdd(t, u.default.instance.curDiff), n = this.mainPlayer.buffData.getBuffValue("掉落概率"), i = d.default.instance.getLostByID(e, this.mainPlayer.addGetBetterEquip + 1 + a, n);
-                if (i) if (u.default.instance.isBagFull()) b.default.instance.showtips("bag_count_limit"); else {
-                    u.default.instance.AddBagItem(i), p.default.instance.refreshBagUI();
+                var a = D.default.instance.getBetterEquipAdd(t, u.default.instance.curDiff), n = this.mainPlayer.buffData.getBuffValue("掉落概率"), i = d.default.instance.getLostByID(e, this.mainPlayer.addGetBetterEquip + 1 + a, n);
+                if (i) if (u.default.instance.isBagFull()) k.default.instance.LoadTipsByID("bag_count_limit"); else {
+                    u.default.instance.AddBagItem(i), p.default.instance && p.default.instance.refreshBagUI();
                     var r = l.default.instance.equipmentData[i.baseId].icon_path;
                     v.default.instance.createDaimondEffect(1, "装备", this.mainMoster.node.parent.convertToWorldSpaceAR(this.mainMoster.node.position), r), 
-                    b.default.instance.showTipsByStr("获得:" + l.default.instance.equipmentData[i.baseId].name);
+                    k.default.instance.LoadTipsByStr("获得:" + l.default.instance.equipmentData[i.baseId].name);
                 }
             }, t.prototype.GetGemByServer = function(e) {
                 u.default.instance.AddGemItem(e);
                 var t = l.default.instance.monsterGemData[e].icon_path;
                 v.default.instance.createDaimondEffect(1, "魔晶", this.effectNode.parent.convertToWorldSpaceAR(this.effectNode.position), t);
             }, t.prototype.checkIsBoss = function() {
-                return this._battleStatus == _.BattleStatus.TargetLevelBattling ? P.default.instance.checkIsBoss(this.targetLevelID, this.targetLevelBeatCount, this._battleStatus) : P.default.instance.checkIsBoss(this.curLevel, this.curBeatCount, this._battleStatus);
+                return this._battleStatus == _.BattleStatus.TargetLevelBattling ? D.default.instance.checkIsBoss(this.targetLevelID, this.targetLevelBeatCount, this._battleStatus) : D.default.instance.checkIsBoss(this.curLevel, this.curBeatCount, this._battleStatus);
             }, t.prototype.BattleShow_MonsterAttack = function() {
                 if (!r.default.beingHit(this.mainMoster, this.mainPlayer)) return R.default.instance.PlayMissEffect(this.mainPlayer.node), 
                 !0;
@@ -1523,7 +1550,7 @@ window.__require = function e(t, a, n) {
                 } else this.BattleShow_MonsterAttack(); else console.error("this.mainMoster == null");
             }, t.prototype.playerDeadProcess = function() {
                 this.mainPlayer.isDead() && a.instance._playerStatus != _.PlayerStatus.Reborning && (this.playerDeadCount -= 1, 
-                this.playerDeadCount > 0 ? (I.default.instance.showUI("你已经死亡", this.playerDeadCount + "秒后自动重生，重生后倒退10层。若是特殊副本则离开副本。点击确认立即重生。", this.playerDeadCallBack), 
+                this.playerDeadCount > 0 ? (k.default.instance.LoadMessageBox("你已经死亡", this.playerDeadCount + "秒后自动重生，重生后倒退10层。若是特殊副本则离开副本。点击确认立即重生。", this.playerDeadCallBack), 
                 this.scheduleOnce(function() {
                     this.playerDeadProcess();
                 }, 1)) : (I.default.instance.hideUI(), a.instance._playerStatus = _.PlayerStatus.Reborning, 
@@ -1541,33 +1568,33 @@ window.__require = function e(t, a, n) {
                 this.updateBatlleUIShow());
             }, t.prototype.updateBatlleUIShow = function() {
                 if (c.default.instance.updatePlayerInfoUI(), this._battleStatus == _.BattleStatus.NormalBattling || this._battleStatus == _.BattleStatus.NormalIdle) {
-                    var e = P.default.instance.getBossBattleCount(this.curLevel);
+                    var e = D.default.instance.getBossBattleCount(this.curLevel);
                     c.default.instance.updateLevelInfo(this.curLevel, this.curBeatCount, e, this._battleStatus);
                 } else {
-                    e = P.default.instance.getBossBattleCount(this.targetLevelID);
+                    e = D.default.instance.getBossBattleCount(this.targetLevelID);
                     c.default.instance.updateLevelInfo(this.targetLevelID, this.targetLevelBeatCount, e, this._battleStatus);
                 }
             }, t.prototype.getExp = function() {
                 var e = 0;
-                return e = this._battleStatus == _.BattleStatus.TargetLevelBattling ? P.default.instance.getLevelExpAdd(this.targetLevelID, u.default.instance.curDiff) : P.default.instance.getLevelExpAdd(this.curLevel, u.default.instance.curDiff), 
+                return e = this._battleStatus == _.BattleStatus.TargetLevelBattling ? D.default.instance.getLevelExpAdd(this.targetLevelID, u.default.instance.curDiff) : D.default.instance.getLevelExpAdd(this.curLevel, u.default.instance.curDiff), 
                 Math.floor(this.mainMoster.maxhp / 10 * (1 + this.mainPlayer.getAddExpRate + e));
             }, t.prototype.getCurDungeonOffieceExpAnHour = function() {
                 var e = 0;
-                e = this._battleStatus == _.BattleStatus.TargetLevelBattling ? P.default.instance.getLevelExpAdd(this.targetLevelID, u.default.instance.curDiff) : P.default.instance.getLevelExpAdd(this.curLevel, u.default.instance.curDiff);
-                var t = P.default.instance.getFirstMonsterHP(this.curLevel, u.default.instance.curDiff);
-                return 3600 * Math.floor(t / 10 * (1 + .3 * (this.mainPlayer.getAddExpRateNoBuff + e) + this.mainPlayer.offlineAdd)) / P.default.instance.getOfflineCdByDiff(this.curLevel, u.default.instance.curDiff);
+                e = this._battleStatus == _.BattleStatus.TargetLevelBattling ? D.default.instance.getLevelExpAdd(this.targetLevelID, u.default.instance.curDiff) : D.default.instance.getLevelExpAdd(this.curLevel, u.default.instance.curDiff);
+                var t = D.default.instance.getFirstMonsterHP(this.curLevel, u.default.instance.curDiff);
+                return 3600 * Math.floor(t / 10 * (1 + .3 * (this.mainPlayer.getAddExpRateNoBuff + e) + this.mainPlayer.offlineAdd)) / D.default.instance.getOfflineCdByDiff(this.curLevel, u.default.instance.curDiff);
             }, t.prototype.getCurDungeonOffieceGoldAnHour = function() {
-                var e = P.default.instance.getFirstMonsterLV(this.curLevel, u.default.instance.curDiff);
-                return 3600 * Math.floor(e * (1 + .3 * (this.mainPlayer.addGetCoinNoBuff + P.default.instance.getLevelMoneyAdd(this.curLevel, u.default.instance.curDiff)) + this.mainPlayer.offlineAdd)) / P.default.instance.getOfflineCdByDiff(this.curLevel, u.default.instance.curDiff);
+                var e = D.default.instance.getFirstMonsterLV(this.curLevel, u.default.instance.curDiff);
+                return 3600 * Math.floor(e * (1 + .3 * (this.mainPlayer.addGetCoinNoBuff + D.default.instance.getLevelMoneyAdd(this.curLevel, u.default.instance.curDiff)) + this.mainPlayer.offlineAdd)) / D.default.instance.getOfflineCdByDiff(this.curLevel, u.default.instance.curDiff);
             }, t.prototype.getCurLevelMonster = function() {
-                return this._battleStatus == _.BattleStatus.TargetLevelBattling ? P.default.instance.getMonsterID(this.targetLevelID, this.targetLevelBeatCount, this._battleStatus) : P.default.instance.getMonsterID(this.curLevel, this.curBeatCount, this._battleStatus);
+                return this._battleStatus == _.BattleStatus.TargetLevelBattling ? D.default.instance.getMonsterID(this.targetLevelID, this.targetLevelBeatCount, this._battleStatus) : D.default.instance.getMonsterID(this.curLevel, this.curBeatCount, this._battleStatus);
             }, t.prototype.getBattleLevel = function() {
                 return this._battleStatus == _.BattleStatus.TargetLevelBattling ? this.targetLevelID : this.curLevel;
             }, t.prototype.getNewMainMonster = function() {
                 var e = this.getCurLevelMonster(), t = this.checkIsBoss(), a = o.default.instance.CreateMonster(this.monsterNode);
                 this.mainMoster = a.getComponent(i.default);
                 var n = !1;
-                if (this._battleStatus == _.BattleStatus.TargetLevelBattling && P.default.instance.getNeedGenerateMonster(this.targetLevelID) && (n = !0), 
+                if (this._battleStatus == _.BattleStatus.TargetLevelBattling && D.default.instance.getNeedGenerateMonster(this.targetLevelID) && (n = !0), 
                 n) this.mainMoster.initMonsterDataByEntity(this.mainPlayer, e); else {
                     var r = 1;
                     this.mainPlayer.buffData.getBuffValue("受击增伤") < -.1 && (r = .5), this.mainMoster.initMonsterData(e, t, r);
@@ -1585,13 +1612,13 @@ window.__require = function e(t, a, n) {
                 return 1 == e && t == u.default.instance.playerMaxLV || (2 == e && t == u.default.instance.playerMaxDiffLV || (3 == e && t == u.default.instance.playerMaxHellLV || void 0));
             }, t.prototype.addLevelBeatCount = function() {
                 if (this._battleStatus == _.BattleStatus.NormalBattling || this._battleStatus == _.BattleStatus.NormalIdle || this._battleStatus == _.BattleStatus.BattleShow) this.checkIsBoss() ? (this.curBeatCount++, 
-                this.isChallengeLevel(u.default.instance.curDiff, this.curLevel) && P.default.instance.hasNextNormalLevel(this.curLevel) ? (this.curLevel++, 
+                this.isChallengeLevel(u.default.instance.curDiff, this.curLevel) && D.default.instance.hasNextNormalLevel(this.curLevel) ? (this.curLevel++, 
                 this.curBeatCount = 0, 1 == u.default.instance.curDiff ? u.default.instance.playerMaxLV = this.curLevel : 2 == u.default.instance.curDiff ? u.default.instance.playerMaxDiffLV = this.curLevel : 3 == u.default.instance.curDiff && (u.default.instance.playerMaxHellLV = this.curLevel), 
                 this.changeBattleBg()) : this._battleStatus = _.BattleStatus.NormalIdle) : (this.curBeatCount++, 
-                P.default.instance.isOverBoss(this.curLevel, this.curBeatCount) && (this._battleStatus = _.BattleStatus.NormalIdle)); else {
+                D.default.instance.isOverBoss(this.curLevel, this.curBeatCount) && (this._battleStatus = _.BattleStatus.NormalIdle)); else {
                     this.targetLevelBeatCount++;
-                    var e = P.default.instance.getBossBattleCount(this.targetLevelID);
-                    this.targetLevelBeatCount > e && (S.default.instance.PlayerOverComeDungeonRequest(this.targetLevelID), 
+                    var e = D.default.instance.getBossBattleCount(this.targetLevelID);
+                    this.targetLevelBeatCount > e && (B.default.instance.PlayerOverComeDungeonRequest(this.targetLevelID), 
                     this.exitTargetLevelStatus());
                 }
                 this.updateBatlleUIShow();
@@ -1605,12 +1632,12 @@ window.__require = function e(t, a, n) {
                 this.curBeatCount = 0, t < u.default.instance.playerMaxDiffLV ? this._battleStatus = _.BattleStatus.NormalIdle : this._battleStatus = _.BattleStatus.NormalBattling, 
                 u.default.instance.curDiff = e, this.updateBatlleUIShow(), !0) : 3 == e && t <= u.default.instance.playerMaxHellLV ? (this.curLevel = t, 
                 this.curBeatCount = 0, t < u.default.instance.playerMaxHellLV ? this._battleStatus = _.BattleStatus.NormalIdle : this._battleStatus = _.BattleStatus.NormalBattling, 
-                u.default.instance.curDiff = e, this.updateBatlleUIShow(), !0) : (b.default.instance.showTipsByStr("此关卡尚未解锁"), 
+                u.default.instance.curDiff = e, this.updateBatlleUIShow(), !0) : (k.default.instance.LoadTipsByStr("此关卡尚未解锁"), 
                 !1);
             }, t.prototype.killCurMonster = function() {
                 null != this.mainMoster && (this.mainMoster.KillThis(), this.mainMoster = null);
             }, t.prototype.update = function(e) {
-                h.default.instance.Inited && (this._battleStatus == _.BattleStatus.BattleShow ? this.processBattleShowStatus(e) : (k.default.instance.gameStatus == _.GameStatus.GamePlaying && null == this.mainMoster && (null == this.mainPlayer || this.mainPlayer.isDead() || (this.mainPlayer.lastCreateMonsterTime = this.mainPlayer.lastCreateMonsterTime + e, 
+                h.default.instance.Inited && (this._battleStatus == _.BattleStatus.BattleShow ? this.processBattleShowStatus(e) : (S.default.instance.gameStatus == _.GameStatus.GamePlaying && null == this.mainMoster && (null == this.mainPlayer || this.mainPlayer.isDead() || (this.mainPlayer.lastCreateMonsterTime = this.mainPlayer.lastCreateMonsterTime + e, 
                 this.mainPlayer.lastCreateMonsterTime > this.mainPlayer.createMonsterInterval && (this.mainPlayer.lastCreateMonsterTime = 0, 
                 0 == this.isCreatingMonster && (this.isCreatingMonster = !0, this.getNewMainMonster())))), 
                 f.default.instance.updateUsingSkill(e), g.default.instance.updateEvent(e), y.default.instance.update(e)));
@@ -1620,12 +1647,12 @@ window.__require = function e(t, a, n) {
             }, t.prototype.changeBattleBg = function() {
                 if (this._battleStatus == _.BattleStatus.TargetLevelBattling) {
                     var e = l.default.instance.levelData[this.targetLevelID].bg_name;
-                    D.default.instance.changeBgByName(e);
+                    b.default.instance.changeBgByName(e);
                     var t = l.default.instance.levelData[this.targetLevelID].name;
                     c.default.instance.showLevelName(t);
                 } else {
                     e = l.default.instance.levelData[this.curLevel].bg_name;
-                    D.default.instance.changeBgByName(e);
+                    b.default.instance.changeBgByName(e);
                     t = l.default.instance.levelData[this.curLevel].name;
                     c.default.instance.showLevelName(t);
                 }
@@ -1645,12 +1672,12 @@ window.__require = function e(t, a, n) {
                     this.sprite4.spriteFrame = h.default.instance.getSpriteSprite(n.icon_path)) : 4 == t && (this.sprite5.node.active = !0, 
                     this.sprite5.spriteFrame = h.default.instance.getSpriteSprite(n.icon_path)), t++;
                 }
-            }, t.instance = null, __decorate([ A(n.default) ], t.prototype, "mainPlayer", void 0), 
-            __decorate([ A(i.default) ], t.prototype, "mainMoster", void 0), __decorate([ A(cc.Node) ], t.prototype, "effectNode", void 0), 
-            __decorate([ A(cc.Node) ], t.prototype, "enemyDamageNode", void 0), __decorate([ A(cc.Node) ], t.prototype, "monsterNode", void 0), 
-            __decorate([ A(cc.Sprite) ], t.prototype, "sprite1", void 0), __decorate([ A(cc.Sprite) ], t.prototype, "sprite2", void 0), 
-            __decorate([ A(cc.Sprite) ], t.prototype, "sprite3", void 0), __decorate([ A(cc.Sprite) ], t.prototype, "sprite4", void 0), 
-            __decorate([ A(cc.Sprite) ], t.prototype, "sprite5", void 0), t = a = __decorate([ N ], t);
+            }, t.instance = null, __decorate([ N(n.default) ], t.prototype, "mainPlayer", void 0), 
+            __decorate([ N(i.default) ], t.prototype, "mainMoster", void 0), __decorate([ N(cc.Node) ], t.prototype, "effectNode", void 0), 
+            __decorate([ N(cc.Node) ], t.prototype, "enemyDamageNode", void 0), __decorate([ N(cc.Node) ], t.prototype, "monsterNode", void 0), 
+            __decorate([ N(cc.Sprite) ], t.prototype, "sprite1", void 0), __decorate([ N(cc.Sprite) ], t.prototype, "sprite2", void 0), 
+            __decorate([ N(cc.Sprite) ], t.prototype, "sprite3", void 0), __decorate([ N(cc.Sprite) ], t.prototype, "sprite4", void 0), 
+            __decorate([ N(cc.Sprite) ], t.prototype, "sprite5", void 0), t = a = __decorate([ M ], t);
         }(cc.Component);
         a.default = w, cc._RF.pop();
     }, {
@@ -1669,6 +1696,7 @@ window.__require = function e(t, a, n) {
         "../manager/reward_manager": "reward_manager",
         "../manager/skill_manager": "skill_manager",
         "../manager/sprite_manager": "sprite_manager",
+        "../manager/ui_manager": "ui_manager",
         "../math/damage": "damage",
         "../math/rand": "rand",
         "../network/player_network": "player_network",
@@ -1677,15 +1705,14 @@ window.__require = function e(t, a, n) {
         "../ui/bag_ui_manager": "bag_ui_manager",
         "../ui/battle_ui_manager": "battle_ui_manager",
         "../ui/bg_ui_manager": "bg_ui_manager",
-        "../ui/messagebox_ui_manager": "messagebox_ui_manager",
-        "../ui/tips_ui_manager": "tips_ui_manager"
+        "../ui/messagebox_ui_manager": "messagebox_ui_manager"
     } ],
     battle_ui_manager: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "2ea58N0WjJKaYX5cSORdWRd", "battle_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../manager/data_manager"), i = e("./messagebox_ui_manager"), r = e("../battle/battle_manager"), o = e("./tips_ui_manager"), s = e("../manager/playerbuff_manager"), l = e("./random_event_ui_manager"), c = e("../manager/pool_manager"), u = e("./item/buff_item"), d = e("../common/allenum"), p = e("../manager/dungeon_data_manager"), m = e("../audio_manager"), f = e("../network/player_network"), g = e("../manager/dynamic_data_manager"), h = e("./sign_ui_manager"), _ = e("../common/emmiter"), y = e("./achievement_ui_manager"), v = e("../manager/achievenment_manager"), b = e("../util"), D = e("./chat_ui_manager"), P = cc._decorator, I = P.ccclass, B = P.property, S = function(e) {
+        var n = e("../manager/data_manager"), i = e("../battle/battle_manager"), r = e("../manager/playerbuff_manager"), o = e("./random_event_ui_manager"), s = e("../manager/pool_manager"), l = e("./item/buff_item"), c = e("../common/allenum"), u = e("../manager/dungeon_data_manager"), d = e("../audio_manager"), p = e("../network/player_network"), m = e("../manager/dynamic_data_manager"), f = e("../common/emmiter"), g = e("../manager/achievenment_manager"), h = e("../util"), _ = e("../manager/ui_manager"), y = cc._decorator, v = y.ccclass, b = y.property, D = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.barExp = null, t.barHP = null, t.barMP = null, t.labelHPProcess = null, 
@@ -1694,102 +1721,105 @@ window.__require = function e(t, a, n) {
                 t.btnSign = null, t.nodeSignRed = null, t.btnAchievement = null, t.barAchievementStatus = null, 
                 t.labelAchievementStatus = null, t.labelAchievementTitle = null, t.nodeAchievementRed = null, 
                 t.barLevelStatus = null, t.nodeSmallMan = null, t.buffNode = null, t.btnChatNode = null, 
-                t.labelLevelNum = null, t.labelLevelProcess = null, t;
+                t.labelCurChatText = null, t.labelLevelNum = null, t.labelLevelProcess = null, t;
             }
             var a;
             return __extends(t, e), a = t, t.prototype.onLoad = function() {
                 a.instance = this, this.btnCloseEvent.node.on("click", this.closeEvent, this), this.btnOpenEvent.node.on("click", this.openEvent, this), 
                 this.btnSign.node.on("click", this.openSign, this), this.btnAchievement.node.on("click", this.openAchievement, this), 
                 this.btnChatNode.node.on("click", this.openChatUI, this);
-                _.Emitter.register(d.AlertType.SignAlert.toString(), this.updateSignAlert, this);
+                f.Emitter.register(c.AlertType.SignAlert.toString(), this.updateSignAlert, this);
             }, t.prototype.closeEvent = function() {
-                l.default.instance.hideEvents(), this.battleInfoUp();
+                o.default.instance.hideEvents(), this.battleInfoUp();
             }, t.prototype.openEvent = function() {
-                l.default.instance.showEvents(), this.battleInfoDown();
+                o.default.instance.showEvents(), this.battleInfoDown();
             }, t.prototype.updateLvExp = function(e, t) {
                 var a = n.default.instance.expData[e].exp;
                 null != a ? (this.labelPlayerLv.string = "LV " + e.toString(), this.barExp.progress = t / a) : console.error("no this lv:%d", e), 
-                g.default.instance.getMainPlayerLVParam() <= 50 ? this.btnChatNode.node.active = !1 : 0 == this.btnChatNode.node.active && (this.btnChatNode.node.active = !0);
+                m.default.instance.getMainPlayerLVParam() <= 50 ? this.btnChatNode.node.active = !1 : 0 == this.btnChatNode.node.active && (this.btnChatNode.node.active = !0);
             }, t.prototype.updateLevelInfo = function(e, t, a, n) {
-                if (void 0 === n && (n = d.BattleStatus.NormalBattling), n == d.BattleStatus.NormalBattling || n == d.BattleStatus.NormalIdle) {
+                if (void 0 === n && (n = c.BattleStatus.NormalBattling), n == c.BattleStatus.NormalBattling || n == c.BattleStatus.NormalIdle) {
                     var i = "普通 ";
-                    2 == g.default.instance.curDiff ? i = "噩梦 " : 3 == g.default.instance.curDiff && (i = "地狱 "), 
-                    this.labelLevelNum.string = i + e.toString() + ":" + p.default.instance.getDungeonName(e);
-                } else this.labelLevelNum.string = p.default.instance.getDungeonName(e);
+                    2 == m.default.instance.curDiff ? i = "噩梦 " : 3 == m.default.instance.curDiff && (i = "地狱 "), 
+                    this.labelLevelNum.string = i + e.toString() + ":" + u.default.instance.getDungeonName(e);
+                } else this.labelLevelNum.string = u.default.instance.getDungeonName(e);
                 t > a ? (this.labelLevelProcess.string = "挂机修炼中...", this.barLevelStatus.progress = t / a, 
                 this.nodeSmallMan.position = new cc.Vec2(250)) : (this.labelLevelProcess.string = t.toString() + " / " + a.toString(), 
                 this.barLevelStatus.progress = t / a, this.nodeSmallMan.position = new cc.Vec2(250 * t / a)), 
                 this.showOfflineInfo();
             }, t.prototype.updateOfflineInfo = function() {
-                this.labelLevelCoin.string = "金币: " + b.default.GetLargeNumStr(r.default.instance.getCurDungeonOffieceGoldAnHour()) + "/H", 
-                this.labelLevelExp.string = "经验: " + b.default.GetLargeNumStr(r.default.instance.getCurDungeonOffieceExpAnHour()) + "/H";
+                this.labelLevelCoin.string = "金币: " + h.default.GetLargeNumStr(i.default.instance.getCurDungeonOffieceGoldAnHour()) + "/H", 
+                this.labelLevelExp.string = "经验: " + h.default.GetLargeNumStr(i.default.instance.getCurDungeonOffieceExpAnHour()) + "/H";
             }, t.prototype.hideOffineInfo = function() {
                 this.labelLevelCoin.node.active = !1, this.labelLevelExp.node.active = !1;
             }, t.prototype.showOfflineInfo = function() {
-                this.isClosingEvent() ? r.default.instance._battleStatus == d.BattleStatus.TargetLevelBattling ? this.hideOffineInfo() : (this.labelLevelCoin.node.active = !0, 
+                this.isClosingEvent() ? i.default.instance._battleStatus == c.BattleStatus.TargetLevelBattling ? this.hideOffineInfo() : (this.labelLevelCoin.node.active = !0, 
                 this.labelLevelExp.node.active = !0, this.updateOfflineInfo()) : this.hideOffineInfo();
             }, t.prototype.updatePlayerInfoUI = function() {
-                this.updatePlayerHP(r.default.instance.mainPlayer.hp, r.default.instance.mainPlayer.maxhp), 
-                this.updatePlayerMP(r.default.instance.mainPlayer.mp, r.default.instance.mainPlayer.maxmp);
+                this.updatePlayerHP(i.default.instance.mainPlayer.hp, i.default.instance.mainPlayer.maxhp), 
+                this.updatePlayerMP(i.default.instance.mainPlayer.mp, i.default.instance.mainPlayer.maxmp);
             }, t.prototype.updatePlayerHP = function(e, t) {
                 this.labelHPProcess.string = e.toString() + "/" + t.toString(), this.barHP.progress = e / t;
             }, t.prototype.updatePlayerMP = function(e, t) {
                 this.labelMPProcess.string = e.toString() + "/" + t.toString(), this.barMP.progress = e / t;
             }, t.prototype.newlift = function() {
-                var e = r.default.instance.mainPlayer.lv, t = n.default.instance.globalValueData.new_left_lv_limit.params;
+                var e = i.default.instance.mainPlayer.lv, t = n.default.instance.globalValueData.new_left_lv_limit.params;
                 if (t <= e) {
-                    var a = Math.floor(e * (1 + s.default.instance.getBuffValue("转生收益")));
-                    i.default.instance.showUI("转生", "回归1级，奖励钻石:" + a.toString() + "  需要等级大于：" + t, this.newliftCallBack);
-                } else o.default.instance.showtips("level_limit");
+                    var a = Math.floor(e * (1 + r.default.instance.getBuffValue("转生收益")));
+                    _.default.instance.LoadMessageBox("转生", "回归1级，奖励钻石:" + a.toString() + "  需要等级大于：" + t, this.newliftCallBack);
+                } else _.default.instance.LoadTipsByID("level_limit");
             }, t.prototype.newliftCallBack = function(e) {
                 if (e) {
-                    var t = r.default.instance.mainPlayer.lv;
-                    f.default.instance.PlayerNewLifeRequest(t);
+                    var t = i.default.instance.mainPlayer.lv;
+                    p.default.instance.PlayerNewLifeRequest(t);
                 }
             }, t.prototype.battleInfoUp = function() {
-                m.default.instance.PlayUISelect(), this.getComponent(cc.Animation).play("battleinfo_up"), 
+                d.default.instance.PlayUISelect(), this.getComponent(cc.Animation).play("battleinfo_up"), 
                 this.btnCloseEvent.node.active = !1, this.btnOpenEvent.node.active = !0, this.btnSign.node.active = !0, 
                 this.btnAchievement.node.active = !1, this.showOfflineInfo();
             }, t.prototype.isClosingEvent = function() {
                 return this.btnOpenEvent.node.active;
             }, t.prototype.battleInfoDown = function() {
-                m.default.instance.PlayUISelect(), this.getComponent(cc.Animation).play("battleinfo_down"), 
+                d.default.instance.PlayUISelect(), this.getComponent(cc.Animation).play("battleinfo_down"), 
                 this.btnCloseEvent.node.active = !0, this.btnOpenEvent.node.active = !1, this.btnSign.node.active = !1, 
                 this.btnAchievement.node.active = !0, this.hideOffineInfo();
             }, t.prototype.addBuffShow = function(e) {
-                c.default.instance.CreateObjectByName("BuffItem", this.buffNode).getComponent(u.default).Init(e);
+                s.default.instance.CreateObjectByName("BuffItem", this.buffNode).getComponent(l.default).Init(e);
             }, t.prototype.showLevelName = function(e) {
                 this.labelLevelName.string = e, this.getComponent(cc.Animation).play("levelname_show");
             }, t.prototype.updatePlayerName = function() {
-                var e = g.default.instance.roleName, t = v.default.instance.getUserTitle();
+                var e = m.default.instance.roleName, t = g.default.instance.getUserTitle();
                 "" == e && (e = "小小勇者"), "" != t && (e = t + " " + e), this.labelPlayerName.string = e;
             }, t.prototype.openSign = function() {
-                h.default.instance.showUI();
+                _.default.instance.LoadSignUI();
             }, t.prototype.updateSignAlert = function() {
-                g.default.instance.canSign ? this.nodeSignRed.active = !0 : this.nodeSignRed.active = !1;
+                m.default.instance.canSign ? this.nodeSignRed.active = !0 : this.nodeSignRed.active = !1;
             }, t.prototype.updateAchievementInfo = function(e, t, a) {
                 this.labelAchievementTitle.string = e, this.labelAchievementStatus.string = t + "/" + a, 
-                this.barAchievementStatus.progress = t / a, v.default.instance.hasCompeletedAchievement() ? this.nodeAchievementRed.active = !0 : this.nodeAchievementRed.active = !1;
+                this.barAchievementStatus.progress = t / a, g.default.instance.hasCompeletedAchievement() ? this.nodeAchievementRed.active = !0 : this.nodeAchievementRed.active = !1;
             }, t.prototype.openAchievement = function() {
-                y.default.instance.showUI();
+                _.default.instance.LoadAchievementUI();
             }, t.prototype.openChatUI = function() {
-                D.default.instance.showChatNode();
-            }, t.instance = null, __decorate([ B(cc.ProgressBar) ], t.prototype, "barExp", void 0), 
-            __decorate([ B(cc.ProgressBar) ], t.prototype, "barHP", void 0), __decorate([ B(cc.ProgressBar) ], t.prototype, "barMP", void 0), 
-            __decorate([ B(cc.Label) ], t.prototype, "labelHPProcess", void 0), __decorate([ B(cc.Label) ], t.prototype, "labelMPProcess", void 0), 
-            __decorate([ B(cc.Label) ], t.prototype, "labelPlayerLv", void 0), __decorate([ B(cc.Label) ], t.prototype, "labelLevelName", void 0), 
-            __decorate([ B(cc.Label) ], t.prototype, "labelLevelExp", void 0), __decorate([ B(cc.Label) ], t.prototype, "labelLevelCoin", void 0), 
-            __decorate([ B(cc.Label) ], t.prototype, "labelPlayerName", void 0), __decorate([ B(cc.Button) ], t.prototype, "btnCloseEvent", void 0), 
-            __decorate([ B(cc.Button) ], t.prototype, "btnOpenEvent", void 0), __decorate([ B(cc.Button) ], t.prototype, "btnSign", void 0), 
-            __decorate([ B(cc.Node) ], t.prototype, "nodeSignRed", void 0), __decorate([ B(cc.Button) ], t.prototype, "btnAchievement", void 0), 
-            __decorate([ B(cc.ProgressBar) ], t.prototype, "barAchievementStatus", void 0), 
-            __decorate([ B(cc.Label) ], t.prototype, "labelAchievementStatus", void 0), __decorate([ B(cc.Label) ], t.prototype, "labelAchievementTitle", void 0), 
-            __decorate([ B(cc.Node) ], t.prototype, "nodeAchievementRed", void 0), __decorate([ B(cc.ProgressBar) ], t.prototype, "barLevelStatus", void 0), 
-            __decorate([ B(cc.Node) ], t.prototype, "nodeSmallMan", void 0), __decorate([ B(cc.Node) ], t.prototype, "buffNode", void 0), 
-            __decorate([ B(cc.Button) ], t.prototype, "btnChatNode", void 0), __decorate([ B(cc.Label) ], t.prototype, "labelLevelNum", void 0), 
-            __decorate([ B(cc.Label) ], t.prototype, "labelLevelProcess", void 0), t = a = __decorate([ I ], t);
+                _.default.instance.LoadChatUiManager();
+            }, t.prototype.setCurChatText = function(e) {
+                e.length > 15 && (e = e.slice(0, 15) + "..."), this.labelCurChatText.string = e;
+            }, t.instance = null, __decorate([ b(cc.ProgressBar) ], t.prototype, "barExp", void 0), 
+            __decorate([ b(cc.ProgressBar) ], t.prototype, "barHP", void 0), __decorate([ b(cc.ProgressBar) ], t.prototype, "barMP", void 0), 
+            __decorate([ b(cc.Label) ], t.prototype, "labelHPProcess", void 0), __decorate([ b(cc.Label) ], t.prototype, "labelMPProcess", void 0), 
+            __decorate([ b(cc.Label) ], t.prototype, "labelPlayerLv", void 0), __decorate([ b(cc.Label) ], t.prototype, "labelLevelName", void 0), 
+            __decorate([ b(cc.Label) ], t.prototype, "labelLevelExp", void 0), __decorate([ b(cc.Label) ], t.prototype, "labelLevelCoin", void 0), 
+            __decorate([ b(cc.Label) ], t.prototype, "labelPlayerName", void 0), __decorate([ b(cc.Button) ], t.prototype, "btnCloseEvent", void 0), 
+            __decorate([ b(cc.Button) ], t.prototype, "btnOpenEvent", void 0), __decorate([ b(cc.Button) ], t.prototype, "btnSign", void 0), 
+            __decorate([ b(cc.Node) ], t.prototype, "nodeSignRed", void 0), __decorate([ b(cc.Button) ], t.prototype, "btnAchievement", void 0), 
+            __decorate([ b(cc.ProgressBar) ], t.prototype, "barAchievementStatus", void 0), 
+            __decorate([ b(cc.Label) ], t.prototype, "labelAchievementStatus", void 0), __decorate([ b(cc.Label) ], t.prototype, "labelAchievementTitle", void 0), 
+            __decorate([ b(cc.Node) ], t.prototype, "nodeAchievementRed", void 0), __decorate([ b(cc.ProgressBar) ], t.prototype, "barLevelStatus", void 0), 
+            __decorate([ b(cc.Node) ], t.prototype, "nodeSmallMan", void 0), __decorate([ b(cc.Node) ], t.prototype, "buffNode", void 0), 
+            __decorate([ b(cc.Button) ], t.prototype, "btnChatNode", void 0), __decorate([ b(cc.Label) ], t.prototype, "labelCurChatText", void 0), 
+            __decorate([ b(cc.Label) ], t.prototype, "labelLevelNum", void 0), __decorate([ b(cc.Label) ], t.prototype, "labelLevelProcess", void 0), 
+            t = a = __decorate([ v ], t);
         }(cc.Component);
-        a.default = S, cc._RF.pop();
+        a.default = D, cc._RF.pop();
     }, {
         "../audio_manager": "audio_manager",
         "../battle/battle_manager": "battle_manager",
@@ -1801,15 +1831,11 @@ window.__require = function e(t, a, n) {
         "../manager/dynamic_data_manager": "dynamic_data_manager",
         "../manager/playerbuff_manager": "playerbuff_manager",
         "../manager/pool_manager": "pool_manager",
+        "../manager/ui_manager": "ui_manager",
         "../network/player_network": "player_network",
         "../util": "util",
-        "./achievement_ui_manager": "achievement_ui_manager",
-        "./chat_ui_manager": "chat_ui_manager",
         "./item/buff_item": "buff_item",
-        "./messagebox_ui_manager": "messagebox_ui_manager",
-        "./random_event_ui_manager": "random_event_ui_manager",
-        "./sign_ui_manager": "sign_ui_manager",
-        "./tips_ui_manager": "tips_ui_manager"
+        "./random_event_ui_manager": "random_event_ui_manager"
     } ],
     bg_ui_manager: [ function(e, t, a) {
         "use strict";
@@ -1895,16 +1921,17 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "09accJOv55Ij4Qoj6uE9XAR", "blackmarket_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../util"), i = e("../manager/pool_manager"), r = e("./item/store_item"), o = e("../manager/cost_manager"), s = e("../manager/dynamic_data_manager"), l = e("../manager/blackmarket_manager"), c = e("./tips_ui_manager"), u = e("../manager/lost_manager"), d = e("../manager/sprite_manager"), p = e("../audio_manager"), m = e("../network/player_network"), f = cc._decorator, g = f.ccclass, h = f.property, _ = function(e) {
+        var n = e("../util"), i = e("../manager/pool_manager"), r = e("./item/store_item"), o = e("../manager/cost_manager"), s = e("../manager/dynamic_data_manager"), l = e("../manager/blackmarket_manager"), c = e("../manager/sprite_manager"), u = e("../audio_manager"), d = e("../network/player_network"), p = e("../manager/ui_manager"), m = cc._decorator, f = m.ccclass, g = m.property, h = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
-                return t.uiNode = null, t.maskNode = null, t.contentNode = null, t;
+                return t.uiNode = null, t.maskNode = null, t.contentNode = null, t.curMaketIndex = 0, 
+                t;
             }
             var a;
             return __extends(t, e), a = t, t.prototype.onLoad = function() {
                 a.instance = this, this.maskNode.on("click", this.hideUI, this), this.uiNode.active && (this.uiNode.active = !1);
             }, t.prototype.update = function() {}, t.prototype.showUI = function() {
-                p.default.instance.PlayUISelect();
+                u.default.instance.PlayUISelect();
                 var e = s.default.instance.getMainPlayerLVParam();
                 l.default.instance.updateBlackMarketGoods(e), this.uiNode.active = !0, this.refreshUI();
             }, t.prototype.checkActiveAndRefresh = function() {
@@ -1922,42 +1949,40 @@ window.__require = function e(t, a, n) {
             }, t.prototype.hideUI = function() {
                 this.uiNode.active = !1;
             }, t.prototype.itemSpriteCallBack = function(e) {
-                if (d.default.instance.isFullSpriteBag()) c.default.instance.showtips("sprite_count_limit"); else {
+                if (c.default.instance.isFullSpriteBag()) p.default.instance.LoadTipsByID("sprite_count_limit"); else {
                     var t = l.default.instance.sprite_cost;
                     if (o.default.instance.cost(t)) {
-                        l.default.instance.removeOneSprite(), d.default.instance.addNewRandomSprite(), a.instance.refreshUI();
-                        var n = s.default.instance.getMainPlayerLVParam(), i = l.default.instance.getBlackMarketByPlayerLV(n).id;
-                        m.default.instance.PlayerBuyBlackMarketRequest(i, !0);
+                        var a = s.default.instance.getMainPlayerLVParam(), n = l.default.instance.getBlackMarketByPlayerLV(a).id, i = c.default.instance.getRandomSpriteByQuality(1);
+                        d.default.instance.PlayerBuyBlackMarketRequest(n, !0, i);
                     }
                 }
             }, t.prototype.itemCallBack = function(e) {
-                if (s.default.instance.isBagFull()) c.default.instance.showtips("bag_count_limit"); else {
+                if (console.log("item id:" + e.toString()), s.default.instance.isBagFull()) p.default.instance.LoadTipsByID("bag_count_limit"); else {
                     var t = l.default.instance.curPrice;
                     if (o.default.instance.cost(t)) {
-                        var n = l.default.instance.goods[e], i = l.default.instance.curLostLevel;
-                        u.default.instance.addAttrToWhiteEquip(n, i, s.default.instance.getMainPlayer().addGetBetterEquip + 1), 
-                        l.default.instance.removeItemOfGoods(e), a.instance.refreshUI();
-                        var r = s.default.instance.getMainPlayerLVParam(), d = l.default.instance.getBlackMarketByPlayerLV(r).id;
-                        m.default.instance.PlayerBuyBlackMarketRequest(d, !1);
+                        var a = l.default.instance.goods[e], n = s.default.instance.getMainPlayerLVParam(), i = l.default.instance.getBlackMarketByPlayerLV(n).id;
+                        d.default.instance.PlayerBuyBlackMarketRequest(i, !1, a.baseId), this.curMaketIndex = e;
                     }
                 }
-            }, t.prototype.bugSpriteOrEquipSuccess = function(e, t) {}, t.instance = null, __decorate([ h(cc.Node) ], t.prototype, "uiNode", void 0), 
-            __decorate([ h(cc.Node) ], t.prototype, "maskNode", void 0), __decorate([ h(cc.Node) ], t.prototype, "contentNode", void 0), 
-            t = a = __decorate([ g ], t);
+            }, t.prototype.bugSpriteOrEquipSuccess = function(e) {
+                0 == e ? (l.default.instance.removeItemOfGoods(this.curMaketIndex), a.instance.refreshUI()) : (l.default.instance.removeOneSprite(), 
+                a.instance.refreshUI());
+            }, t.instance = null, __decorate([ g(cc.Node) ], t.prototype, "uiNode", void 0), 
+            __decorate([ g(cc.Node) ], t.prototype, "maskNode", void 0), __decorate([ g(cc.Node) ], t.prototype, "contentNode", void 0), 
+            t = a = __decorate([ f ], t);
         }(cc.Component);
-        a.default = _, cc._RF.pop();
+        a.default = h, cc._RF.pop();
     }, {
         "../audio_manager": "audio_manager",
         "../manager/blackmarket_manager": "blackmarket_manager",
         "../manager/cost_manager": "cost_manager",
         "../manager/dynamic_data_manager": "dynamic_data_manager",
-        "../manager/lost_manager": "lost_manager",
         "../manager/pool_manager": "pool_manager",
         "../manager/sprite_manager": "sprite_manager",
+        "../manager/ui_manager": "ui_manager",
         "../network/player_network": "player_network",
         "../util": "util",
-        "./item/store_item": "store_item",
-        "./tips_ui_manager": "tips_ui_manager"
+        "./item/store_item": "store_item"
     } ],
     block_effect: [ function(e, t, a) {
         "use strict";
@@ -2111,12 +2136,34 @@ window.__require = function e(t, a, n) {
         }(cc.Component));
         a.default = r, cc._RF.pop();
     }, {} ],
+    canvas_manager: [ function(e, t, a) {
+        "use strict";
+        cc._RF.push(t, "1e084j/AopBVp9/pzsAbY2y", "canvas_manager"), Object.defineProperty(a, "__esModule", {
+            value: !0
+        });
+        var n = cc._decorator, i = n.ccclass, r = (n.property, function(e) {
+            function t() {
+                return null !== e && e.apply(this, arguments) || this;
+            }
+            var a;
+            return __extends(t, e), a = t, Object.defineProperty(t, "instance", {
+                get: function() {
+                    return this._instance;
+                },
+                enumerable: !0,
+                configurable: !0
+            }), t.prototype.onLoad = function() {
+                a._instance = this;
+            }, t._instance = null, t = a = __decorate([ i ], t);
+        }(cc.Component));
+        a.default = r, cc._RF.pop();
+    }, {} ],
     changname_ui_manager: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "ebfbefGgcZDyoohL36nPHD4", "changname_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("./tips_ui_manager"), i = e("../util"), r = e("../network/player_network"), o = cc._decorator, s = o.ccclass, l = o.property, c = function(e) {
+        var n = e("../util"), i = e("../network/player_network"), r = e("../manager/ui_manager"), o = cc._decorator, s = o.ccclass, l = o.property, c = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.btnConfrim = null, t.editboxAccount = null, t.uiNode = null, t.maskNode = null, 
@@ -2133,63 +2180,62 @@ window.__require = function e(t, a, n) {
                 this.btnConfrim.node.on("click", this.changeName, this);
             }, t.prototype.changeName = function() {
                 var e = this.editboxAccount.string;
-                "" != e && 1 != /^\s+$/.test(e) ? i.default.strlen(e) > 18 ? n.default.instance.showTipsByStr("名字太长，不能多于18字符") : (console.log("newName:" + e), 
-                r.default.instance.PlayerChangeName(e)) : n.default.instance.showTipsByStr("名字不能为空");
+                "" != e && 1 != /^\s+$/.test(e) ? n.default.strlen(e) > 18 ? r.default.instance.LoadTipsByStr("名字太长，不能多于18字符") : (console.log("newName:" + e), 
+                i.default.instance.PlayerChangeName(e)) : r.default.instance.LoadTipsByStr("名字不能为空");
             }, t.instance = null, __decorate([ l(cc.Button) ], t.prototype, "btnConfrim", void 0), 
             __decorate([ l(cc.EditBox) ], t.prototype, "editboxAccount", void 0), __decorate([ l(cc.Node) ], t.prototype, "uiNode", void 0), 
             __decorate([ l(cc.Node) ], t.prototype, "maskNode", void 0), t = a = __decorate([ s ], t);
         }(cc.Component);
         a.default = c, cc._RF.pop();
     }, {
+        "../manager/ui_manager": "ui_manager",
         "../network/player_network": "player_network",
-        "../util": "util",
-        "./tips_ui_manager": "tips_ui_manager"
+        "../util": "util"
     } ],
     chat_ui_manager: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "58771zWcu9I651kNx4wAda2", "chat_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../manager/pool_manager"), i = e("./item/item_ask"), r = e("../network/player_network"), o = e("../manager/dynamic_data_manager"), s = e("./tips_ui_manager"), l = e("../manager/achievenment_manager"), c = e("./item/item_btn_chat_room"), u = cc._decorator, d = u.ccclass, p = u.property, m = function(e) {
+        var n = e("../manager/pool_manager"), i = e("./item/item_ask"), r = e("../network/player_network"), o = e("../manager/dynamic_data_manager"), s = e("../manager/achievenment_manager"), l = e("./item/item_btn_chat_room"), c = e("./battle_ui_manager"), u = e("../manager/ui_manager"), d = cc._decorator, p = d.ccclass, m = d.property, f = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
-                return t.chatUINode = null, t.curText = null, t.btn_sendAsk = null, t.btn_close = null, 
-                t.editBox = null, t.askParent = null, t.scrollView = null, t.offsetHeight = 0, t.canSpeak = !0, 
-                t.canSpeakTime = 2, t.curCanSpeakTime = 0, t.node_room = null, t.label_cur_room = null, 
-                t.btn_open_room = null, t.btn_close_room = null, t.node_room_content = null, t;
+                return t.chatUINode = null, t.btn_sendAsk = null, t.btn_close = null, t.editBox = null, 
+                t.askParent = null, t.scrollView = null, t.offsetHeight = 0, t.canSpeak = !0, t.canSpeakTime = 2, 
+                t.curCanSpeakTime = 0, t.node_room = null, t.label_cur_room = null, t.btn_open_room = null, 
+                t.btn_close_room = null, t.node_room_content = null, t;
             }
             var a;
             return __extends(t, e), a = t, t.prototype.onLoad = function() {
-                a.instance = this, this.askCtrls = [], this.chatTemp = [], this.item_chat_rooms = [], 
-                this.btn_close.node.on("click", this.closeNode, this), this.btn_sendAsk.node.on("click", this.playerAsk, this), 
-                this.btn_close_room.node.on("click", this.closeSelectRoom, this), this.btn_open_room.node.on("click", this.openSelectRoom, this), 
-                this.chatUINode.active && this.closeNode(), this.node_room.active && (this.node_room.active = !1);
+                a.instance = this, this.askCtrls = [], this.item_chat_rooms = [], this.btn_close.node.on("click", this.closeNode, this), 
+                this.btn_sendAsk.node.on("click", this.playerAsk, this), this.btn_close_room.node.on("click", this.closeSelectRoom, this), 
+                this.btn_open_room.node.on("click", this.openSelectRoom, this), this.chatUINode.active && this.closeNode(), 
+                this.node_room.active && (this.node_room.active = !1);
             }, t.prototype.start = function() {}, t.prototype.playerAsk = function() {
                 var e = this.editBox.string;
-                o.default.instance.getMainPlayerLVParam() <= 50 ? s.default.instance.showTipsByStr("50级之后才可以发言") : "" != e && 1 != /^\s+$/.test(e) ? 0 != this.canSpeak ? (this.editBox.string = "", 
-                r.default.instance.PlayerChatRoomSendRequest(e), this.canSpeak = !1) : s.default.instance.showtips("talk_cd_tips") : s.default.instance.showTipsByStr("内容不能为空");
+                o.default.instance.getMainPlayerLVParam() <= 50 ? u.default.instance.LoadTipsByStr("50级之后才可以发言") : "" != e && 1 != /^\s+$/.test(e) ? 0 != this.canSpeak ? (this.editBox.string = "", 
+                r.default.instance.PlayerChatRoomSendRequest(e), this.canSpeak = !1) : u.default.instance.LoadTipsByID("talk_cd_tips") : u.default.instance.LoadTipsByStr("内容不能为空");
             }, t.prototype.otherAsk = function(e) {
-                this.chatTemp.length > 50 && this.chatTemp.shift(), this.chatTemp.push(e), this.showOtherAsk(e);
+                this.showOtherAsk(e);
             }, t.prototype.showOtherAsk = function(e) {
                 if (1 == this.chatUINode.active) {
-                    var t = n.default.instance.CreateObjectByName("AskItem", this.askParent).getComponent(i.default), a = l.default.instance.getOtherTitle(e.AchievementID);
+                    var t = n.default.instance.CreateObjectByName("AskItem", this.askParent).getComponent(i.default), a = s.default.instance.getOtherTitle(e.AchievementID);
                     null != a && (a = a);
                     var r = "";
                     r = e.PlayerName ? e.PlayerName : "小小勇者", e.Lv && (r += "  LV " + e.Lv);
-                    var s = e.Content;
-                    s || (s = ""), t.Init(a, r, s, o.default.instance.id == e.PlayerID), t.node.position = new cc.Vec2(t.node.position.x, -this.offsetHeight), 
+                    var l = e.Content;
+                    l || (l = ""), t.Init(a, r, l, o.default.instance.id == e.PlayerID), t.node.position = new cc.Vec2(t.node.position.x, -this.offsetHeight), 
                     this.offsetHeight += 110, this.askCtrls.push(t), this.updateParentContentHeight();
                 }
-                this.updateCurText(e.PlayerName + ":" + e.Content);
             }, t.prototype.update = function(e) {
                 0 == this.canSpeak && (this.curCanSpeakTime += e, this.curCanSpeakTime >= this.canSpeakTime && (this.canSpeak = !0, 
                 this.curCanSpeakTime = 0));
             }, t.prototype.updateCurText = function(e) {
-                e.length > 15 && (e = e.slice(0, 15) + "..."), this.curText.string = e;
+                e.length > 15 && (e = e.slice(0, 15) + "..."), c.default.instance.setCurChatText(e);
             }, t.prototype.showChatNode = function() {
                 if (this.chatUINode.active = !0, this.askParent.height = 0, this.label_cur_room.string = "勇者酒馆 " + o.default.instance.chatRoomID, 
-                null != this.chatTemp) {
-                    for (var e = 0, t = this.chatTemp; e < t.length; e++) {
+                null != o.default.instance.chatTemp) {
+                    for (var e = 0, t = o.default.instance.chatTemp; e < t.length; e++) {
                         var a = t[e];
                         this.showOtherAsk(a);
                     }
@@ -2218,27 +2264,28 @@ window.__require = function e(t, a, n) {
                 this.node_room.active = !1;
             }, t.prototype.refreshSelectRoom = function(e) {
                 for (var t in e) {
-                    var a = n.default.instance.CreateObjectByName("ItemChatRoom", this.node_room_content).getComponent(c.default);
+                    var a = n.default.instance.CreateObjectByName("ItemChatRoom", this.node_room_content).getComponent(l.default);
                     a.Init(Number(t), e[t]), this.item_chat_rooms.push(a);
                 }
                 this.node_room.active = !0;
-            }, t.instance = null, __decorate([ p(cc.Node) ], t.prototype, "chatUINode", void 0), 
-            __decorate([ p(cc.Label) ], t.prototype, "curText", void 0), __decorate([ p(cc.Button) ], t.prototype, "btn_sendAsk", void 0), 
-            __decorate([ p(cc.Button) ], t.prototype, "btn_close", void 0), __decorate([ p(cc.EditBox) ], t.prototype, "editBox", void 0), 
-            __decorate([ p(cc.Node) ], t.prototype, "askParent", void 0), __decorate([ p(cc.Node) ], t.prototype, "scrollView", void 0), 
-            __decorate([ p(cc.Node) ], t.prototype, "node_room", void 0), __decorate([ p(cc.Label) ], t.prototype, "label_cur_room", void 0), 
-            __decorate([ p(cc.Button) ], t.prototype, "btn_open_room", void 0), __decorate([ p(cc.Button) ], t.prototype, "btn_close_room", void 0), 
-            __decorate([ p(cc.Node) ], t.prototype, "node_room_content", void 0), t = a = __decorate([ d ], t);
+            }, t.instance = null, __decorate([ m(cc.Node) ], t.prototype, "chatUINode", void 0), 
+            __decorate([ m(cc.Button) ], t.prototype, "btn_sendAsk", void 0), __decorate([ m(cc.Button) ], t.prototype, "btn_close", void 0), 
+            __decorate([ m(cc.EditBox) ], t.prototype, "editBox", void 0), __decorate([ m(cc.Node) ], t.prototype, "askParent", void 0), 
+            __decorate([ m(cc.Node) ], t.prototype, "scrollView", void 0), __decorate([ m(cc.Node) ], t.prototype, "node_room", void 0), 
+            __decorate([ m(cc.Label) ], t.prototype, "label_cur_room", void 0), __decorate([ m(cc.Button) ], t.prototype, "btn_open_room", void 0), 
+            __decorate([ m(cc.Button) ], t.prototype, "btn_close_room", void 0), __decorate([ m(cc.Node) ], t.prototype, "node_room_content", void 0), 
+            t = a = __decorate([ p ], t);
         }(cc.Component);
-        a.default = m, cc._RF.pop();
+        a.default = f, cc._RF.pop();
     }, {
         "../manager/achievenment_manager": "achievenment_manager",
         "../manager/dynamic_data_manager": "dynamic_data_manager",
         "../manager/pool_manager": "pool_manager",
+        "../manager/ui_manager": "ui_manager",
         "../network/player_network": "player_network",
+        "./battle_ui_manager": "battle_ui_manager",
         "./item/item_ask": "item_ask",
-        "./item/item_btn_chat_room": "item_btn_chat_room",
-        "./tips_ui_manager": "tips_ui_manager"
+        "./item/item_btn_chat_room": "item_btn_chat_room"
     } ],
     combat_ui_manager: [ function(e, t, a) {
         "use strict";
@@ -2277,9 +2324,9 @@ window.__require = function e(t, a, n) {
         });
         var n = cc._decorator, i = (n.ccclass, n.property, function() {
             function e() {}
-            return e.ServerIP = "ws://127.0.0.1:8080/ws", e.WechatChatLoginUrl = "https://littlehero.wechat.pre.shouyouqianxian.com/login", 
+            return e.ServerIP = "wss://littlehero.wechat.dev.shouyouqianxian.com/ws", e.WechatChatLoginUrl = "https://littlehero.wechat.pre.shouyouqianxian.com/login", 
             e.AnnouncementUrl = "https://littlehero.wechat.pre.shouyouqianxian.com/announcement", 
-            e.VersionCode = "0.963", e;
+            e.VersionCode = "0.97", e;
         }());
         a.Config = i, cc._RF.pop();
     }, {} ],
@@ -2319,7 +2366,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "5019bj8MehI7r30rXNEJpj5", "cost_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("./dynamic_data_manager"), i = e("../ui/tips_ui_manager"), r = function() {
+        var n = e("./dynamic_data_manager"), i = e("./ui_manager"), r = function() {
             function e() {}
             return Object.defineProperty(e, "instance", {
                 get: function() {
@@ -2329,24 +2376,24 @@ window.__require = function e(t, a, n) {
                 configurable: !0
             }), e.prototype.isEnough = function(e) {
                 for (var t in e) if ("金币" == t) {
-                    if (n.default.instance.goldNum < e[t]) return i.default.instance.showtips("coin_limit"), 
+                    if (n.default.instance.goldNum < e[t]) return i.default.instance.LoadTipsByID("coin_limit"), 
                     !1;
-                } else if ("钻石" == t && n.default.instance.daimondNum < e[t]) return i.default.instance.showtips("daimond_limit"), 
+                } else if ("钻石" == t && n.default.instance.daimondNum < e[t]) return i.default.instance.LoadTipsByID("daimond_limit"), 
                 !1;
                 return !0;
             }, e.prototype.cost = function(e) {
                 for (var t in e) if ("金币" == t) {
-                    if (n.default.instance.goldNum < e[t]) return i.default.instance.showtips("coin_limit"), 
+                    if (n.default.instance.goldNum < e[t]) return i.default.instance.LoadTipsByID("coin_limit"), 
                     !1;
-                } else if ("钻石" == t && n.default.instance.daimondNum < e[t]) return i.default.instance.showtips("daimond_limit"), 
+                } else if ("钻石" == t && n.default.instance.daimondNum < e[t]) return i.default.instance.LoadTipsByID("daimond_limit"), 
                 !1;
                 return !0;
             }, e._instance = null, e;
         }();
         a.default = r, cc._RF.pop();
     }, {
-        "../ui/tips_ui_manager": "tips_ui_manager",
-        "./dynamic_data_manager": "dynamic_data_manager"
+        "./dynamic_data_manager": "dynamic_data_manager",
+        "./ui_manager": "ui_manager"
     } ],
     damage_effect: [ function(e, t, a) {
         "use strict";
@@ -2656,16 +2703,18 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "de7cfniXgNLbbPf3uVOA0LQ", "dynamic_data_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../data/bag_item_data"), i = e("../ui/menu_ui_manager"), r = e("./data_manager"), o = e("../util"), s = e("./playerbuff_manager"), l = e("../ui/tips_ui_manager"), c = e("../math/rand"), u = e("../common/emmiter"), d = e("../common/allenum"), p = e("../network/player_network"), m = e("../network/bag_network"), f = e("../battle/battle_manager"), g = e("./gem_manager"), h = e("../ui/bag_ui_manager"), _ = e("../ui/depot_ui_manager"), y = e("../ui/bag_control_ui_manager"), v = function() {
+        var n = e("../data/bag_item_data"), i = e("../ui/menu_ui_manager"), r = e("./data_manager"), o = e("../role/hero"), s = e("../util"), l = e("./playerbuff_manager"), c = e("../math/rand"), u = e("../common/emmiter"), d = e("../common/allenum"), p = e("../network/player_network"), m = e("../network/bag_network"), f = e("../battle/battle_manager"), g = e("./gem_manager"), h = e("../ui/bag_ui_manager"), _ = e("../ui/depot_ui_manager"), y = e("../ui/bag_control_ui_manager"), v = e("../ui/role_ui_manager"), b = e("./ui_manager"), D = e("../ui/chat_ui_manager"), I = e("../ui/battle_ui_manager"), P = function() {
             function e() {
                 this.BagItemDataMap = {}, this.DepotItemDataMap = {}, this.EquipItemDataMap = {}, 
-                this.GemItemDataMap = {}, this.curDiff = 1, this.curLevel = 1, this.playerMaxLV = 1, 
-                this.playerMaxDiffLV = 1, this.playerMaxHellLV = 1, this.roleName = "", this.serverUnix = 0, 
-                this.deltaUnix = 0, this.id = "", this.playerLeftADShow = 0, this.signTotalCount = 0, 
-                this.canSign = !1, this.missleadingGold = 0, this.missleadingDaimon = 0, this.isGetCollectionBonus = 0, 
-                this.sceneID = 0, this.adID = 0, this.fromUserID = "", this.chatRoomID = 0, this.referUserData = {}, 
-                this._goldNum = 0, this._daimonNum = 0, this._mainPlayerEntity = null, this._playerBagCount = 1, 
-                this._playerDepotCount = 1, this._newLiftCount = 0;
+                this.GemItemDataMap = {}, this.curUseEquipPlanIndex = 0, this.EquipItemAllDatas = {}, 
+                this.curDiff = 1, this.curLevel = 1, this.playerMaxLV = 1, this.playerMaxDiffLV = 1, 
+                this.playerMaxHellLV = 1, this.roleName = "", this.serverUnix = 0, this.deltaUnix = 0, 
+                this.id = "", this.playerLeftADShow = 0, this.signTotalCount = 0, this.canSign = !1, 
+                this.missleadingGold = 0, this.missleadingDaimon = 0, this.isGetCollectionBonus = 0, 
+                this.sceneID = 0, this.adID = 0, this.fromUserID = "", this.chatRoomID = 0, this.chatTemp = [], 
+                this.referUserData = {}, this.virtualHero = null, this.virtualEquip = {}, this._goldNum = 0, 
+                this._daimonNum = 0, this._mainPlayerEntity = null, this._playerBagCount = 1, this._playerDepotCount = 1, 
+                this._newLiftCount = 0, this._curUseEquipPlanNum = 1;
             }
             return Object.defineProperty(e, "instance", {
                 get: function() {
@@ -2685,7 +2734,7 @@ window.__require = function e(t, a, n) {
             }, e.prototype.AddGemItenByServer = function(e, t) {
                 this.GemItemDataMap[e] = t;
             }, e.prototype.AddBagItem = function(e) {
-                this.isBagFull() ? l.default.instance.showtips("bag_count_limit") : m.default.instance.AddItemToBagRequest(e.baseId, e.additionAttr);
+                this.isBagFull() ? b.default.instance.LoadTipsByID("bag_count_limit") : m.default.instance.AddItemToBagRequest(e.baseId, e.additionAttr);
             }, e.prototype.AddBagItemByServer = function(e, t, a, i, r, o) {
                 var s = new n.default(t, 1);
                 s.index = e, s.lv = a, s.additionAttr = i, r && (s.holeNum = r), o && (s.gemIDs = o), 
@@ -2698,28 +2747,41 @@ window.__require = function e(t, a, n) {
                 var l = r.default.instance.equipmentData[t].type, c = new n.default(t, 1);
                 c.index = e, c.lv = a, c.additionAttr = i, o && (c.holeNum = o), s && (c.gemIDs = s), 
                 this.EquipItemDataMap[l] = c, this.addEquipAttrToPlayer(this.EquipItemDataMap[l]);
+            }, e.prototype.DealAllEquipByServer = function(e, t, a, i, o, s, l) {
+                var c = r.default.instance.equipmentData[t].type, u = new n.default(t, 1);
+                u.index = e, u.lv = a, u.additionAttr = i, o && (u.holeNum = o), s && (u.gemIDs = s), 
+                null == this.EquipItemAllDatas[l] && (this.EquipItemAllDatas[l] = []), this.EquipItemAllDatas[l][c] = u, 
+                l == this.curUseEquipPlanIndex && (this.EquipItemDataMap[c] = u, this.addEquipAttrToPlayer(this.EquipItemDataMap[c]));
             }, e.prototype.AddBagItemFromDepot = function(e) {
-                this.isBagFull() ? l.default.instance.showtips("bag_count_limit") : this.DepotItemDataMap[e.index] && m.default.instance.AddItemFromDepotToBagRequest(e.index);
+                this.isBagFull() ? b.default.instance.LoadTipsByID("bag_count_limit") : this.DepotItemDataMap[e.index] && m.default.instance.AddItemFromDepotToBagRequest(e.index);
             }, e.prototype.AddBagItemFromDepotByServer = function(e) {
                 this.BagItemDataMap[e] = this.DepotItemDataMap[e], delete this.DepotItemDataMap[e], 
                 u.Emitter.fire(d.AlertType.BagAlert.toString()), _.default.instance.refreshBagUI();
+            }, e.prototype.ChangeEquipPlanSuccess = function(t) {
+                var a = f.default.instance.mainPlayer.hp, n = f.default.instance.mainPlayer.mp;
+                for (var i in this.curUseEquipPlanIndex = t, null == this.EquipItemAllDatas[t] && (this.EquipItemAllDatas[t] = []), 
+                this.EquipItemDataMap) this.removeEquipAttrToPlayer(this.EquipItemDataMap[i]);
+                if (this.EquipItemDataMap = this.EquipItemAllDatas[t], null != this.EquipItemDataMap) for (var i in this.EquipItemDataMap) this.addEquipAttrToPlayer(this.EquipItemDataMap[i]);
+                e.instance.getMainPlayer().fullfill(), a < f.default.instance.mainPlayer.maxhp && f.default.instance.mainPlayer.addHp(a - f.default.instance.mainPlayer.maxhp), 
+                n < f.default.instance.mainPlayer.maxmp && f.default.instance.mainPlayer.addHp(n - f.default.instance.mainPlayer.maxmp), 
+                b.default.instance.LoadRoleUI(), v.default.instance && v.default.instance.refreshAllEquipItem();
             }, e.prototype.GetItemBagTypeByIndex = function(e) {
                 return this.BagItemDataMap[e] ? d.BagType.Common : this.DepotItemDataMap[e] ? d.BagType.Depot : d.BagType.Equip;
             }, e.prototype.AddDepotItemFromBag = function(e) {
-                this.isDepotFull() ? l.default.instance.showtips("depot_count_limit") : this.BagItemDataMap[e.index] && m.default.instance.AddItemFromBagToDepotRequest(e.index);
+                this.isDepotFull() ? b.default.instance.LoadTipsByID("depot_count_limit") : this.BagItemDataMap[e.index] && m.default.instance.AddItemFromBagToDepotRequest(e.index);
             }, e.prototype.AddDepotItemFromBagByServer = function(e) {
                 this.DepotItemDataMap[e] = this.BagItemDataMap[e], delete this.BagItemDataMap[e], 
                 h.default.instance.refreshBagUI();
             }, e.prototype.isDepotFull = function() {
-                return o.default.len(this.DepotItemDataMap) >= this.playerDeportCount;
+                return s.default.len(this.DepotItemDataMap) >= this.playerDeportCount;
             }, Object.defineProperty(e.prototype, "bagGridCount", {
                 get: function() {
-                    return o.default.len(this.BagItemDataMap);
+                    return s.default.len(this.BagItemDataMap);
                 },
                 enumerable: !0,
                 configurable: !0
             }), e.prototype.isBagFull = function() {
-                return o.default.len(this.BagItemDataMap) >= this.playerBagCount;
+                return s.default.len(this.BagItemDataMap) >= this.playerBagCount;
             }, Object.defineProperty(e.prototype, "goldNum", {
                 get: function() {
                     return this._goldNum;
@@ -2734,7 +2796,7 @@ window.__require = function e(t, a, n) {
                 !0);
             }, e.prototype.changeMissleadingGold = function(e) {
                 return this.missleadingGold += e, this.missleadingGold < 0 && (this.missleadingGold = 0), 
-                o.default.GetLargeNumStr(this.missleadingGold);
+                s.default.GetLargeNumStr(this.missleadingGold);
             }, Object.defineProperty(e.prototype, "daimondNum", {
                 get: function() {
                     return this._daimonNum;
@@ -2752,7 +2814,7 @@ window.__require = function e(t, a, n) {
                 !0);
             }, e.prototype.changeMissleadingDaimon = function(e) {
                 return this.missleadingDaimon += e, this.missleadingDaimon < 0 && (this.missleadingDaimon = 0), 
-                o.default.GetLargeNumStr(this.missleadingDaimon);
+                s.default.GetLargeNumStr(this.missleadingDaimon);
             }, e.prototype.setMainPlayerEntity = function(e) {
                 this._mainPlayerEntity = e;
             }, e.prototype.getMainPlayer = function() {
@@ -2763,245 +2825,255 @@ window.__require = function e(t, a, n) {
                 return 50 * this.newLiftCount + this.getMainPlayerLV();
             }, e.prototype.EquipItem = function(e) {
                 m.default.instance.AddItemFromBagToEquipRequest(e.index);
-            }, e.prototype.EquipItemSuccess = function(e) {
-                var t = this.BagItemDataMap[e], a = t.baseId, n = r.default.instance.equipmentData[a].type;
-                delete this.BagItemDataMap[e], this.EquipItemDataMap[n] = t, this.addEquipAttrToPlayer(t), 
-                u.Emitter.fire(d.AlertType.BagAlert.toString()), y.default.instance.equipBodyServerCallback();
+            }, e.prototype.EquipItemSuccess = function(e, t) {
+                var a = this.BagItemDataMap[e], n = a.baseId, i = r.default.instance.equipmentData[n].type;
+                delete this.BagItemDataMap[e], null == this.EquipItemAllDatas[t] && (this.EquipItemAllDatas[t] = []), 
+                this.EquipItemAllDatas[t][i] = a, this.EquipItemDataMap[i] = this.EquipItemAllDatas[t][i], 
+                this.addEquipAttrToPlayer(a), u.Emitter.fire(d.AlertType.BagAlert.toString()), y.default.instance.equipBodyServerCallback();
             }, e.prototype.getEquipItemByIndex = function(t) {
-                for (var a in e.instance.EquipItemDataMap) if (e.instance.EquipItemDataMap[a] && e.instance.EquipItemDataMap[a].index == t) return e.instance.EquipItemDataMap[a];
+                for (var a in e.instance.EquipItemAllDatas) if (null != e.instance.EquipItemAllDatas[a]) for (var n in e.instance.EquipItemAllDatas[a]) if (t == e.instance.EquipItemAllDatas[a][n].index) return e.instance.EquipItemAllDatas[a][n];
+                return null;
+            }, e.prototype.getPlanIndexByEquipIndex = function(t) {
+                for (var a in e.instance.EquipItemAllDatas) if (null != e.instance.EquipItemAllDatas[a]) for (var n in e.instance.EquipItemAllDatas[a]) if (t == e.instance.EquipItemAllDatas[a][n].index) return Number(a);
                 return null;
             }, e.prototype.addAttrByType = function(e, t) {
+                var a = this.getHeroIsVirtual();
                 switch (e) {
                   case "伤害":
-                    this.getMainPlayer().addDamage(t);
+                    a.addDamage(t);
                     break;
 
                   case "最小伤害":
-                    this.getMainPlayer().addMinDamage(t);
+                    a.addMinDamage(t);
                     break;
 
                   case "伤害追加":
-                    this.getMainPlayer().changeAddDamagePercent(t);
+                    a.changeAddDamagePercent(t);
                     break;
 
                   case "最大伤害":
-                    this.getMainPlayer().addMaxDamage(t);
+                    a.addMaxDamage(t);
                     break;
 
                   case "力量":
-                    this.getMainPlayer().addBaseStrength(t);
+                    a.addBaseStrength(t);
                     break;
 
                   case "敏捷":
-                    this.getMainPlayer().addBaseAgile(t);
+                    a.addBaseAgile(t);
                     break;
 
                   case "体力":
-                    this.getMainPlayer().addBasePower(t);
+                    a.addBasePower(t);
                     break;
 
                   case "精神":
-                    this.getMainPlayer().addBaseEnergy(t);
+                    a.addBaseEnergy(t);
                     break;
 
                   case "生命":
-                    this.getMainPlayer().changeMaxhp(t);
+                    a.changeMaxhp(t);
                     break;
 
                   case "生命追加":
-                    this.getMainPlayer().changeAddHp(t);
+                    a.changeAddHp(t);
                     break;
 
                   case "法力":
-                    this.getMainPlayer().changeMaxmp(t);
+                    a.changeMaxmp(t);
                     break;
 
                   case "法力追加":
-                    this.getMainPlayer().changeAddMp(t);
+                    a.changeAddMp(t);
                     break;
 
                   case "行动力":
-                    this.getMainPlayer().addSt(t);
+                    a.addSt(t);
                     break;
 
                   case "护甲":
-                    this.getMainPlayer().addDf(t);
+                    a.addDf(t);
                     break;
 
                   case "护甲追加":
-                    this.getMainPlayer().changeAddDf(t);
+                    a.changeAddDf(t);
                     break;
 
                   case "攻击速度":
-                    this.getMainPlayer().attInterval = t > 0 ? t : 1;
+                    a.attInterval = t > 0 ? t : 1;
                     break;
 
                   case "攻击加速":
-                    this.getMainPlayer().AddAttIntervalReduce(t);
+                    a.AddAttIntervalReduce(t);
                     break;
 
                   case "暴击率":
-                    this.getMainPlayer().changeCriticalRate(t);
+                    a.changeCriticalRate(t);
                     break;
 
                   case "命中值":
-                    this.getMainPlayer().changeHitValRate(t);
+                    a.changeHitValRate(t);
                     break;
 
                   case "命中追加":
-                    this.getMainPlayer().changeAddHitVal(t);
+                    a.changeAddHitVal(t);
                     break;
 
                   case "格挡值":
-                    this.getMainPlayer().changeBlockValRate(t);
+                    a.changeBlockValRate(t);
                     break;
 
                   case "杀怪回血":
-                    this.getMainPlayer().changeKillAddHp(t);
+                    a.changeKillAddHp(t);
                     break;
 
                   case "杀怪回法":
-                    this.getMainPlayer().changeKillAddMp(t);
+                    a.changeKillAddMp(t);
                     break;
 
                   case "攻击吸血":
-                    this.getMainPlayer().changeAttAddHpPercent(t);
+                    a.changeAttAddHpPercent(t);
                     break;
 
                   case "攻击回法":
-                    this.getMainPlayer().changeAttAddMpPercent(t);
+                    a.changeAttAddMpPercent(t);
                     break;
 
                   case "真实伤害":
-                    this.getMainPlayer().changeRealDamage(t);
+                    a.changeRealDamage(t);
                     break;
 
                   case "最终减伤":
-                    this.getMainPlayer().changeRealDefence(t);
+                    a.changeRealDefence(t);
                     break;
 
                   case "全元素增伤":
-                    this.getMainPlayer().changeElementDamagePercent(t);
+                    a.changeElementDamagePercent(t);
                     break;
 
                   case "全元素抗性":
-                    this.getMainPlayer().changeElementDefence(t);
+                    a.changeElementDefence(t);
                     break;
 
                   case "冰冻伤害":
-                    this.getMainPlayer().changeFrozenDamage(t);
+                    a.changeFrozenDamage(t);
                     break;
 
                   case "冰冻增伤":
-                    this.getMainPlayer().changeFrozenDamagePercent(t);
+                    a.changeFrozenDamagePercent(t);
                     break;
 
                   case "冰冻抗性":
-                    this.getMainPlayer().changeFrozenDefence(t);
+                    a.changeFrozenDefence(t);
                     break;
 
                   case "闪电伤害":
-                    this.getMainPlayer().changeLightDamage(t);
+                    a.changeLightDamage(t);
                     break;
 
                   case "闪电增伤":
-                    this.getMainPlayer().changeLightDamagePercent(t);
+                    a.changeLightDamagePercent(t);
                     break;
 
                   case "闪电抗性":
-                    this.getMainPlayer().changeLightDefence(t);
+                    a.changeLightDefence(t);
                     break;
 
                   case "毒素伤害":
-                    this.getMainPlayer().changePoisonDamage(t);
+                    a.changePoisonDamage(t);
                     break;
 
                   case "毒素增伤":
-                    this.getMainPlayer().changePoisonDamagePercent(t);
+                    a.changePoisonDamagePercent(t);
                     break;
 
                   case "毒素抗性":
-                    this.getMainPlayer().changePoisonDefence(t);
+                    a.changePoisonDefence(t);
                     break;
 
                   case "火焰伤害":
-                    this.getMainPlayer().changeBlazeDamage(t);
+                    a.changeBlazeDamage(t);
                     break;
 
                   case "火焰增伤":
-                    this.getMainPlayer().changeBlazeDamagePercent(t);
+                    a.changeBlazeDamagePercent(t);
                     break;
 
                   case "火焰抗性":
-                    this.getMainPlayer().changeBlazeDefence(t);
+                    a.changeBlazeDefence(t);
                     break;
 
                   case "金币获取增加":
-                    this.getMainPlayer().changeAddGetCoin(t * 100);
+                    a.changeAddGetCoin(t);
                     break;
 
                   case "经验获得增加":
-                    this.getMainPlayer().changeAddExpRate(t * 100);
+                    a.changeAddExpRate(t);
                     break;
 
                   case "获得更高品质物品":
-                    this.getMainPlayer().changeAddGetBetterEquip(t * 100);
+                    a.changeAddGetBetterEquip(t);
                     break;
 
                   case "遇怪速度":
-                    this.getMainPlayer().createMonsterInterval = t;
+                    a.createMonsterInterval = t;
                     break;
 
                   case "更快遇到怪物":
-                    this.getMainPlayer().changeCreateMonsterFaster(t);
+                    a.changeCreateMonsterFaster(t);
                     break;
 
                   case "格挡追加":
-                    this.getMainPlayer().changeAddBlockVal(t);
+                    a.changeAddBlockVal(t);
                 }
+            }, e.prototype.getHeroIsVirtual = function() {
+                return 1 == this.isVirtual ? this.virtualHero : this.getMainPlayer();
             }, e.prototype.addEquipAttrToPlayer = function(e) {
                 var t = e.getBaseAttr();
-                for (var a in t) console.log("attr：" + a.toString()), this.addAttrByType(a, t[a]);
-                if (o.default.len(e.additionAttr) > 0) for (var n in e.additionAttr) {
+                for (var a in t) this.addAttrByType(a, t[a]);
+                if (s.default.len(e.additionAttr) > 0) for (var n in e.additionAttr) {
                     var i = r.default.instance.equipPrefixData[n];
                     this.addAttrByType(i.attrtype, e.additionAttr[n]);
                 }
-                if (e.gemIDs.length > 0) for (var s in e.gemIDs) {
-                    console.log("i:" + s);
-                    a = g.default.instance.getAttrByGemIDAndEquipType(e.gemIDs[s], e.getEquipType());
+                if (e.gemIDs.length > 0) for (var o in e.gemIDs) {
+                    console.log("i:" + o);
+                    a = g.default.instance.getAttrByGemIDAndEquipType(e.gemIDs[o], e.getEquipType());
                     for (var l in a) this.addAttrByType(l, a[l]);
                 }
             }, e.prototype.removeEquipAttrToPlayer = function(e) {
                 var t = e.getBaseAttr();
-                for (var a in t) console.log("attr：" + a.toString()), this.addAttrByType(a, -t[a]);
-                if (o.default.len(e.additionAttr) > 0) for (var n in e.additionAttr) {
+                for (var a in t) this.addAttrByType(a, -t[a]);
+                if (s.default.len(e.additionAttr) > 0) for (var n in e.additionAttr) {
                     var i = r.default.instance.equipPrefixData[n];
                     this.addAttrByType(i.attrtype, -e.additionAttr[n]);
                 }
-                if (e.gemIDs.length > 0) for (var s in e.gemIDs) {
-                    var l = g.default.instance.getAttrByGemIDAndEquipType(e.gemIDs[s], e.getEquipType());
+                if (e.gemIDs.length > 0) for (var o in e.gemIDs) {
+                    var l = g.default.instance.getAttrByGemIDAndEquipType(e.gemIDs[o], e.getEquipType());
                     for (var c in l) this.addAttrByType(c, -l[c]);
                 }
-            }, e.prototype.IsEquiping = function(e) {
-                var t = r.default.instance.equipmentData[e.baseId].type;
-                return e == this.EquipItemDataMap[t];
+            }, e.prototype.IsEquiping = function(t) {
+                var a = r.default.instance.equipmentData[t.baseId].type;
+                for (var n in this.EquipItemAllDatas) if (null != this.EquipItemAllDatas[n] && t == this.EquipItemAllDatas[n][a]) return Number(n) == e.instance.curUseEquipPlanIndex ? 1 : 2;
+                return 0;
             }, e.prototype.IsBetterThanEquip = function(e) {
                 var t = r.default.instance.equipmentData[e.baseId].type;
-                return !this.EquipItemDataMap[t] || e.getEquipPoint() > this.EquipItemDataMap[t].getEquipPoint();
+                return 1 == this.isVirtual ? !this.virtualEquip[t] || e.getEquipPoint() > this.virtualEquip[t].getEquipPoint() : !this.EquipItemDataMap[t] || e.getEquipPoint() > this.EquipItemDataMap[t].getEquipPoint();
             }, e.prototype.hasBetterEquip = function() {
                 if (null != e.instance.BagItemDataMap) for (var t in this.BagItemDataMap) if (this.IsBetterThanEquip(this.BagItemDataMap[t])) return !0;
                 return !1;
             }, e.prototype.TakeOffEquipItemNew = function(e) {
                 m.default.instance.AddItemFromEquipToBagRequest(e.index);
-            }, e.prototype.TakeOffEquipItemNewByServer = function(e) {
-                var t = this.getEquipItemByIndex(e);
-                if (t) {
-                    var a = r.default.instance.equipmentData[t.baseId].type;
-                    this.BagItemDataMap[t.index] = t, this.removeEquipAttrToPlayer(t), delete this.EquipItemDataMap[a], 
-                    y.default.instance.takeOffEquipByServer();
-                } else console.error("no this item:" + e);
+            }, e.prototype.TakeOffEquipItemNewByServer = function(t, a) {
+                var n = this.getEquipItemByIndex(t);
+                if (n) {
+                    var i = r.default.instance.equipmentData[n.baseId].type;
+                    this.BagItemDataMap[n.index] = n, this.removeEquipAttrToPlayer(n), 1 == e.instance.isVirtual ? delete this.virtualEquip[i] : delete this.EquipItemDataMap[i], 
+                    delete this.EquipItemAllDatas[a][i], y.default.instance && y.default.instance.takeOffEquipByServer();
+                } else console.error("take off no this item:" + t);
             }, e.prototype.GetEquipByIndex = function(e) {
                 return null != this.EquipItemDataMap[e] ? this.EquipItemDataMap[e] : null;
+            }, e.prototype.GetVirtualEquipByIndex = function(e) {
+                return null != this.virtualEquip[e] ? this.virtualEquip[e] : null;
             }, e.prototype.SellItem = function(e) {
                 var t = e.index;
                 m.default.instance.RemoveItemFromBagRequest(t);
@@ -3012,23 +3084,23 @@ window.__require = function e(t, a, n) {
                     var i = n[a].index;
                     t.push(i);
                 }
-                m.default.instance.FastRemoveItemFromBagRequest(t), u.Emitter.fire(d.AlertType.BagAlert.toString());
+                t.length > 0 && (m.default.instance.FastRemoveItemFromBagRequest(t), u.Emitter.fire(d.AlertType.BagAlert.toString()));
             }, e.prototype.AddAltar = function(e) {
-                if (console.error("AddAltar:" + e), o.default.IsContain(this.AltarBuffData, e)) console.log("已经存在这个BUFF了"); else {
+                if (console.error("AddAltar:" + e), s.default.IsContain(this.AltarBuffData, e)) console.log("已经存在这个BUFF了"); else {
                     var t = r.default.instance.atlarData[e].bufflv;
                     if (1 != t) {
                         var a = r.default.instance.getAltarDataByTypeAndLv(r.default.instance.atlarData[e].bufftype, t);
-                        o.default.Remove(this.AltarBuffData, a.id);
+                        s.default.Remove(this.AltarBuffData, a.id);
                     }
                     if (this.AltarBuffData.push(e), p.default.instance.AddPlayerAltarBuff(e, 1), r.default.instance.atlarData[e].effect["BOSS区距离拉近"]) {
                         var n = r.default.instance.atlarData[e].effect["BOSS区距离拉近"];
                         n > .5 && (n = .5), f.default.instance.curBeatCount = Math.floor(f.default.instance.curBeatCount * (1 - n));
                     }
-                    s.default.instance.updateBuff(r.default.instance.atlarData[e].effect);
+                    l.default.instance.updateBuff(r.default.instance.atlarData[e].effect);
                 }
             }, e.prototype.AddAltarByServer = function(e) {
-                o.default.IsContain(this.AltarBuffData, e) ? console.error("AddAltarByServer is contain " + e) : (this.AltarBuffData.push(e), 
-                s.default.instance.updateBuff(r.default.instance.atlarData[e].effect));
+                s.default.IsContain(this.AltarBuffData, e) ? console.error("AddAltarByServer is contain " + e) : (this.AltarBuffData.push(e), 
+                l.default.instance.updateBuff(r.default.instance.atlarData[e].effect));
             }, e.prototype.getCanLearnAltar = function() {
                 var t = new Array(), a = r.default.instance.getAltarDataByMinLvType(e.instance.AltarBuffData);
                 for (var n in a) t.push(a[n].id);
@@ -3043,7 +3115,7 @@ window.__require = function e(t, a, n) {
                 return null;
             }, Object.defineProperty(e.prototype, "playerBagCount", {
                 get: function() {
-                    return this._playerBagCount + s.default.instance.getBuffValue("背包格子数");
+                    return this._playerBagCount + l.default.instance.getBuffValue("背包格子数");
                 },
                 enumerable: !0,
                 configurable: !0
@@ -3051,7 +3123,7 @@ window.__require = function e(t, a, n) {
                 this._playerBagCount = e;
             }, Object.defineProperty(e.prototype, "playerDeportCount", {
                 get: function() {
-                    return this._playerDepotCount + s.default.instance.getBuffValue("仓库格子数");
+                    return this._playerDepotCount + l.default.instance.getBuffValue("仓库格子数");
                 },
                 enumerable: !0,
                 configurable: !0
@@ -3071,9 +3143,29 @@ window.__require = function e(t, a, n) {
             }, e.prototype.isGemNumberEnough = function(e) {
                 var t = r.default.instance.monsterGemData[e];
                 return this.GemItemDataMap[e] >= t.combine_num;
+            }, Object.defineProperty(e.prototype, "curUseEquipPlanNum", {
+                get: function() {
+                    return this._curUseEquipPlanNum + l.default.instance.getBuffValue("装备方案");
+                },
+                set: function(e) {
+                    this._curUseEquipPlanNum = e;
+                },
+                enumerable: !0,
+                configurable: !0
+            }), e.prototype.ShowVirtualHeroData = function(t) {
+                if (t == e.instance.curUseEquipPlanIndex) b.default.instance.LoadRoleUI(); else {
+                    for (var a in this.virtualHero = new o.default(), this.virtualHero.clone(this.getMainPlayer()), 
+                    null == this.EquipItemAllDatas[t] && (this.EquipItemAllDatas[t] = []), this.EquipItemDataMap) this.EquipItemDataMap[a] && this.removeEquipAttrToPlayer(this.EquipItemDataMap[a]);
+                    if (this.virtualEquip = this.EquipItemAllDatas[t], null != this.virtualEquip) for (var a in this.virtualEquip) this.virtualEquip[a] && this.addEquipAttrToPlayer(this.virtualEquip[a]);
+                    b.default.instance.LoadRoleUI(!0);
+                }
+                v.default.instance && v.default.instance.refreshAllEquipItem();
+            }, e.prototype.saveChatMessage = function(e) {
+                this.chatTemp.length > 50 && this.chatTemp.shift(), this.chatTemp.push(e), D.default.instance && D.default.instance.otherAsk(e), 
+                I.default.instance.setCurChatText(e.PlayerName + ":" + e.Content);
             }, e._instance = null, e;
         }();
-        a.default = v, cc._RF.pop();
+        a.default = P, cc._RF.pop();
     }, {
         "../battle/battle_manager": "battle_manager",
         "../common/allenum": "allenum",
@@ -3082,15 +3174,19 @@ window.__require = function e(t, a, n) {
         "../math/rand": "rand",
         "../network/bag_network": "bag_network",
         "../network/player_network": "player_network",
+        "../role/hero": "hero",
         "../ui/bag_control_ui_manager": "bag_control_ui_manager",
         "../ui/bag_ui_manager": "bag_ui_manager",
+        "../ui/battle_ui_manager": "battle_ui_manager",
+        "../ui/chat_ui_manager": "chat_ui_manager",
         "../ui/depot_ui_manager": "depot_ui_manager",
         "../ui/menu_ui_manager": "menu_ui_manager",
-        "../ui/tips_ui_manager": "tips_ui_manager",
+        "../ui/role_ui_manager": "role_ui_manager",
         "../util": "util",
         "./data_manager": "data_manager",
         "./gem_manager": "gem_manager",
-        "./playerbuff_manager": "playerbuff_manager"
+        "./playerbuff_manager": "playerbuff_manager",
+        "./ui_manager": "ui_manager"
     } ],
     effect_control_item: [ function(e, t, a) {
         "use strict";
@@ -3129,7 +3225,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "61406abjhxB+rvb+vxvnZSY", "effect_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("./pool_manager"), i = e("./game_manager"), r = e("../audio_manager"), o = e("../controller/ui/add_hp_effect"), s = e("../controller/ui/add_mp_effect"), l = e("../controller/ui/add_exp_effect"), c = e("../ui/boss_come_effect_manager"), u = e("../controller/ui/damage_effect"), d = e("../ui/item/lvup_item"), p = e("../ui/combat_ui_manager"), m = function() {
+        var n = e("./pool_manager"), i = e("./game_manager"), r = e("../audio_manager"), o = e("../controller/ui/add_hp_effect"), s = e("../controller/ui/add_mp_effect"), l = e("../controller/ui/add_exp_effect"), c = e("../controller/ui/damage_effect"), u = e("../ui/item/lvup_item"), d = e("../ui/combat_ui_manager"), p = e("./ui_manager"), m = function() {
             function e() {
                 this.isRemoveEffect = !1;
             }
@@ -3155,10 +3251,10 @@ window.__require = function e(t, a, n) {
                 }
             }, e.prototype.PlayDamageEffect = function(e, t, a, r, o, s, l) {
                 if (!this.isRemoveEffect) {
-                    var c = n.default.instance.CreateDamagerEffect(e);
-                    c.getComponent(u.default).Init(t, a, r, o, s), c.getComponent(cc.Animation).play(l), 
+                    var u = n.default.instance.CreateDamagerEffect(e);
+                    u.getComponent(c.default).Init(t, a, r, o, s), u.getComponent(cc.Animation).play(l), 
                     i.default.instance.scheduleOnce(function() {
-                        n.default.instance.RemoveDamagerEffect(c);
+                        n.default.instance.RemoveDamagerEffect(u);
                     }, 2);
                 }
             }, e.prototype.PlayAddHPEffect = function(e, t) {
@@ -3168,11 +3264,11 @@ window.__require = function e(t, a, n) {
             }, e.prototype.PlayAddExpEffect = function(e, t) {
                 this.isRemoveEffect || n.default.instance.CreateObjectByName("AddEXPEffect", e).getComponent(l.default).Init(t);
             }, e.prototype.PlayBossWarmEffect = function() {
-                this.isRemoveEffect || (c.default.instance.play(), r.default.instance.PlayWarning());
+                this.isRemoveEffect || (p.default.instance.LoadBossComeUI(), r.default.instance.PlayWarning());
             }, e.prototype.PlayerLvUpEffect = function() {
-                this.isRemoveEffect || d.default.instance.playerLvUpEffect();
+                this.isRemoveEffect || u.default.instance.playerLvUpEffect();
             }, e.prototype.PlayerCombatEffectUp = function(e, t) {
-                this.isRemoveEffect || p.default.instance.PlayCombatEffectAnim(e, t);
+                this.isRemoveEffect || d.default.instance.PlayCombatEffectAnim(e, t);
             }, e._instance = null, e;
         }();
         a.default = m, cc._RF.pop();
@@ -3182,11 +3278,11 @@ window.__require = function e(t, a, n) {
         "../controller/ui/add_hp_effect": "add_hp_effect",
         "../controller/ui/add_mp_effect": "add_mp_effect",
         "../controller/ui/damage_effect": "damage_effect",
-        "../ui/boss_come_effect_manager": "boss_come_effect_manager",
         "../ui/combat_ui_manager": "combat_ui_manager",
         "../ui/item/lvup_item": "lvup_item",
         "./game_manager": "game_manager",
-        "./pool_manager": "pool_manager"
+        "./pool_manager": "pool_manager",
+        "./ui_manager": "ui_manager"
     } ],
     emmiter: [ function(e, t, a) {
         "use strict";
@@ -3817,7 +3913,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "b51ffHROk9I96pxtKOpNFwe", "equip_hero_item"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../../manager/dynamic_data_manager"), i = e("../../manager/data_manager"), r = e("../../manager/resource_manager"), o = e("../equipinfo_tip_manager"), s = e("../bag_control_ui_manager"), l = cc._decorator, c = l.ccclass, u = l.property, d = function(e) {
+        var n = e("../../manager/dynamic_data_manager"), i = e("../../manager/data_manager"), r = e("../../manager/resource_manager"), o = e("../bag_control_ui_manager"), s = e("../../manager/ui_manager"), l = cc._decorator, c = l.ccclass, u = l.property, d = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.button = null, t.spriteIcon = null, t.spriteBg = null, t.nodeBg = null, 
@@ -3828,8 +3924,8 @@ window.__require = function e(t, a, n) {
             }, t.prototype.onEnable = function() {
                 this.refreshItem();
             }, t.prototype.refreshItem = function() {
-                var e = n.default.instance.GetEquipByIndex(this.heroEquipIndex);
-                if (null != e) {
+                var e;
+                if (null != (e = 1 == n.default.instance.isVirtual ? n.default.instance.GetVirtualEquipByIndex(this.heroEquipIndex) : n.default.instance.GetEquipByIndex(this.heroEquipIndex))) {
                     this.curItemData = e, this.spriteIcon.node.active = !0;
                     var t = i.default.instance.equipmentData[e.baseId].icon_path;
                     this.spriteIcon.spriteFrame = r.default.instance.getEquipSprite(t), this.spriteBg.spriteFrame = r.default.instance.getEquipSprite(this.curItemData.getQualitySpriteName()), 
@@ -3837,8 +3933,8 @@ window.__require = function e(t, a, n) {
                 } else this.spriteIcon.node.active = !1, this.spriteBg.spriteFrame = r.default.instance.getEquipSprite("equip1"), 
                 this.nodeBg.active = !0;
             }, t.prototype.showItemInfo = function() {
-                o.default.instance.showEquipTip(this.curItemData), s.default.instance.setEquipHeroItem(this), 
-                s.default.instance.showEquipingPart();
+                s.default.instance.LoadEquipInfoTips(this.curItemData), s.default.instance.LoadBagControlUI("equiping"), 
+                o.default.instance && o.default.instance.setEquipHeroItem(this);
             }, __decorate([ u(cc.Button) ], t.prototype, "button", void 0), __decorate([ u(cc.Sprite) ], t.prototype, "spriteIcon", void 0), 
             __decorate([ u(cc.Sprite) ], t.prototype, "spriteBg", void 0), __decorate([ u(cc.Node) ], t.prototype, "nodeBg", void 0), 
             __decorate([ u ], t.prototype, "heroEquipIndex", void 0), t = __decorate([ c ], t);
@@ -3848,8 +3944,8 @@ window.__require = function e(t, a, n) {
         "../../manager/data_manager": "data_manager",
         "../../manager/dynamic_data_manager": "dynamic_data_manager",
         "../../manager/resource_manager": "resource_manager",
-        "../bag_control_ui_manager": "bag_control_ui_manager",
-        "../equipinfo_tip_manager": "equipinfo_tip_manager"
+        "../../manager/ui_manager": "ui_manager",
+        "../bag_control_ui_manager": "bag_control_ui_manager"
     } ],
     equipinfo_tip_manager: [ function(e, t, a) {
         "use strict";
@@ -3917,7 +4013,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "ace70PhhvRJpZu4aVp/Xcz8", "event_item"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../../manager/data_manager"), i = e("../../manager/random_event_manager"), r = e("../tips_ui_manager"), o = e("../../util"), s = e("../../manager/dynamic_data_manager"), l = e("../../manager/sprite_manager"), c = e("../../manager/resource_manager"), u = cc._decorator, d = u.ccclass, p = u.property, m = function(e) {
+        var n = e("../../manager/data_manager"), i = e("../../manager/random_event_manager"), r = e("../../util"), o = e("../../manager/dynamic_data_manager"), s = e("../../manager/sprite_manager"), l = e("../../manager/resource_manager"), c = e("../../manager/ui_manager"), u = cc._decorator, d = u.ccclass, p = u.property, m = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.labelDesc = null, t.labelTime = null, t.labelBonus = null, t.nodeLabelBg = null, 
@@ -3932,33 +4028,33 @@ window.__require = function e(t, a, n) {
                     this.isNeedRefresh = !1, this.labelBonus.node.active = !1, this.labelTime.node.active = !1, 
                     this.nodeLabelBg.active = !1;
                     var t = i.default.instance.getEventByIndex(this.curIndex);
-                    this.lastEventID = e.id, t.canTrigger() ? (this.spriteBg.spriteFrame = c.default.instance.getEventSprite(e.pic_path), 
+                    this.lastEventID = e.id, t.canTrigger() ? (this.spriteBg.spriteFrame = l.default.instance.getEventSprite(e.pic_path), 
                     this.labelDesc.string = e.desc, 2 == e.type ? (this.nodeLabelBg.active = !0, this.labelBonus.node.active = !0, 
                     "gold" == e.param ? this.labelBonus.string = t.bonusNum.toString() + " 金币" : "daimond" == e.param ? this.labelBonus.string = t.bonusNum.toString() + " 钻石" : "equipment" == e.param ? this.labelBonus.string = "稀有装备" + t.bonusNum.toString() + " 件" : "sprite" == e.param && (this.labelBonus.string = "稀有精灵" + t.bonusNum.toString() + " 个")) : 4 == e.type ? (this.nodeLabelBg.active = !0, 
                     this.labelBonus.node.active = !0, this.labelBonus.string = e.info) : 5 == e.type && (this.nodeLabelBg.active = !0, 
                     this.labelBonus.node.active = !0, this.labelBonus.string = e.info)) : (this.labelDesc.string = "等待刷新", 
-                    this.spriteBg.spriteFrame = c.default.instance.getEventSprite("waiting"), this.labelTime.node.active = !0);
+                    this.spriteBg.spriteFrame = l.default.instance.getEventSprite("waiting"), this.labelTime.node.active = !0);
                 }
             }, t.prototype.update = function() {
                 var e = i.default.instance.getEventByIndex(this.curIndex);
                 if (e) {
                     if (this.isNeedRefresh) return void this.onInit();
                     e.canTrigger() && this.labelTime.node.active ? this.onInit() : e.isWaitingRefresh() ? (this.labelTime.node.active || (this.labelTime.node.active = !0, 
-                    this.onInit()), this.labelTime.string = o.default.getTimeFormat(e.nextFreshTime)) : this.isNeedRefresh = !0;
+                    this.onInit()), this.labelTime.string = r.default.getTimeFormat(e.nextFreshTime)) : this.isNeedRefresh = !0;
                 }
             }, t.prototype.onClick = function() {
-                i.default.instance.getEventByIndex(this.curIndex).canTrigger() ? this.trigger() : r.default.instance.showtips("event_is_triggered");
+                i.default.instance.getEventByIndex(this.curIndex).canTrigger() ? this.trigger() : c.default.instance.LoadTipsByID("event_is_triggered");
             }, t.prototype.trigger = function() {
                 this.checkCondition() && i.default.instance.triggerEvent(this.curIndex);
             }, t.prototype.checkCondition = function() {
                 var e = n.default.instance.randomEventData[this.lastEventID];
                 if (2 == e.type && "sprite" == e.param) {
-                    if (l.default.instance.isFullSpriteBag()) return r.default.instance.showtips("sprite_count_limit"), 
+                    if (s.default.instance.isFullSpriteBag()) return c.default.instance.LoadTipsByID("sprite_count_limit"), 
                     !1;
                 } else if (2 == e.type && "equipment" == e.param) {
-                    if (s.default.instance.isBagFull()) return r.default.instance.showtips("bag_count_limit"), 
+                    if (o.default.instance.isBagFull()) return c.default.instance.LoadTipsByID("bag_count_limit"), 
                     !1;
-                } else if (4 == e.type && s.default.instance.getMainPlayer().isDead()) return r.default.instance.showTipsByStr("勇者，请先回复状态再来挑战！"), 
+                } else if (4 == e.type && o.default.instance.getMainPlayer().isDead()) return c.default.instance.LoadTipsByStr("勇者，请先回复状态再来挑战！"), 
                 !1;
                 return !0;
             }, __decorate([ p(cc.Label) ], t.prototype, "labelDesc", void 0), __decorate([ p(cc.Label) ], t.prototype, "labelTime", void 0), 
@@ -3973,15 +4069,15 @@ window.__require = function e(t, a, n) {
         "../../manager/random_event_manager": "random_event_manager",
         "../../manager/resource_manager": "resource_manager",
         "../../manager/sprite_manager": "sprite_manager",
-        "../../util": "util",
-        "../tips_ui_manager": "tips_ui_manager"
+        "../../manager/ui_manager": "ui_manager",
+        "../../util": "util"
     } ],
     event_network: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "2c255lktmhFabFDOOU2BLz8", "event_network"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../common/emmiter"), i = e("../manager/network_manager"), r = e("../common/message"), o = e("../manager/random_event_manager"), s = e("../manager/game_manager"), l = e("../ui/tips_ui_manager"), c = function() {
+        var n = e("../common/emmiter"), i = e("../manager/network_manager"), r = e("../common/message"), o = e("../manager/random_event_manager"), s = e("../manager/game_manager"), l = e("../manager/ui_manager"), c = function() {
             function e() {}
             return Object.defineProperty(e, "instance", {
                 get: function() {
@@ -4014,7 +4110,7 @@ window.__require = function e(t, a, n) {
                 };
                 i.NetworkManager.SendMessage(r.MessageNo.PlayerTriggerEventRequest, r.MessageType.GamePlay, t);
             }, e.prototype.PlayerTriggerEventResponse = function(e, t) {
-                t.IsOk ? o.default.instance.triggerCallBack(t.EventData, t.Index) : l.default.instance.showtips("事件异常，请重新登录。");
+                t.IsOk ? o.default.instance.triggerCallBack(t.EventData) : l.default.instance.LoadTipsByID("事件异常，请重新登录。");
             }, e.prototype.ShareRefreshEventRequest = function(e, t, a, n, o, s, l) {
                 var c = {
                     ID1: Number(e),
@@ -4027,7 +4123,7 @@ window.__require = function e(t, a, n) {
                 };
                 i.NetworkManager.SendMessage(r.MessageNo.ShareRefreshEventRequest, r.MessageType.GamePlay, c);
             }, e.prototype.ShareRefreshEventResponse = function(e, t) {
-                t.IsOk ? l.default.instance.showTipsByStr("事件刷新成功") : l.default.instance.showTipsByStr("今日分享次数已满");
+                t.IsOk ? l.default.instance.LoadTipsByStr("事件刷新成功") : l.default.instance.LoadTipsByStr("今日分享次数已满");
             }, e._instance = null, e;
         }();
         a.default = c, cc._RF.pop();
@@ -4037,14 +4133,14 @@ window.__require = function e(t, a, n) {
         "../manager/game_manager": "game_manager",
         "../manager/network_manager": "network_manager",
         "../manager/random_event_manager": "random_event_manager",
-        "../ui/tips_ui_manager": "tips_ui_manager"
+        "../manager/ui_manager": "ui_manager"
     } ],
     game_manager: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "41b0bBXEkdCVqdco4lraHIN", "game_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../common/allenum"), i = e("./resource_manager"), r = e("../ui/skill_ui_manager"), o = e("../battle/battle_manager"), s = e("./data_manager"), l = e("./dynamic_data_manager"), c = e("../ui/menu_ui_manager"), u = e("../ui/tips_ui_manager"), d = e("../common/emmiter"), p = e("./network_manager"), m = e("../common/message"), f = e("../network/player_network"), g = e("./dungeon_data_manager"), h = e("../ui/battle_ui_manager"), _ = e("./blackmarket_manager"), y = e("../network/sprite_network"), v = e("../network/bag_network"), b = e("../network/event_network"), D = e("../ui/notice_ui_manager"), P = e("../ui/changname_ui_manager"), I = e("../common/config"), B = e("./wx_manager"), S = e("../ui/messagebox_ui_manager"), k = e("../network/achievement_network"), R = e("../ui/item/ad_item"), M = e("../ui/item/add_to_my_program_item"), N = e("../network/gem_network"), A = cc._decorator, w = A.ccclass, C = A.property, E = function(e) {
+        var n = e("../common/allenum"), i = e("./resource_manager"), r = e("../ui/skill_ui_manager"), o = e("../battle/battle_manager"), s = e("./data_manager"), l = e("./dynamic_data_manager"), c = e("../ui/menu_ui_manager"), u = e("../common/emmiter"), d = e("./network_manager"), p = e("../common/message"), m = e("../network/player_network"), f = e("./dungeon_data_manager"), g = e("../ui/battle_ui_manager"), h = e("./blackmarket_manager"), _ = e("../network/sprite_network"), y = e("../network/bag_network"), v = e("../network/event_network"), b = e("../common/config"), D = e("./wx_manager"), I = e("../network/achievement_network"), P = e("../ui/item/ad_item"), B = e("../ui/item/add_to_my_program_item"), S = e("../network/gem_network"), R = e("./ui_manager"), k = e("./guide_manager"), A = cc._decorator, M = A.ccclass, N = A.property, w = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.gameStatus = n.GameStatus.GameBegin, t.maskNode = null, t.mainCanvas = null, 
@@ -4058,49 +4154,50 @@ window.__require = function e(t, a, n) {
                 a.instance = this, this.btnLogin.node.on("click", this.logintest, this);
                 this.schedule(function(e) {
                     this.GamePlayPing();
-                }, 2), B.default.instance.checkUpdate();
+                }, 2), D.default.instance.checkUpdate();
             }, t.prototype.start = function() {
-                this.gameStatus = n.GameStatus.LoadResource, d.Emitter.register(p.NetworkManager.GetEventID(m.MessageNo.NewConnectResponse, m.MessageType.Login), this.NewConnectResponse, this), 
-                d.Emitter.register(p.NetworkManager.GetEventID(m.MessageNo.PongResponse, m.MessageType.GamePlay), this.PongResponse, this);
+                this.gameStatus = n.GameStatus.LoadResource, u.Emitter.register(d.NetworkManager.GetEventID(p.MessageNo.NewConnectResponse, p.MessageType.Login), this.NewConnectResponse, this), 
+                u.Emitter.register(d.NetworkManager.GetEventID(p.MessageNo.PongResponse, p.MessageType.GamePlay), this.PongResponse, this);
             }, t.prototype.logintest = function() {
                 var e = this.editboxAccount.string;
-                "" != e ? (this.token = e, this.editboxAccount.node.parent.active = !1, a.instance.startLogin()) : u.default.instance.showTipsByStr("请输入账号");
+                "" != e ? (this.token = e, this.editboxAccount.node.parent.active = !1, a.instance.startLogin()) : R.default.instance.LoadTipsByStr("请输入账号");
             }, t.prototype.startLogin = function() {
-                b.default.instance.init(), f.default.instance.init(), y.default.instance.init(), 
-                v.default.instance.init(), k.default.instance.init(), N.default.instance.init(), 
-                p.NetworkManager.initNetwork();
+                v.default.instance.init(), m.default.instance.init(), _.default.instance.init(), 
+                y.default.instance.init(), I.default.instance.init(), S.default.instance.init(), 
+                d.NetworkManager.initNetwork();
             }, t.prototype.ReInitNetwork = function() {
                 a.instance.scheduleOnce(function() {
-                    p.NetworkManager.initNetwork();
+                    d.NetworkManager.initNetwork();
                 }, 3);
             }, t.prototype.PlayerBeingKickOffline = function(e, t) {
-                a.instance.gameStatus = n.GameStatus.BeingKickOffline, p.NetworkManager.DisconnectTest(), 
-                "" != e ? S.default.instance.showUI(e, t) : S.default.instance.showUI("账号冲突", "您有别的客户端登录，此账号被下线。请重新登录");
+                a.instance.gameStatus = n.GameStatus.BeingKickOffline, d.NetworkManager.DisconnectTest(), 
+                "" != e ? R.default.instance.LoadMessageBox(e, t) : R.default.instance.LoadMessageBox("账号冲突", "您有别的客户端登录，此账号被下线。请重新登录");
             }, t.prototype.NewConnectResponse = function(e, t) {
                 if (console.log("----------\x3e NewConnectResponse"), t.IsOk) {
                     this.isConnecting = !1;
                     var a = "";
-                    0 != l.default.instance.adID ? (a = "wx_ad_" + l.default.instance.adID, 0 != l.default.instance.sceneID && (a += "_sceneid_" + l.default.instance.adID)) : 0 != l.default.instance.sceneID && (a = "wx_sceneid_" + l.default.instance.sceneID);
+                    0 != l.default.instance.adID ? (a = "wx_ad_" + l.default.instance.adID, 0 != l.default.instance.sceneID && (a += "_sceneid_" + l.default.instance.sceneID)) : 0 != l.default.instance.sceneID && (a = "wx_sceneid_" + l.default.instance.sceneID);
                     var n = {
                         Token: this.token,
                         ComeFrom: a,
                         ReferUserID: l.default.instance.fromUserID
                     };
-                    p.NetworkManager.SetGameStart(), p.NetworkManager.SendMessage(m.MessageNo.GetUserInfoRequest, m.MessageType.GamePlay, n);
+                    d.NetworkManager.SetGameStart(), d.NetworkManager.SendMessage(p.MessageNo.GetUserInfoRequest, p.MessageType.GamePlay, n);
                 } else console.log("error ,reconnect");
             }, t.prototype.RequireAllNetworkInitData = function() {
-                a.instance.NeedInitDataCount = 7, p.NetworkManager.SendMessage(m.MessageNo.GetPlayerAltarBuffRequest, m.MessageType.GamePlay, {}), 
-                p.NetworkManager.SendMessage(m.MessageNo.GetPlayerSkillRequest, m.MessageType.GamePlay, {}), 
-                y.default.instance.GetPlayerSpriteRequest(), v.default.instance.GetBagRequest(), 
-                v.default.instance.GetDepotRequest(), v.default.instance.GetEquipRequest(), b.default.instance.GetEventCardDataRequest();
+                a.instance.NeedInitDataCount = 7, d.NetworkManager.SendMessage(p.MessageNo.GetPlayerAltarBuffRequest, p.MessageType.GamePlay, {}), 
+                d.NetworkManager.SendMessage(p.MessageNo.GetPlayerSkillRequest, p.MessageType.GamePlay, {}), 
+                _.default.instance.GetPlayerSpriteRequest(), y.default.instance.GetBagRequest(), 
+                y.default.instance.GetDepotRequest(), y.default.instance.GetEquipRequest(), v.default.instance.GetEventCardDataRequest();
             }, t.prototype.CheckedOneInit = function() {
                 a.instance.NeedInitDataCount--, console.log("player network data init process :" + a.instance.NeedInitDataCount), 
                 0 == a.instance.NeedInitDataCount && this.InitGame();
             }, t.prototype.InitGame = function() {
-                l.default.instance.getMainPlayerLV() > 5 && R.default.instance.setCloseShowTime(), 
-                l.default.instance.getMainPlayerLV() > 30 && (D.default.instance.showUI(), 0 == l.default.instance.isGetCollectionBonus && (M.default.instance.showInfo(), 
-                1104 == l.default.instance.sceneID && f.default.instance.GetCollectionBounsRequest())), 
-                "" == l.default.instance.roleName && l.default.instance.getMainPlayerLV() > 30 && P.default.instance.showUI(), 
+                l.default.instance.getMainPlayerLVParam() < 100 && k.default.instance.Init(), l.default.instance.getMainPlayerLV() > 5 && P.default.instance.setCloseShowTime(), 
+                l.default.instance.getMainPlayerLV() > 30 && (R.default.instance.LoadNoticeUI(), 
+                0 == l.default.instance.isGetCollectionBonus && (B.default.instance.showInfo(), 
+                1104 == l.default.instance.sceneID && m.default.instance.GetCollectionBounsRequest())), 
+                "" == l.default.instance.roleName && l.default.instance.getMainPlayerLV() > 30 && R.default.instance.LoadChangeNameUI(), 
                 r.default.instance.resetSkillItem();
                 var e = s.default.instance.globalValueData.base_bag_count.params;
                 l.default.instance.changePlayerBagCount(e);
@@ -4110,41 +4207,41 @@ window.__require = function e(t, a, n) {
                 l.default.instance.changeDaimonNum(a);
                 var i = s.default.instance.globalValueData.player_default_gold.params;
                 l.default.instance.changeGoldNum(i);
-                var u = g.default.instance.getBossBattleCount(l.default.instance.curLevel);
-                h.default.instance.updateLevelInfo(l.default.instance.curLevel, 0, u), h.default.instance.updateLvExp(l.default.instance.getMainPlayerLV(), l.default.instance.getMainPlayer().exp), 
-                h.default.instance.updatePlayerName();
+                var u = f.default.instance.getBossBattleCount(l.default.instance.curLevel);
+                g.default.instance.updateLevelInfo(l.default.instance.curLevel, 0, u), g.default.instance.updateLvExp(l.default.instance.getMainPlayerLV(), l.default.instance.getMainPlayer().exp), 
+                g.default.instance.updatePlayerName();
                 var d = l.default.instance.getMainPlayerLVParam();
-                _.default.instance.updateBlackMarketGoods(d), o.default.instance.setNormalBattle(), 
+                h.default.instance.updateBlackMarketGoods(d), o.default.instance.setNormalBattle(), 
                 c.default.instance.initAlertStatus(), this.mainCanvas.getComponent(cc.Animation).play("start_game"), 
                 this.maskNode.active = !1, this.gameStatus = n.GameStatus.GamePlaying;
             }, t.prototype.update = function(e) {
                 this.gameStatus == n.GameStatus.LoadResource && i.default.instance.Inited && (this.gameStatus = n.GameStatus.Login, 
-                this.startGameShow()), this.gameStatus == n.GameStatus.GamePlaying ? p.NetworkManager.IsDrop() && this.tryReconneting() : this.gameStatus == n.GameStatus.TryReconnect && p.NetworkManager.IsDrop() && (this.isConnecting ? (this.curConnectTime += e, 
+                this.startGameShow()), this.gameStatus == n.GameStatus.GamePlaying ? d.NetworkManager.IsDrop() && this.tryReconneting() : this.gameStatus == n.GameStatus.TryReconnect && d.NetworkManager.IsDrop() && (this.isConnecting ? (this.curConnectTime += e, 
                 this.curConnectTime > this.maxConnectTime && (this.tryReconneting(!0), this.curConnectTime = 0)) : this.tryReconneting());
             }, t.prototype.startGameShow = function() {
                 o.default.instance.InitGameShow(), this.maskNode.on("click", this.startGame, this), 
-                d.Emitter.fire(n.AlertType.GameStart.toString());
+                u.Emitter.fire(n.AlertType.GameStart.toString());
             }, t.prototype.startGame = function() {
-                this.maskNode.active = !1, "undefined" != typeof wx ? (B.default.instance.InitData(), 
+                this.maskNode.active = !1, "undefined" != typeof wx ? (D.default.instance.InitData(), 
                 wx.onShow(function(e) {
                     console.log("onshow:", e);
                     var t = e.query, a = (t.gdt_vid, t.weixinadinfo), n = 0;
                     a && (n = a.split(".")[0]);
-                    l.default.instance.sceneID = e.scene, 0 != n && (l.default.instance.adID = n), 1104 == l.default.instance.sceneID && 0 == l.default.instance.isGetCollectionBonus && f.default.instance.GetCollectionBounsRequest();
+                    l.default.instance.sceneID = e.scene, 0 != n && (l.default.instance.adID = n), 1104 == l.default.instance.sceneID && 0 == l.default.instance.isGetCollectionBonus && m.default.instance.GetCollectionBounsRequest();
                 }), wx.login({
                     success: function(e) {
                         e.code ? (a.instance.tipsBg.active = !0, a.instance.tipsLabel.string = "登录中，请稍后...", 
                         wx.request({
-                            url: I.Config.WechatChatLoginUrl,
+                            url: b.Config.WechatChatLoginUrl,
                             data: {
                                 code: e.code,
-                                version: I.Config.VersionCode
+                                version: b.Config.VersionCode
                             },
                             header: {
                                 "content-type": "application/json"
                             },
                             success: function(e) {
-                                a.instance.tipsBg.active = !1, a.instance.token = e.data.Token, e.data.ServerIP && (I.Config.ServerIP = e.data.ServerIP), 
+                                a.instance.tipsBg.active = !1, a.instance.token = e.data.Token, e.data.ServerIP && (b.Config.ServerIP = e.data.ServerIP), 
                                 a.instance.startLogin();
                             },
                             fail: function(e) {
@@ -4158,15 +4255,15 @@ window.__require = function e(t, a, n) {
                 })) : (this.editboxAccount.node.parent.active = !0, this.maskNode.active = !1);
             }, t.prototype.tryReconneting = function(e) {
                 void 0 === e && (e = !1), (e || this.gameStatus != n.GameStatus.TryReconnect) && (console.log("try reconnect"), 
-                this.isConnecting = !0, this.gameStatus = n.GameStatus.TryReconnect, p.NetworkManager.DisconnectTest(), 
-                p.NetworkManager.ReconnectToServer(), this.tipsBg.active = !0, this.tipsLabel.string = "正在重连...");
+                this.isConnecting = !0, this.gameStatus = n.GameStatus.TryReconnect, d.NetworkManager.DisconnectTest(), 
+                d.NetworkManager.ReconnectToServer(), this.tipsBg.active = !0, this.tipsLabel.string = "正在重连...");
             }, t.prototype.GamePlayPing = function() {
                 if (this.gameStatus == n.GameStatus.GamePlaying) {
                     var e = new Date();
                     this.sendPingTime = e.getTime(), this.sendPingTime - this.serverPongTime > 4e3 ? (this.pingDelayCount++, 
                     this.pingDelayCount >= 3 && (this.tryReconneting(), this.pingDelayCount = 0)) : (this.pingDelayCount = 0, 
                     1 == this.tipsBg.active && (this.tipsBg.active = !1));
-                    p.NetworkManager.SendMessage(m.MessageNo.PingRequest, m.MessageType.GamePlay, {});
+                    d.NetworkManager.SendMessage(p.MessageNo.PingRequest, p.MessageType.GamePlay, {});
                 }
             }, t.prototype.PongResponse = function(e, t) {
                 var a = new Date();
@@ -4175,12 +4272,12 @@ window.__require = function e(t, a, n) {
                 this.gameStatus = n.GameStatus.GamePlaying, this.isConnecting = !1, this.tipsBg.active = !1;
             }, t.prototype.PlayerReconnectFailResponse = function(e, t) {
                 console.log("PlayerReconnectFailResponse:" + JSON.stringify(t));
-            }, t.instance = null, __decorate([ C(cc.Node) ], t.prototype, "maskNode", void 0), 
-            __decorate([ C(cc.Node) ], t.prototype, "mainCanvas", void 0), __decorate([ C(cc.Button) ], t.prototype, "btnLogin", void 0), 
-            __decorate([ C(cc.EditBox) ], t.prototype, "editboxAccount", void 0), __decorate([ C(cc.Node) ], t.prototype, "tipsBg", void 0), 
-            __decorate([ C(cc.Label) ], t.prototype, "tipsLabel", void 0), t = a = __decorate([ w ], t);
+            }, t.instance = null, __decorate([ N(cc.Node) ], t.prototype, "maskNode", void 0), 
+            __decorate([ N(cc.Node) ], t.prototype, "mainCanvas", void 0), __decorate([ N(cc.Button) ], t.prototype, "btnLogin", void 0), 
+            __decorate([ N(cc.EditBox) ], t.prototype, "editboxAccount", void 0), __decorate([ N(cc.Node) ], t.prototype, "tipsBg", void 0), 
+            __decorate([ N(cc.Label) ], t.prototype, "tipsLabel", void 0), t = a = __decorate([ M ], t);
         }(cc.Component);
-        a.default = E, cc._RF.pop();
+        a.default = w, cc._RF.pop();
     }, {
         "../battle/battle_manager": "battle_manager",
         "../common/allenum": "allenum",
@@ -4194,20 +4291,18 @@ window.__require = function e(t, a, n) {
         "../network/player_network": "player_network",
         "../network/sprite_network": "sprite_network",
         "../ui/battle_ui_manager": "battle_ui_manager",
-        "../ui/changname_ui_manager": "changname_ui_manager",
         "../ui/item/ad_item": "ad_item",
         "../ui/item/add_to_my_program_item": "add_to_my_program_item",
         "../ui/menu_ui_manager": "menu_ui_manager",
-        "../ui/messagebox_ui_manager": "messagebox_ui_manager",
-        "../ui/notice_ui_manager": "notice_ui_manager",
         "../ui/skill_ui_manager": "skill_ui_manager",
-        "../ui/tips_ui_manager": "tips_ui_manager",
         "./blackmarket_manager": "blackmarket_manager",
         "./data_manager": "data_manager",
         "./dungeon_data_manager": "dungeon_data_manager",
         "./dynamic_data_manager": "dynamic_data_manager",
+        "./guide_manager": "guide_manager",
         "./network_manager": "network_manager",
         "./resource_manager": "resource_manager",
+        "./ui_manager": "ui_manager",
         "./wx_manager": "wx_manager"
     } ],
     gem_equip_ui_manager: [ function(e, t, a) {
@@ -4215,7 +4310,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "b180822o3VHOIdIrAoj1ShF", "gem_equip_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../manager/dynamic_data_manager"), i = e("../manager/pool_manager"), r = e("./item/bag_item"), o = e("../common/allenum"), s = e("../audio_manager"), l = e("../util"), c = cc._decorator, u = c.ccclass, d = c.property, p = function(e) {
+        var n = e("../manager/dynamic_data_manager"), i = e("../manager/pool_manager"), r = e("./item/bag_item"), o = e("../common/allenum"), s = e("../audio_manager"), l = cc._decorator, c = l.ccclass, u = l.property, d = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.bagUINode = null, t.maskNode = null, t.bagContentViewNode = null, t;
@@ -4227,26 +4322,26 @@ window.__require = function e(t, a, n) {
                 s.default.instance.PlayUISelect(), this.bagUINode.active = !0, this.refreshBagUI();
             }, t.prototype.refreshBagUI = function() {
                 for (var e = this.bagContentViewNode.children, t = e.length - 1; t >= 0; t--) i.default.instance.RemoveBagItem(e[t]);
-                if (null != n.default.instance.EquipItemDataMap) for (var t in n.default.instance.EquipItemDataMap) if (l.default.len(n.default.instance.EquipItemDataMap[t]) && n.default.instance.EquipItemDataMap[t].canEquipGem()) {
-                    var a = i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default);
-                    a.reinit(n.default.instance.EquipItemDataMap[t], o.GridType.PreGemEquipItem), a.setEquipingTag();
+                if (null != n.default.instance.EquipItemAllDatas) for (var a in n.default.instance.EquipItemAllDatas) if (null != a) for (var s in n.default.instance.EquipItemAllDatas[a]) if (n.default.instance.EquipItemAllDatas[a][s].canEquipGem()) {
+                    var l = i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default);
+                    l.reinit(n.default.instance.EquipItemAllDatas[a][s], o.GridType.PreGemEquipItem), 
+                    l.setEquipingTag(Number(a) + 1);
                 }
-                if (null != n.default.instance.BagItemDataMap) for (var t in n.default.instance.BagItemDataMap) {
-                    if (n.default.instance.BagItemDataMap[t].canEquipGem()) i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default).reinit(n.default.instance.BagItemDataMap[t], o.GridType.PreGemEquipItem);
+                if (null != n.default.instance.BagItemDataMap) for (var c in n.default.instance.BagItemDataMap) {
+                    if (n.default.instance.BagItemDataMap[c].canEquipGem()) i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default).reinit(n.default.instance.BagItemDataMap[c], o.GridType.PreGemEquipItem);
                 }
             }, t.prototype.hideBagUI = function() {
                 this.bagUINode.active = !1;
-            }, t.instance = null, __decorate([ d(cc.Node) ], t.prototype, "bagUINode", void 0), 
-            __decorate([ d(cc.Node) ], t.prototype, "maskNode", void 0), __decorate([ d(cc.Node) ], t.prototype, "bagContentViewNode", void 0), 
-            t = a = __decorate([ u ], t);
+            }, t.instance = null, __decorate([ u(cc.Node) ], t.prototype, "bagUINode", void 0), 
+            __decorate([ u(cc.Node) ], t.prototype, "maskNode", void 0), __decorate([ u(cc.Node) ], t.prototype, "bagContentViewNode", void 0), 
+            t = a = __decorate([ c ], t);
         }(cc.Component);
-        a.default = p, cc._RF.pop();
+        a.default = d, cc._RF.pop();
     }, {
         "../audio_manager": "audio_manager",
         "../common/allenum": "allenum",
         "../manager/dynamic_data_manager": "dynamic_data_manager",
         "../manager/pool_manager": "pool_manager",
-        "../util": "util",
         "./item/bag_item": "bag_item"
     } ],
     gem_manager: [ function(e, t, a) {
@@ -4283,7 +4378,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "92c40CfwcRN/Yomn+benQDd", "gem_network"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../common/emmiter"), i = e("../manager/network_manager"), r = e("../common/message"), o = e("../ui/tips_ui_manager"), s = e("../ui/equipinfo_tip_manager"), l = e("../common/allenum"), c = e("../manager/dynamic_data_manager"), u = e("../ui/bag_ui_manager"), d = function() {
+        var n = e("../common/emmiter"), i = e("../manager/network_manager"), r = e("../common/message"), o = e("../ui/equipinfo_tip_manager"), s = e("../common/allenum"), l = e("../manager/dynamic_data_manager"), c = e("../ui/bag_ui_manager"), u = e("../ui/role_ui_manager"), d = e("../manager/ui_manager"), p = function() {
             function e() {}
             return Object.defineProperty(e, "instance", {
                 get: function() {
@@ -4304,12 +4399,12 @@ window.__require = function e(t, a, n) {
                 i.NetworkManager.SendMessage(r.MessageNo.AddEquipHoleRequest, r.MessageType.GamePlay, a);
             }, e.prototype.AddEquipHoleResponse = function(e, t) {
                 if (t.IsOk) {
-                    if (t.BagType == l.BagType.Common) (a = c.default.instance.BagItemDataMap[t.Index]) && a.holeNum++; else if (t.BagType == l.BagType.Equip) {
+                    if (t.BagType == s.BagType.Common) (a = l.default.instance.BagItemDataMap[t.Index]) && a.holeNum++; else if (t.BagType == s.BagType.Equip) {
                         var a;
-                        (a = c.default.instance.getEquipItemByIndex(t.Index)) && a.holeNum++;
+                        (a = l.default.instance.getEquipItemByIndex(t.Index)) && a.holeNum++;
                     }
-                    s.default.instance.refresh();
-                } else o.default.instance.showTipsByStr("打孔失败");
+                    o.default.instance.refresh();
+                } else d.default.instance.LoadTipsByStr("打孔失败");
             }, e.prototype.AddMonsterGemFromBagToEquipRequest = function(e, t, a) {
                 var n = {
                     BagType: Number(e),
@@ -4327,44 +4422,48 @@ window.__require = function e(t, a, n) {
             }, e.prototype.AddMonsterGemFromBagToEquipResponse = function(e, t) {
                 if (t.IsOk) {
                     var a = t.BaseID;
-                    if (c.default.instance.GemItemDataMap[a]--, t.BagType == l.BagType.Common) (n = c.default.instance.BagItemDataMap[t.Index]) && n.addGem(a); else if (t.BagType == l.BagType.Equip) {
+                    if (l.default.instance.GemItemDataMap[a]--, t.BagType == s.BagType.Common) (n = l.default.instance.BagItemDataMap[t.Index]) && n.addGem(a); else if (t.BagType == s.BagType.Equip) {
                         var n;
-                        (n = c.default.instance.getEquipItemByIndex(t.Index)) && (c.default.instance.removeEquipAttrToPlayer(n), 
-                        n.addGem(a), c.default.instance.addEquipAttrToPlayer(n));
+                        if (n = l.default.instance.getEquipItemByIndex(t.Index)) l.default.instance.getPlanIndexByEquipIndex(t.Index) == l.default.instance.curUseEquipPlanIndex ? (l.default.instance.removeEquipAttrToPlayer(n), 
+                        n.addGem(a), l.default.instance.addEquipAttrToPlayer(n)) : n.addGem(a);
                     }
-                    s.default.instance.refresh(), u.default.instance.refreshBagUI();
-                } else o.default.instance.showtips("gem_mosaic_fail");
+                    o.default.instance.refresh(), c.default.instance.refreshBagUI();
+                } else d.default.instance.LoadTipsByID("gem_mosaic_fail");
             }, e.prototype.AddMonsterGemFromEquipToBagResponse = function(e, t) {
+                console.log("----------\x3e AddMonsterGemFromEquipToBagResponse:" + JSON.stringify(t));
+                var a = null;
                 if (t.IsOk) {
-                    var a = t.BaseID;
-                    if (c.default.instance.GemItemDataMap[a]++, t.BagType == l.BagType.Common) (n = c.default.instance.BagItemDataMap[t.Index]) && n.removeGem(a); else if (t.BagType == l.BagType.Equip) {
-                        var n;
-                        (n = c.default.instance.getEquipItemByIndex(t.Index)) && (c.default.instance.removeEquipAttrToPlayer(n), 
-                        n.removeGem(a), c.default.instance.addEquipAttrToPlayer(n));
+                    var n = t.BaseID;
+                    if (l.default.instance.GemItemDataMap[n]++, t.BagType == s.BagType.Common) (a = l.default.instance.BagItemDataMap[t.Index]) && a.removeGem(n); else if (t.BagType == s.BagType.Equip) {
+                        if (a = l.default.instance.getEquipItemByIndex(t.Index)) l.default.instance.getPlanIndexByEquipIndex(t.Index) == l.default.instance.curUseEquipPlanIndex ? (l.default.instance.removeEquipAttrToPlayer(a), 
+                        a.removeGem(n), l.default.instance.addEquipAttrToPlayer(a)) : 1 == l.default.instance.isVirtual ? (l.default.instance.removeEquipAttrToPlayer(a), 
+                        a.removeGem(n), l.default.instance.addEquipAttrToPlayer(a)) : a.removeGem(n);
+                        u.default.instance && u.default.instance.updateBaseAttr(l.default.instance.isVirtual);
                     }
-                    u.default.instance.refreshBagUI(), s.default.instance.refresh();
-                } else o.default.instance.showTipsByStr("异常错误");
+                    c.default.instance && c.default.instance.refreshBagUI(), d.default.instance.LoadEquipInfoTips(a);
+                } else d.default.instance.LoadTipsByStr("异常错误");
             }, e.prototype.AddMonsterGemResponse = function(e, t) {
-                for (var a in t) c.default.instance.ChangeGemItem(Number(a), Number(t[a]));
+                for (var a in t) l.default.instance.ChangeGemItem(Number(a), Number(t[a]));
             }, e._instance = null, e;
         }();
-        a.default = d, cc._RF.pop();
+        a.default = p, cc._RF.pop();
     }, {
         "../common/allenum": "allenum",
         "../common/emmiter": "emmiter",
         "../common/message": "message",
         "../manager/dynamic_data_manager": "dynamic_data_manager",
         "../manager/network_manager": "network_manager",
+        "../manager/ui_manager": "ui_manager",
         "../ui/bag_ui_manager": "bag_ui_manager",
         "../ui/equipinfo_tip_manager": "equipinfo_tip_manager",
-        "../ui/tips_ui_manager": "tips_ui_manager"
+        "../ui/role_ui_manager": "role_ui_manager"
     } ],
     gem_tip_ui_manager: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "5ff2bkY/25J0ZUlIRGbw9xx", "gem_tip_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../audio_manager"), i = e("../manager/data_manager"), r = e("../manager/resource_manager"), o = e("../manager/help_manager"), s = e("../manager/dynamic_data_manager"), l = e("./tips_ui_manager"), c = e("../manager/cost_manager"), u = e("../network/player_network"), d = e("./messagebox_ui_manager"), p = e("./gem_equip_ui_manager"), m = e("./bag_control_ui_manager"), f = cc._decorator, g = f.ccclass, h = f.property, _ = function(e) {
+        var n = e("../audio_manager"), i = e("../manager/data_manager"), r = e("../manager/resource_manager"), o = e("../manager/help_manager"), s = e("../manager/dynamic_data_manager"), l = e("../manager/cost_manager"), c = e("../network/player_network"), u = e("../manager/ui_manager"), d = cc._decorator, p = d.ccclass, m = d.property, f = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.uiNode = null, t.maskNode = null, t.spriteGem = null, t.spriteGemBg = null, 
@@ -4396,31 +4495,32 @@ window.__require = function e(t, a, n) {
                 this.labelDefence.string = u, this.labelNum.string = "拥有数量：" + t.toString(), 0 == a.next_id ? this.btnCombine.node.active = !1 : this.btnCombine.node.active = !0, 
                 this.curGemID = e;
             }, t.prototype.OnClickEquip = function() {
-                m.default.instance.setContolGemID(this.curGemID), p.default.instance.showUI(), this.hideBagUI();
+                u.default.instance.LoadBagControlUIGemValue(this.curGemID), u.default.instance.LoadGemEquipUI(), 
+                this.hideBagUI();
             }, t.prototype.OnClickBtnCombine = function() {
                 if (0 != s.default.instance.isGemNumberEnough(this.curGemID)) {
                     var e = i.default.instance.monsterGemData[this.curGemID];
-                    if (c.default.instance.cost(e.combine_cost)) {
+                    if (l.default.instance.cost(e.combine_cost)) {
                         var t = "是否确认花费以下资源来合成一个" + i.default.instance.monsterGemData[e.next_id].name;
-                        d.default.instance.showUI("魔晶合成", t, this.OnClickSureCombine, e.combine_cost);
+                        u.default.instance.LoadMessageBox("魔晶合成", t, this.OnClickSureCombine, e.combine_cost);
                     }
-                } else l.default.instance.showTipsByStr("魔晶数量不足");
+                } else u.default.instance.LoadTipsByStr("魔晶数量不足");
             }, t.prototype.OnClickSureCombine = function(e) {
                 1 == e && a.instance.SendMessageToServer();
             }, t.prototype.IsCurGemEnough = function() {
                 this.showGemItemTip(this.curGemID, s.default.instance.GemItemDataMap[this.curGemID]), 
                 0 == s.default.instance.GemItemDataMap[this.curGemID] && this.hideBagUI();
             }, t.prototype.SendMessageToServer = function() {
-                u.default.instance.BlendMonsterGemRequest(this.curGemID);
-            }, t.prototype.OnClickCancelCombine = function() {}, t.instance = null, __decorate([ h(cc.Node) ], t.prototype, "uiNode", void 0), 
-            __decorate([ h(cc.Node) ], t.prototype, "maskNode", void 0), __decorate([ h(cc.Sprite) ], t.prototype, "spriteGem", void 0), 
-            __decorate([ h(cc.Sprite) ], t.prototype, "spriteGemBg", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelName", void 0), 
-            __decorate([ h(cc.Label) ], t.prototype, "labelDesc", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelWeapon", void 0), 
-            __decorate([ h(cc.Label) ], t.prototype, "labelRing", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelDefence", void 0), 
-            __decorate([ h(cc.Label) ], t.prototype, "labelNum", void 0), __decorate([ h(cc.Button) ], t.prototype, "btnEquip", void 0), 
-            __decorate([ h(cc.Button) ], t.prototype, "btnCombine", void 0), t = a = __decorate([ g ], t);
+                c.default.instance.BlendMonsterGemRequest(this.curGemID);
+            }, t.prototype.OnClickCancelCombine = function() {}, t.instance = null, __decorate([ m(cc.Node) ], t.prototype, "uiNode", void 0), 
+            __decorate([ m(cc.Node) ], t.prototype, "maskNode", void 0), __decorate([ m(cc.Sprite) ], t.prototype, "spriteGem", void 0), 
+            __decorate([ m(cc.Sprite) ], t.prototype, "spriteGemBg", void 0), __decorate([ m(cc.Label) ], t.prototype, "labelName", void 0), 
+            __decorate([ m(cc.Label) ], t.prototype, "labelDesc", void 0), __decorate([ m(cc.Label) ], t.prototype, "labelWeapon", void 0), 
+            __decorate([ m(cc.Label) ], t.prototype, "labelRing", void 0), __decorate([ m(cc.Label) ], t.prototype, "labelDefence", void 0), 
+            __decorate([ m(cc.Label) ], t.prototype, "labelNum", void 0), __decorate([ m(cc.Button) ], t.prototype, "btnEquip", void 0), 
+            __decorate([ m(cc.Button) ], t.prototype, "btnCombine", void 0), t = a = __decorate([ p ], t);
         }(cc.Component);
-        a.default = _, cc._RF.pop();
+        a.default = f, cc._RF.pop();
     }, {
         "../audio_manager": "audio_manager",
         "../manager/cost_manager": "cost_manager",
@@ -4428,18 +4528,395 @@ window.__require = function e(t, a, n) {
         "../manager/dynamic_data_manager": "dynamic_data_manager",
         "../manager/help_manager": "help_manager",
         "../manager/resource_manager": "resource_manager",
-        "../network/player_network": "player_network",
-        "./bag_control_ui_manager": "bag_control_ui_manager",
-        "./gem_equip_ui_manager": "gem_equip_ui_manager",
-        "./messagebox_ui_manager": "messagebox_ui_manager",
-        "./tips_ui_manager": "tips_ui_manager"
+        "../manager/ui_manager": "ui_manager",
+        "../network/player_network": "player_network"
+    } ],
+    guide_manager: [ function(e, t, a) {
+        "use strict";
+        cc._RF.push(t, "fe7fci6/DpEK6t+MKxsst1a", "guide_manager"), Object.defineProperty(a, "__esModule", {
+            value: !0
+        });
+        var n = e("./dynamic_data_manager"), i = e("../ui/guide_ui_manager"), r = e("../common/allenum"), o = e("../battle/battle_manager"), s = e("../ui/menu_ui_manager"), l = e("./ui_manager"), c = e("../ui/random_event_ui_manager"), u = e("../ui/battle_ui_manager"), d = e("../ui/today_reward_ui"), p = e("./reward_manager"), m = e("./random_event_manager"), f = e("./sprite_manager"), g = e("./achievenment_manager"), h = cc._decorator, _ = h.ccclass, y = h.property, v = function() {
+            function e() {
+                this.ID = 0, this.NextStep = 0, this.GuideDesc = "", this.VecPos = cc.Vec2.ZERO, 
+                this.VecArrow = cc.Vec2.ZERO, this.RotaionArrow = 0, this.EventType = r.GuildEventType.TapMonster, 
+                this.IsFirst = !1;
+            }
+            return e.prototype.initPos = function() {
+                switch (this.EventType) {
+                  case r.GuildEventType.TapMonster:
+                    this.VecPos = new cc.Vec2(0, -402);
+                    var e = o.default.instance.monsterNode.parent.convertToWorldSpaceAR(o.default.instance.monsterNode.position), t = i.default.instance.nodeContent.convertToNodeSpaceAR(e);
+                    this.VecArrow = new cc.Vec2(t.x, t.y - 40), this.RotaionArrow = 0;
+                    break;
+
+                  case r.GuildEventType.Sign:
+                    this.VecPos = new cc.Vec2(0, -402);
+                    e = u.default.instance.btnSign.node.parent.convertToWorldSpaceAR(u.default.instance.btnSign.node.position), 
+                    t = i.default.instance.nodeContent.convertToNodeSpaceAR(e);
+                    this.VecArrow = new cc.Vec2(t.x, t.y - 70), this.RotaionArrow = 0;
+                    break;
+
+                  case r.GuildEventType.OpenAchievement:
+                    this.VecPos = new cc.Vec2(0, -402);
+                    e = u.default.instance.btnAchievement.node.parent.convertToWorldSpaceAR(u.default.instance.btnAchievement.node.position), 
+                    t = i.default.instance.nodeContent.convertToNodeSpaceAR(e);
+                    this.VecArrow = new cc.Vec2(t.x, t.y - 70), this.RotaionArrow = 0;
+                    break;
+
+                  case r.GuildEventType.ShowOfflineReward:
+                    this.VecPos = new cc.Vec2(0, -402);
+                    e = u.default.instance.labelLevelCoin.node.parent.convertToWorldSpaceAR(u.default.instance.labelLevelCoin.node.position), 
+                    t = i.default.instance.nodeContent.convertToNodeSpaceAR(e);
+                    this.VecArrow = new cc.Vec2(t.x + 30, t.y - 40), this.RotaionArrow = 0;
+                    break;
+
+                  case r.GuildEventType.OpenSprite:
+                    this.VecPos = new cc.Vec2(0, -402);
+                    var a = s.default.instance.buttonSprite.node.parent.convertToWorldSpaceAR(s.default.instance.buttonSprite.node.position), n = i.default.instance.nodeContent.convertToNodeSpaceAR(a);
+                    this.VecArrow = new cc.Vec2(n.x, n.y + 60), this.RotaionArrow = 180;
+                    break;
+
+                  case r.GuildEventType.OpenBag:
+                    this.VecPos = new cc.Vec2(0, -402);
+                    a = s.default.instance.bagButton.node.parent.convertToWorldSpaceAR(s.default.instance.bagButton.node.position), 
+                    n = i.default.instance.nodeContent.convertToNodeSpaceAR(a);
+                    this.VecArrow = new cc.Vec2(n.x, n.y + 60), this.RotaionArrow = 180;
+                    break;
+
+                  case r.GuildEventType.OpenRole:
+                    this.VecPos = new cc.Vec2(0, -402);
+                    a = s.default.instance.roleButton.node.parent.convertToWorldSpaceAR(s.default.instance.roleButton.node.position), 
+                    n = i.default.instance.nodeContent.convertToNodeSpaceAR(a);
+                    this.VecArrow = new cc.Vec2(n.x, n.y + 60), this.RotaionArrow = 180;
+                    break;
+
+                  case r.GuildEventType.DailyReward:
+                    this.VecPos = new cc.Vec2(0, -402);
+                    a = d.default.instance.node.parent.convertToWorldSpaceAR(d.default.instance.node.position), 
+                    n = i.default.instance.nodeContent.convertToNodeSpaceAR(a);
+                    this.VecArrow = new cc.Vec2(n.x, n.y - 60), this.RotaionArrow = 0;
+                    break;
+
+                  case r.GuildEventType.EventCardBonus:
+                    this.VecPos = new cc.Vec2(0, -402);
+                    e = cc.Vec2.ZERO;
+                    if (m.default.instance.isBonusTypeAndCanTrigger(0)) e = c.default.instance.getCardWordSpaceByIndex(0); else if (m.default.instance.isBonusTypeAndCanTrigger(1)) e = c.default.instance.getCardWordSpaceByIndex(1); else m.default.instance.isBonusTypeAndCanTrigger(2) && (e = c.default.instance.getCardWordSpaceByIndex(2));
+                    n = i.default.instance.nodeContent.convertToNodeSpaceAR(e);
+                    this.VecArrow = new cc.Vec2(n.x, n.y - 60), this.RotaionArrow = 0;
+                    break;
+
+                  case r.GuildEventType.OpenAltar:
+                    this.VecPos = new cc.Vec2(0, -402);
+                    e = cc.Vec2.ZERO;
+                    if (m.default.instance.isAltarEventAndCanTrigger(0)) e = c.default.instance.getCardWordSpaceByIndex(0); else if (m.default.instance.isAltarEventAndCanTrigger(1)) e = c.default.instance.getCardWordSpaceByIndex(1); else m.default.instance.isAltarEventAndCanTrigger(2) && (e = c.default.instance.getCardWordSpaceByIndex(2));
+                    n = i.default.instance.nodeContent.convertToNodeSpaceAR(e);
+                    this.VecArrow = new cc.Vec2(n.x, n.y - 60), this.RotaionArrow = 0;
+                    break;
+
+                  case r.GuildEventType.OpenBlackmarket:
+                    this.VecPos = new cc.Vec2(0, -402);
+                    e = cc.Vec2.ZERO;
+                    if (m.default.instance.isBlackmarketEventAndCanTrigger(0)) e = c.default.instance.getCardWordSpaceByIndex(0); else if (m.default.instance.isBlackmarketEventAndCanTrigger(1)) e = c.default.instance.getCardWordSpaceByIndex(1); else m.default.instance.isBlackmarketEventAndCanTrigger(2) && (e = c.default.instance.getCardWordSpaceByIndex(2));
+                    n = i.default.instance.nodeContent.convertToNodeSpaceAR(e);
+                    this.VecArrow = new cc.Vec2(n.x, n.y - 60), this.RotaionArrow = 0;
+                    break;
+
+                  case r.GuildEventType.EventSwich:
+                  case r.GuildEventType.EventSwichOpen:
+                    this.VecPos = new cc.Vec2(0, -402);
+                    e = c.default.instance.getShowEventBtnWordSpace(), n = i.default.instance.nodeContent.convertToNodeSpaceAR(e);
+                    this.VecArrow = new cc.Vec2(n.x, n.y - 60), this.RotaionArrow = 0;
+                    break;
+
+                  case r.GuildEventType.Relife:
+                    this.VecPos = new cc.Vec2(0, -402);
+                    e = cc.Vec2.ZERO;
+                    if (m.default.instance.isRelifeEventAndCanTrigger(0)) e = c.default.instance.getCardWordSpaceByIndex(0); else if (m.default.instance.isRelifeEventAndCanTrigger(1)) e = c.default.instance.getCardWordSpaceByIndex(1); else m.default.instance.isRelifeEventAndCanTrigger(2) && (e = c.default.instance.getCardWordSpaceByIndex(2));
+                    n = i.default.instance.nodeContent.convertToNodeSpaceAR(e);
+                    this.VecArrow = new cc.Vec2(n.x, n.y - 60), this.RotaionArrow = 0;
+                }
+            }, e.prototype.canShow = function() {
+                if (!this.IsFirst) return !1;
+                switch (this.EventType) {
+                  case r.GuildEventType.TapMonster:
+                    return !0;
+
+                  case r.GuildEventType.OpenBag:
+                    if (n.default.instance.hasBetterEquip()) return !0;
+                    break;
+
+                  case r.GuildEventType.OpenSprite:
+                    if (!f.default.instance.isFullBattle()) return !0;
+                    break;
+
+                  case r.GuildEventType.Sign:
+                    if (n.default.instance.canSign && !c.default.instance.IsOnshowEvent()) return !0;
+                    break;
+
+                  case r.GuildEventType.ShowOfflineReward:
+                    if (!c.default.instance.IsOnshowEvent()) return !0;
+                    break;
+
+                  case r.GuildEventType.OpenAchievement:
+                    if (g.default.instance.hasCompeletedAchievement() && c.default.instance.IsOnshowEvent()) return !0;
+                    break;
+
+                  case r.GuildEventType.OpenRole:
+                    if (o.default.instance.mainPlayer.unSeperatePoint > 0) return !0;
+                    break;
+
+                  case r.GuildEventType.DailyReward:
+                    if (p.default.instance.canGetReward()) return !0;
+                    break;
+
+                  case r.GuildEventType.EventCardBonus:
+                    if (!c.default.instance.IsOnshowEvent()) return !1;
+                    if (m.default.instance.isBonusTypeAndCanTrigger(0)) return !0;
+                    if (m.default.instance.isBonusTypeAndCanTrigger(1)) return !0;
+                    if (m.default.instance.isBonusTypeAndCanTrigger(2)) return !0;
+                    break;
+
+                  case r.GuildEventType.Relife:
+                    if (!c.default.instance.IsOnshowEvent()) return !1;
+                    if (m.default.instance.isRelifeEventAndCanTrigger(0)) return !0;
+                    if (m.default.instance.isRelifeEventAndCanTrigger(1)) return !0;
+                    if (m.default.instance.isRelifeEventAndCanTrigger(2)) return !0;
+                    break;
+
+                  case r.GuildEventType.OpenAltar:
+                    if (!c.default.instance.IsOnshowEvent()) return !1;
+                    if (m.default.instance.isAltarEventAndCanTrigger(0)) return !0;
+                    if (m.default.instance.isAltarEventAndCanTrigger(1)) return !0;
+                    if (m.default.instance.isAltarEventAndCanTrigger(2)) return !0;
+                    break;
+
+                  case r.GuildEventType.OpenBlackmarket:
+                    if (!c.default.instance.IsOnshowEvent()) return !1;
+                    if (m.default.instance.isBlackmarketEventAndCanTrigger(0)) return !0;
+                    if (m.default.instance.isBlackmarketEventAndCanTrigger(1)) return !0;
+                    if (m.default.instance.isBlackmarketEventAndCanTrigger(2)) return !0;
+                    break;
+
+                  case r.GuildEventType.EventSwich:
+                    if (c.default.instance.IsOnshowEvent()) return !0;
+                    break;
+
+                  case r.GuildEventType.EventSwichOpen:
+                    if (!m.default.instance.hasCanTriggerEvent) return !1;
+                    if (!c.default.instance.IsOnshowEvent()) return !0;
+                }
+                return !1;
+            }, e;
+        }();
+        a.GuideStep = v;
+        var b = function(e) {
+            function t() {
+                var t = null !== e && e.apply(this, arguments) || this;
+                return t.label = null, t.GuideDataMap = {}, t.isShowingGuide = !1, t;
+            }
+            var a;
+            return __extends(t, e), a = t, Object.defineProperty(t, "instance", {
+                get: function() {
+                    return null == this._instance && (this._instance = new a()), this._instance;
+                },
+                enumerable: !0,
+                configurable: !0
+            }), t.prototype.Init = function() {
+                var e = o.default.instance.monsterNode.parent.convertToWorldSpaceAR(o.default.instance.monsterNode.position), t = i.default.instance.nodeContent.convertToNodeSpaceAR(e);
+                console.log("worldPos:" + e), console.log("targetPos:" + t), this.addGuideStep(1, 2, "尝试点击怪物，锤它！", r.GuildEventType.TapMonster, !0), 
+                this.addGuideStep(2, 3, "多点几下试试，锤它！", r.GuildEventType.TapMonster, !1), this.addGuideStep(3, 0, "前期有效，后期攻速超高就无效了，锤它！", r.GuildEventType.TapMonster, !1), 
+                this.addGuideStep(4, 0, "这是离线收益，下次上线即获丰厚奖励！", r.GuildEventType.ShowOfflineReward, !0), 
+                this.addGuideStep(5, 0, "每日有丰富的签到奖励！点箭头这！", r.GuildEventType.Sign, !0), this.addGuideStep(6, 0, "更换更强力的装备", r.GuildEventType.OpenBag, !0), 
+                this.addGuideStep(7, 0, "有可以提升的战斗属性", r.GuildEventType.OpenRole, !0), this.addGuideStep(8, 0, "可领取丰厚的在线奖励", r.GuildEventType.DailyReward, !0), 
+                this.addGuideStep(9, 0, "可以领取事件奖励", r.GuildEventType.EventCardBonus, !0), this.addGuideStep(10, 0, "可以切换事件模式", r.GuildEventType.EventSwich, !0), 
+                this.addGuideStep(11, 0, "这里拥有强大的精灵，出战给予强大力量！", r.GuildEventType.OpenSprite, !0), 
+                this.addGuideStep(12, 0, "祭司为你添加神圣祝福", r.GuildEventType.OpenAltar, !0), this.addGuideStep(13, 0, "完成成就任务，获得称号的属性加成！", r.GuildEventType.OpenAchievement, !0), 
+                this.addGuideStep(14, 0, "黑商来了，小心被骗，慎重购买！", r.GuildEventType.OpenBlackmarket, !0), 
+                this.addGuideStep(15, 0, "神秘人带你时光倒流，重新做勇者!", r.GuildEventType.Relife, !0), this.addGuideStep(16, 0, "有可使用随机事件，切换看看", r.GuildEventType.EventSwichOpen, !0), 
+                this.guidCheck();
+                this.schedule(function(e) {
+                    this.guidCheck();
+                }, 10);
+            }, t.prototype.guidCheck = function() {
+                if (!(n.default.instance.getMainPlayerLVParam() >= 100 || this.isShowingGuide)) for (var e in this.GuideDataMap) if (this.GuideDataMap[e].canShow()) {
+                    this.GuideDataMap[e].initPos(), this.triggerStep(this.GuideDataMap[e]);
+                    break;
+                }
+            }, t.prototype.addGuideStep = function(e, t, a, n, i) {
+                var r = new v();
+                r.ID = e, r.NextStep = t, r.GuideDesc = a, r.EventType = n, r.IsFirst = i, this.GuideDataMap[e] = r;
+            }, t.prototype.GuildFinishCallback = function(e) {
+                if (this.isShowingGuide = !1, 0 != e) {
+                    var t = this.GuideDataMap[e];
+                    if (this.triggerEvent(t), 0 != t.NextStep) {
+                        var a = this.GuideDataMap[t.NextStep];
+                        a.initPos(), this.triggerStep(a);
+                    }
+                    this.GuideDataMap[e].EventType != r.GuildEventType.EventCardBonus && this.GuideDataMap[e].EventType != r.GuildEventType.DailyReward && delete this.GuideDataMap[e];
+                }
+            }, t.prototype.triggerEvent = function(e) {
+                switch (e.EventType) {
+                  case r.GuildEventType.TapMonster:
+                    var t = o.default.instance.mainPlayer;
+                    t.isDead() || t.attInterval > .1 && t.attack();
+                    break;
+
+                  case r.GuildEventType.ShowOfflineReward:
+                    break;
+
+                  case r.GuildEventType.Sign:
+                    l.default.instance.LoadSignUI();
+                    break;
+
+                  case r.GuildEventType.Sign:
+                    l.default.instance.LoadAchievementUI();
+                    break;
+
+                  case r.GuildEventType.OpenBag:
+                    l.default.instance.LoadBagUI();
+                    break;
+
+                  case r.GuildEventType.OpenRole:
+                    l.default.instance.LoadRoleUI();
+                    break;
+
+                  case r.GuildEventType.OpenSprite:
+                    l.default.instance.LoadSpriteUI();
+                    break;
+
+                  case r.GuildEventType.OpenAltar:
+                    if (m.default.instance.isAltarEventAndCanTrigger(0)) {
+                        m.default.instance.triggerEvent(0);
+                        break;
+                    }
+                    if (m.default.instance.isAltarEventAndCanTrigger(1)) {
+                        m.default.instance.triggerEvent(1);
+                        break;
+                    }
+                    if (m.default.instance.isAltarEventAndCanTrigger(2)) {
+                        m.default.instance.triggerEvent(2);
+                        break;
+                    }
+                    break;
+
+                  case r.GuildEventType.DailyReward:
+                    p.default.instance.getReward();
+                    break;
+
+                  case r.GuildEventType.Relife:
+                    if (m.default.instance.isRelifeEventAndCanTrigger(0)) {
+                        m.default.instance.triggerEvent(0);
+                        break;
+                    }
+                    if (m.default.instance.isRelifeEventAndCanTrigger(1)) {
+                        m.default.instance.triggerEvent(1);
+                        break;
+                    }
+                    if (m.default.instance.isRelifeEventAndCanTrigger(2)) {
+                        m.default.instance.triggerEvent(2);
+                        break;
+                    }
+                    break;
+
+                  case r.GuildEventType.OpenBlackmarket:
+                    if (m.default.instance.isBlackmarketEventAndCanTrigger(0)) {
+                        m.default.instance.triggerEvent(0);
+                        break;
+                    }
+                    if (m.default.instance.isBlackmarketEventAndCanTrigger(1)) {
+                        m.default.instance.triggerEvent(1);
+                        break;
+                    }
+                    if (m.default.instance.isBlackmarketEventAndCanTrigger(2)) {
+                        m.default.instance.triggerEvent(2);
+                        break;
+                    }
+                    break;
+
+                  case r.GuildEventType.EventCardBonus:
+                    if (m.default.instance.isBonusTypeAndCanTrigger(0)) {
+                        m.default.instance.triggerEvent(0);
+                        break;
+                    }
+                    if (m.default.instance.isBonusTypeAndCanTrigger(1)) {
+                        m.default.instance.triggerEvent(1);
+                        break;
+                    }
+                    if (m.default.instance.isBonusTypeAndCanTrigger(2)) {
+                        m.default.instance.triggerEvent(2);
+                        break;
+                    }
+                    break;
+
+                  case r.GuildEventType.EventSwich:
+                    c.default.instance.hideEvents();
+                    break;
+
+                  case r.GuildEventType.EventSwichOpen:
+                    c.default.instance.showEvents();
+                }
+            }, Object.defineProperty(t.prototype, "isNeedGuide", {
+                get: function() {
+                    return n.default.instance.getMainPlayerLVParam() <= 50;
+                },
+                enumerable: !0,
+                configurable: !0
+            }), t.prototype.triggerStep = function(e) {
+                this.isShowingGuide = !0, i.default.instance.showUI(e.ID, e.GuideDesc, e.VecPos, e.VecArrow, e.RotaionArrow);
+            }, t._instance = null, __decorate([ y(cc.Label) ], t.prototype, "label", void 0), 
+            t = a = __decorate([ _ ], t);
+        }(cc.Component);
+        a.default = b, cc._RF.pop();
+    }, {
+        "../battle/battle_manager": "battle_manager",
+        "../common/allenum": "allenum",
+        "../ui/battle_ui_manager": "battle_ui_manager",
+        "../ui/guide_ui_manager": "guide_ui_manager",
+        "../ui/menu_ui_manager": "menu_ui_manager",
+        "../ui/random_event_ui_manager": "random_event_ui_manager",
+        "../ui/today_reward_ui": "today_reward_ui",
+        "./achievenment_manager": "achievenment_manager",
+        "./dynamic_data_manager": "dynamic_data_manager",
+        "./random_event_manager": "random_event_manager",
+        "./reward_manager": "reward_manager",
+        "./sprite_manager": "sprite_manager",
+        "./ui_manager": "ui_manager"
+    } ],
+    guide_ui_manager: [ function(e, t, a) {
+        "use strict";
+        cc._RF.push(t, "f1642XXhUtHzLXyoQ+S7L2k", "guide_ui_manager"), Object.defineProperty(a, "__esModule", {
+            value: !0
+        });
+        var n = e("../manager/guide_manager"), i = cc._decorator, r = i.ccclass, o = i.property, s = function(e) {
+            function t() {
+                var t = null !== e && e.apply(this, arguments) || this;
+                return t.labelGuideDesc = null, t.nodeArrow = null, t.nodeContent = null, t.maskNode = null, 
+                t.guideID = 0, t;
+            }
+            var a;
+            return __extends(t, e), a = t, t.prototype.onLoad = function() {
+                a.instance = this, this.maskNode.on(cc.Node.EventType.TOUCH_START, this.hideUI, this);
+            }, t.prototype.showUI = function(e, t, a, n, i) {
+                this.nodeContent.active = !0, console.log("guideDesc:" + t + " guidePos :" + a + "  arrowPos:" + n), 
+                this.guideID = e, this.labelGuideDesc.string = t, this.node.position = a, this.nodeArrow.rotation = i, 
+                this.nodeArrow.position = n;
+            }, t.prototype.hideUI = function() {
+                this.nodeContent.active = !1, n.default.instance.GuildFinishCallback(this.guideID);
+            }, t.instance = null, __decorate([ o(cc.Label) ], t.prototype, "labelGuideDesc", void 0), 
+            __decorate([ o(cc.Node) ], t.prototype, "nodeArrow", void 0), __decorate([ o(cc.Node) ], t.prototype, "nodeContent", void 0), 
+            __decorate([ o(cc.Node) ], t.prototype, "maskNode", void 0), t = a = __decorate([ r ], t);
+        }(cc.Component);
+        a.default = s, cc._RF.pop();
+    }, {
+        "../manager/guide_manager": "guide_manager"
     } ],
     help_item: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "a9495iJljRLi5jml5QJBB6/", "help_item"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../help_ui_manager"), i = cc._decorator, r = i.ccclass, o = i.property, s = function(e) {
+        var n = e("../../manager/ui_manager"), i = cc._decorator, r = i.ccclass, o = i.property, s = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.helpKey = "", t.btnHelp = null, t;
@@ -4447,20 +4924,20 @@ window.__require = function e(t, a, n) {
             return __extends(t, e), t.prototype.start = function() {
                 this.btnHelp.node.on("click", this.showHelp, this);
             }, t.prototype.showHelp = function() {
-                n.default.instance.showHelp(this.helpKey);
+                n.default.instance.LoadHelpUI(this.helpKey);
             }, __decorate([ o ], t.prototype, "helpKey", void 0), __decorate([ o(cc.Button) ], t.prototype, "btnHelp", void 0), 
             t = __decorate([ r ], t);
         }(cc.Component);
         a.default = s, cc._RF.pop();
     }, {
-        "../help_ui_manager": "help_ui_manager"
+        "../../manager/ui_manager": "ui_manager"
     } ],
     help_manager: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "8c6e8k25DhKQLiVclfcnn7u", "help_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("./dynamic_data_manager"), i = e("../battle/battle_manager"), r = e("../ui/battle_ui_manager"), o = e("./playerbuff_manager"), s = e("./data_manager"), l = function() {
+        var n = e("./dynamic_data_manager"), i = e("../battle/battle_manager"), r = e("../ui/battle_ui_manager"), o = e("./data_manager"), s = function() {
             function e() {}
             return Object.defineProperty(e, "instance", {
                 get: function() {
@@ -4469,9 +4946,7 @@ window.__require = function e(t, a, n) {
                 enumerable: !0,
                 configurable: !0
             }), e.prototype.playerNewLift = function() {
-                var e = n.default.instance.getMainPlayer().lv;
-                if (n.default.instance.getMainPlayer().initNewPlayerBaseAttr(), null != n.default.instance.EquipItemDataMap) for (var t in n.default.instance.EquipItemDataMap) n.default.instance.addEquipAttrToPlayer(n.default.instance.EquipItemDataMap[t]);
-                Math.floor(e * (1 + o.default.instance.getBuffValue("转生收益")));
+                if (n.default.instance.getMainPlayer().initNewPlayerBaseAttr(), null != n.default.instance.EquipItemDataMap) for (var e in n.default.instance.EquipItemDataMap) n.default.instance.addEquipAttrToPlayer(n.default.instance.EquipItemDataMap[e]);
                 n.default.instance.playerNewLift(), i.default.instance.killCurMonster(), n.default.instance.playerMaxLV = 1, 
                 n.default.instance.playerMaxHellLV = 1, n.default.instance.playerMaxDiffLV = 1, 
                 i.default.instance.curLevel = 1, i.default.instance.curBeatCount = 0, i.default.instance.setNormalBattle(), 
@@ -4485,7 +4960,7 @@ window.__require = function e(t, a, n) {
                 console.log(t);
             }, e.prototype.RefreshEquipAttr = function(e, t, a) {
                 var n = 0;
-                n = a || s.default.instance.getEquipPrefixValById(t), e.addAttr(t, n);
+                n = a || o.default.instance.getEquipPrefixValById(t), e.addAttr(t, n);
             }, e.prototype.sellAllEquipByQuality = function(e) {
                 var t = [];
                 for (var a in n.default.instance.BagItemDataMap) null != n.default.instance.BagItemDataMap[a] && n.default.instance.BagItemDataMap[a].getQuality() == e && t.push(n.default.instance.BagItemDataMap[a]);
@@ -4495,19 +4970,18 @@ window.__require = function e(t, a, n) {
                 return !1;
             }, e.prototype.getAttrShowStr = function(e, t) {
                 return "攻击速度" != e ? ("全元素抗性" != e && "火焰抗性" != e && "闪电抗性" != e && "毒素抗性" != e && "冰冻抗性" != e || (t *= .1), 
-                t > 0 ? e + " : +" + s.default.instance.getAttrValStr(e, t) : e + " : " + s.default.instance.getAttrValStr(e, t)) : e + " : " + s.default.instance.getAttrValStr(e, t);
+                t > 0 ? e + " : +" + o.default.instance.getAttrValStr(e, t) : e + " : " + o.default.instance.getAttrValStr(e, t)) : e + " : " + o.default.instance.getAttrValStr(e, t);
             }, e.prototype.getAttrShowValueStr = function(e, t) {
                 return "全元素抗性" != e && "火焰抗性" != e && "闪电抗性" != e && "毒素抗性" != e && "冰冻抗性" != e || (t *= .1), 
-                s.default.instance.getAttrValStr(e, t);
+                o.default.instance.getAttrValStr(e, t);
             }, e._instance = null, e;
         }();
-        a.default = l, cc._RF.pop();
+        a.default = s, cc._RF.pop();
     }, {
         "../battle/battle_manager": "battle_manager",
         "../ui/battle_ui_manager": "battle_ui_manager",
         "./data_manager": "data_manager",
-        "./dynamic_data_manager": "dynamic_data_manager",
-        "./playerbuff_manager": "playerbuff_manager"
+        "./dynamic_data_manager": "dynamic_data_manager"
     } ],
     help_ui_manager: [ function(e, t, a) {
         "use strict";
@@ -4726,7 +5200,6 @@ window.__require = function e(t, a, n) {
             }), Object.defineProperty(t.prototype, "addGetBetterEquip", {
                 get: function() {
                     var e = this._addGetBetterEquip + l.default.instance.getBuffValue("获得更高品质物品") + c.default.instance.getBuffValue("获得更高品质物品") + m.default.instance.getTitleAttr("获得更高品质物品");
-                    // return 20;
                     return e > 20 ? 20 : e;
                 },
                 enumerable: !0,
@@ -4862,7 +5335,7 @@ window.__require = function e(t, a, n) {
                     var n = r.default.instance.expData[this.lv].exp;
                     if (n) {
                         if (this.lv >= 1e3) return;
-                        t - n > 0 ? (t -= n, this.addLV(1), a = !0) : (t, t = 0);
+                        t - n > 0 ? (t -= n, a = !0) : (t, t = 0);
                     } else t = 0;
                 }
                 a && (i.default.instance.updatePlayerHP(this.hp, this.maxhp), i.default.instance.updatePlayerMP(this.mp, this.maxmp), 
@@ -4894,6 +5367,25 @@ window.__require = function e(t, a, n) {
                     this.canAttack() ? (o.default.instance.hasMonster() && this.attack(), this.lastAttTime = 0) : this.lastAttTime = this.lastAttTime + e;
                 }
                 this.buffData.update(e);
+            }, t.prototype.clone = function(e) {
+                this.buffData = e.buffData, this._lv = e._lv, this._unSeperatePoint = e._unSeperatePoint, 
+                this._attInterval = e._attInterval, this._attIntervalReduce = e._attIntervalReduce, 
+                this._strength = e._strength, this._agile = e._agile, this._power = e._power, this._energy = e._energy, 
+                this._hp = e._hp, this._maxhp = e._maxhp, this._addhp = e._addhp, this._mp = e._mp, 
+                this._maxmp = e._maxmp, this._addmp = e._addmp, this._st = e._st, this._addDamagePercent = e._addDamagePercent, 
+                this._minDamage = e._minDamage, this._maxDamage = e._maxDamage, this._doubleAttack = e._doubleAttack, 
+                this._df = e._df, this._adddf = e._adddf, this._criticalRate = e._criticalRate, 
+                this._hitVal = e._hitVal, this._addHitVal = e._addHitVal, this._blockVal = e._blockVal, 
+                this._killAddHp = e._killAddHp, this._killAddMp = e._killAddMp, this._attAddHpPercent = e._attAddHpPercent, 
+                this._attAddMpPercent = e._attAddMpPercent, this._realDamage = e._realDamage, this._realDefence = e._realDefence, 
+                this._elementDamagePercent = e._elementDamagePercent, this._elementDefence = e._elementDefence, 
+                this._frozenDamage = e._frozenDamage, this._frozenDamagePercent = e._frozenDamagePercent, 
+                this._frozenDefence = e._frozenDefence, this._lightDamage = e._lightDamage, this._lightDamagePercent = e._lightDamagePercent, 
+                this._lightDefence = e._lightDefence, this._blazeDamage = e._blazeDamage, this._blazeDamagePercent = e._blazeDamagePercent, 
+                this._blazeDefence = e._blazeDefence, this._poisonDamage = e._poisonDamage, this._poisonDamagePercent = e._poisonDamagePercent, 
+                this._poisonDefence = e._poisonDefence, this._addGetCoin = e._addGetCoin, this._addExpRate = e._addExpRate, 
+                this._addGetBetterEquip = e._addGetBetterEquip, this._createMonsterInterval = e._createMonsterInterval, 
+                this._createMonsterFaster = e._createMonsterFaster, this._lastCreateMonsterTime = e._lastCreateMonsterTime;
             }, __decorate([ _(cc.Label) ], t.prototype, "labelWord", void 0), __decorate([ _(cc.Animation) ], t.prototype, "AniRole", void 0), 
             __decorate([ _(cc.Animation) ], t.prototype, "AniSay", void 0), __decorate([ _(cc.Node) ], t.prototype, "missLeadingGold", void 0), 
             __decorate([ _(cc.Node) ], t.prototype, "missLeadingdamaion", void 0), __decorate([ _(cc.Label) ], t.prototype, "miss_GoldNum", void 0), 
@@ -4922,7 +5414,7 @@ window.__require = function e(t, a, n) {
         var n = e("../../battle/battle_manager"), i = cc._decorator, r = i.ccclass, o = i.property, s = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
-                return t.btnHit = null, t.canHit = !0, t.hitInterval = .1, t.curTime = 0, t;
+                return t.btnHit = null, t.canHit = !0, t.hitInterval = .15, t.curTime = 0, t;
             }
             return __extends(t, e), t.prototype.start = function() {
                 this.btnHit.node.on("click", this.hit, this);
@@ -4993,7 +5485,7 @@ window.__require = function e(t, a, n) {
                 t;
             }
             var a;
-            return __extends(t, e), a = t, t.prototype.start = function() {
+            return __extends(t, e), a = t, t.prototype.onLoad = function() {
                 a.instance = this, this.content.active = !1, this.btn_share.node.on("click", this.OnClickShareToFeiend, this), 
                 this.btn_close.node.on("click", this.CloseInviteFriendUI, this), this.itemFriendCtrls = [];
             }, t.prototype.OnClickShareToFeiend = function() {
@@ -5065,10 +5557,11 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "80d5300gzRDfJ+NAGlFMSeo", "item_btn_chat_room"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../../network/player_network"), i = e("../tips_ui_manager"), r = cc._decorator, o = r.ccclass, s = r.property, l = function(e) {
+        var n = e("../../network/player_network"), i = e("../../manager/ui_manager"), r = cc._decorator, o = r.ccclass, s = r.property, l = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
-                return t.label_Statue = null, t.roomNum = 0, t.personNum = 0, t;
+                return t.label_Statue = null, t.label_Room_number = null, t.roomNum = 0, t.personNum = 0, 
+                t;
             }
             return __extends(t, e), t.prototype.start = function() {}, t.prototype.Init = function(e, t) {
                 var a = "";
@@ -5077,14 +5570,14 @@ window.__require = function e(t, a, n) {
                 this.label_Statue.string = a, this.label_Room_number.string = "勇者酒馆 " + e.toString(), 
                 this.roomNum = e, this.personNum = t, this.node.on("click", this.enterNewRoom, this);
             }, t.prototype.enterNewRoom = function() {
-                this.personNum >= 100 ? i.default.instance.showtips("talk_station_tips") : n.default.instance.ApplyChatRoomRequest(this.roomNum);
+                this.personNum >= 100 ? i.default.instance.LoadTipsByID("talk_station_tips") : n.default.instance.ApplyChatRoomRequest(this.roomNum);
             }, __decorate([ s(cc.Label) ], t.prototype, "label_Statue", void 0), __decorate([ s(cc.Label) ], t.prototype, "label_Room_number", void 0), 
             t = __decorate([ o ], t);
         }(cc.Component);
         a.default = l, cc._RF.pop();
     }, {
-        "../../network/player_network": "player_network",
-        "../tips_ui_manager": "tips_ui_manager"
+        "../../manager/ui_manager": "ui_manager",
+        "../../network/player_network": "player_network"
     } ],
     item_friend: [ function(e, t, a) {
         "use strict";
@@ -5289,7 +5782,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "df5d1E7xrBIWrkRqECLEUlk", "map_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../manager/data_manager"), i = e("../manager/pool_manager"), r = e("./item/map_item"), o = e("../battle/battle_manager"), s = e("../audio_manager"), l = e("../manager/resource_manager"), c = e("../manager/dynamic_data_manager"), u = e("./tips_ui_manager"), d = cc._decorator, p = d.ccclass, m = d.property, f = function(e) {
+        var n = e("../manager/data_manager"), i = e("../manager/pool_manager"), r = e("./item/map_item"), o = e("../battle/battle_manager"), s = e("../audio_manager"), l = e("../manager/resource_manager"), c = e("../manager/dynamic_data_manager"), u = e("../manager/ui_manager"), d = cc._decorator, p = d.ccclass, m = d.property, f = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.uiNode = null, t.maskNode = null, t.contentNode = null, t.labelLVName = null, 
@@ -5323,21 +5816,21 @@ window.__require = function e(t, a, n) {
                 this.labelLVName.string = t.name, this.labelLVDesc.string = t.desc, 1 == this.curSelectDiff ? this.labelLVDesc2.string = t.desc_normal : 2 == this.curSelectDiff ? this.labelLVDesc2.string = t.desc_diff : 3 == this.curSelectDiff && (this.labelLVDesc2.string = t.desc_hell), 
                 this.curSelectLevel = e, this.initContent();
             }, t.prototype.lastPage = function() {
-                this.curPage <= 1 ? u.default.instance.showTipsByStr("没有更多记录") : (this.curPage--, 
+                this.curPage <= 1 ? u.default.instance.LoadTipsByStr("没有更多记录") : (this.curPage--, 
                 this.initContent());
             }, t.prototype.nextPage = function() {
-                this.curPage >= this.maxPage ? u.default.instance.showTipsByStr("没有更多记录") : (this.curPage++, 
+                this.curPage >= this.maxPage ? u.default.instance.LoadTipsByStr("没有更多记录") : (this.curPage++, 
                 this.initContent());
             }, t.prototype.selectSimple = function() {
                 this.curSelectDiff = 1, this.spriteSimple.spriteFrame = l.default.instance.getCommonSprite("jszb_13"), 
                 this.spriteDiff.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), this.spriteHell.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), 
                 this.initContent();
             }, t.prototype.selectDiff = function() {
-                c.default.instance.newLiftCount < 20 ? u.default.instance.showtips("new_life_num_diff_limit") : (this.curSelectDiff = 2, 
+                c.default.instance.newLiftCount < 20 ? u.default.instance.LoadTipsByID("new_life_num_diff_limit") : (this.curSelectDiff = 2, 
                 this.spriteSimple.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), this.spriteDiff.spriteFrame = l.default.instance.getCommonSprite("jszb_13"), 
                 this.spriteHell.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), this.initContent());
             }, t.prototype.selectHell = function() {
-                c.default.instance.newLiftCount < 0 ? u.default.instance.showtips("new_life_num_hell_limit") : (this.curSelectDiff = 3, 
+                c.default.instance.newLiftCount < 30 ? u.default.instance.LoadTipsByID("new_life_num_hell_limit") : (this.curSelectDiff = 3, 
                 this.spriteSimple.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), this.spriteDiff.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), 
                 this.spriteHell.spriteFrame = l.default.instance.getCommonSprite("jszb_13"), this.initContent());
             }, t.prototype.gotoLevel = function() {
@@ -5358,15 +5851,15 @@ window.__require = function e(t, a, n) {
         "../manager/dynamic_data_manager": "dynamic_data_manager",
         "../manager/pool_manager": "pool_manager",
         "../manager/resource_manager": "resource_manager",
-        "./item/map_item": "map_item",
-        "./tips_ui_manager": "tips_ui_manager"
+        "../manager/ui_manager": "ui_manager",
+        "./item/map_item": "map_item"
     } ],
     menu_ui_manager: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "52883Sm8v5A87GomlDrNWA+", "menu_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("./bag_ui_manager"), i = e("./role_ui_manager"), r = e("./map_ui_manager"), o = e("./store_ui_manager"), s = e("./blackmarket_ui_manager"), l = e("./refresh_ui_manager"), c = e("./sprite_ui_manager"), u = e("./learn_skill_manager"), d = e("./strengthen_ui_manager"), p = e("./depot_ui_manager"), m = e("../util"), f = e("../battle/battle_manager"), g = e("../manager/sprite_manager"), h = e("../manager/dynamic_data_manager"), _ = e("../common/emmiter"), y = e("../common/allenum"), v = e("./invite_friend_ui_manager"), b = cc._decorator, D = b.ccclass, P = b.property, I = function(e) {
+        var n = e("../util"), i = e("../battle/battle_manager"), r = e("../manager/sprite_manager"), o = e("../manager/dynamic_data_manager"), s = e("../common/emmiter"), l = e("../common/allenum"), c = e("../manager/ui_manager"), u = cc._decorator, d = u.ccclass, p = u.property, m = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.bagButton = null, t.depotButton = null, t.roleButton = null, t.mapButton = null, 
@@ -5378,32 +5871,22 @@ window.__require = function e(t, a, n) {
                 a.instance = this, this.bagButton.node.on("click", this.showBagUI, this), this.depotButton.node.on("click", this.showDepotUI, this), 
                 this.roleButton.node.on("click", this.showRoleUI, this), this.mapButton.node.on("click", this.showMapUI, this), 
                 this.buttonSprite.node.on("click", this.showSpriteUI, this), this.btn_invite.node.on("click", this.inviteFriends, this);
-                _.Emitter.register(y.AlertType.BagAlert.toString(), this.checkBagAlert, this), _.Emitter.register(y.AlertType.RoleAlert.toString(), this.checkRoleAlert, this), 
-                _.Emitter.register(y.AlertType.SpriteAlert.toString(), this.checkSpriteAlert, this);
+                s.Emitter.register(l.AlertType.BagAlert.toString(), this.checkBagAlert, this), s.Emitter.register(l.AlertType.RoleAlert.toString(), this.checkRoleAlert, this), 
+                s.Emitter.register(l.AlertType.SpriteAlert.toString(), this.checkSpriteAlert, this);
             }, t.prototype.showRoleUI = function() {
-                i.default.instance.showUI();
+                c.default.instance.LoadRoleUI();
             }, t.prototype.showDepotUI = function() {
-                p.default.instance.showUI();
+                c.default.instance.LoadDepotUI();
             }, t.prototype.showBagUI = function() {
-                n.default.instance.showBagUI();
+                c.default.instance.LoadBagUI();
             }, t.prototype.showMapUI = function() {
-                r.default.instance.showUI();
-            }, t.prototype.showAltarUI = function() {
-                o.default.instance.showUI();
-            }, t.prototype.showBlackMarketUI = function() {
-                s.default.instance.showUI();
-            }, t.prototype.showRefreshEquipmentUI = function() {
-                l.default.instance.showUI();
-            }, t.prototype.showShrengthenUI = function() {
-                d.default.instance.showUI();
+                c.default.instance.LoadMapUI();
             }, t.prototype.showSpriteUI = function() {
-                c.default.instance.showUI();
-            }, t.prototype.showLearnSkillUI = function() {
-                u.default.instance.showUI();
+                c.default.instance.LoadSpriteUI();
             }, t.prototype.updateGoldNum = function(e) {
-                this.labelGold.string = m.default.GetLargeNumStr(e);
+                this.labelGold.string = n.default.GetLargeNumStr(e);
             }, t.prototype.updateDaimondNum = function(e) {
-                this.labelDaimond.string = m.default.GetLargeNumStr(e);
+                this.labelDaimond.string = n.default.GetLargeNumStr(e);
             }, t.prototype.getBagIconWorldPos = function() {
                 return this.bagButton.node.parent.convertToWorldSpaceAR(this.bagButton.node.position);
             }, t.prototype.getSpriteIconWorldPos = function() {
@@ -5411,40 +5894,30 @@ window.__require = function e(t, a, n) {
             }, t.prototype.initAlertStatus = function() {
                 this.checkBagAlert(), this.checkRoleAlert(), this.checkSpriteAlert();
             }, t.prototype.checkRoleAlert = function() {
-                f.default.instance.mainPlayer.unSeperatePoint > 0 ? this.nodeAlertRole.active = !0 : this.nodeAlertRole.active = !1;
+                i.default.instance.mainPlayer.unSeperatePoint > 0 ? this.nodeAlertRole.active = !0 : this.nodeAlertRole.active = !1;
             }, t.prototype.checkSpriteAlert = function() {
-                g.default.instance.isFullBattle() ? this.nodeAlertSprite.active = !1 : this.nodeAlertSprite.active = !0;
+                r.default.instance.isFullBattle() ? this.nodeAlertSprite.active = !1 : this.nodeAlertSprite.active = !0;
             }, t.prototype.checkBagAlert = function() {
-                h.default.instance.hasBetterEquip() ? this.nodeAlertBag.active = !0 : this.nodeAlertBag.active = !1;
+                o.default.instance.hasBetterEquip() ? this.nodeAlertBag.active = !0 : this.nodeAlertBag.active = !1;
             }, t.prototype.inviteFriends = function() {
-                v.default.instance.ShowInviteFrinedUI();
-            }, t.instance = null, __decorate([ P(cc.Button) ], t.prototype, "bagButton", void 0), 
-            __decorate([ P(cc.Button) ], t.prototype, "depotButton", void 0), __decorate([ P(cc.Button) ], t.prototype, "roleButton", void 0), 
-            __decorate([ P(cc.Button) ], t.prototype, "mapButton", void 0), __decorate([ P(cc.Button) ], t.prototype, "buttonSprite", void 0), 
-            __decorate([ P(cc.Label) ], t.prototype, "labelGold", void 0), __decorate([ P(cc.Label) ], t.prototype, "labelDaimond", void 0), 
-            __decorate([ P(cc.Node) ], t.prototype, "nodeAlertRole", void 0), __decorate([ P(cc.Node) ], t.prototype, "nodeAlertSprite", void 0), 
-            __decorate([ P(cc.Node) ], t.prototype, "nodeAlertBag", void 0), __decorate([ P(cc.Button) ], t.prototype, "btn_invite", void 0), 
-            t = a = __decorate([ D ], t);
+                c.default.instance.LoadInviteFriendUI();
+            }, t.instance = null, __decorate([ p(cc.Button) ], t.prototype, "bagButton", void 0), 
+            __decorate([ p(cc.Button) ], t.prototype, "depotButton", void 0), __decorate([ p(cc.Button) ], t.prototype, "roleButton", void 0), 
+            __decorate([ p(cc.Button) ], t.prototype, "mapButton", void 0), __decorate([ p(cc.Button) ], t.prototype, "buttonSprite", void 0), 
+            __decorate([ p(cc.Label) ], t.prototype, "labelGold", void 0), __decorate([ p(cc.Label) ], t.prototype, "labelDaimond", void 0), 
+            __decorate([ p(cc.Node) ], t.prototype, "nodeAlertRole", void 0), __decorate([ p(cc.Node) ], t.prototype, "nodeAlertSprite", void 0), 
+            __decorate([ p(cc.Node) ], t.prototype, "nodeAlertBag", void 0), __decorate([ p(cc.Button) ], t.prototype, "btn_invite", void 0), 
+            t = a = __decorate([ d ], t);
         }(cc.Component);
-        a.default = I, cc._RF.pop();
+        a.default = m, cc._RF.pop();
     }, {
         "../battle/battle_manager": "battle_manager",
         "../common/allenum": "allenum",
         "../common/emmiter": "emmiter",
         "../manager/dynamic_data_manager": "dynamic_data_manager",
         "../manager/sprite_manager": "sprite_manager",
-        "../util": "util",
-        "./bag_ui_manager": "bag_ui_manager",
-        "./blackmarket_ui_manager": "blackmarket_ui_manager",
-        "./depot_ui_manager": "depot_ui_manager",
-        "./invite_friend_ui_manager": "invite_friend_ui_manager",
-        "./learn_skill_manager": "learn_skill_manager",
-        "./map_ui_manager": "map_ui_manager",
-        "./refresh_ui_manager": "refresh_ui_manager",
-        "./role_ui_manager": "role_ui_manager",
-        "./sprite_ui_manager": "sprite_ui_manager",
-        "./store_ui_manager": "store_ui_manager",
-        "./strengthen_ui_manager": "strengthen_ui_manager"
+        "../manager/ui_manager": "ui_manager",
+        "../util": "util"
     } ],
     messagebox_ui_manager: [ function(e, t, a) {
         "use strict";
@@ -5519,6 +5992,7 @@ window.__require = function e(t, a, n) {
             e[e.UpdatePlayerCanUseTitleResponse = 152] = "UpdatePlayerCanUseTitleResponse", 
             e[e.PlayerUseTitleRequest = 153] = "PlayerUseTitleRequest", e[e.PlayerUseTitleResponse = 154] = "PlayerUseTitleResponse", 
             e[e.FastRemoveItemFromBagRequest = 155] = "FastRemoveItemFromBagRequest", e[e.FastRemoveItemFromBagResponse = 156] = "FastRemoveItemFromBagResponse", 
+            e[e.ActiveEquipRequest = 157] = "ActiveEquipRequest", e[e.ActiveEquipResponse = 158] = "ActiveEquipResponse", 
             e[e.StengthItemRequest = 200] = "StengthItemRequest", e[e.StengthItemResponse = 201] = "StengthItemResponse", 
             e[e.RefreshItemRequest = 300] = "RefreshItemRequest", e[e.RefreshItemResponse = 301] = "RefreshItemResponse", 
             e[e.PlayerNewLifeRequest = 400] = "PlayerNewLifeRequest", e[e.PlayerNewLifeResponse = 401] = "PlayerNewLifeResponse", 
@@ -5535,21 +6009,23 @@ window.__require = function e(t, a, n) {
             e[e.PlayerSignRequest = 709] = "PlayerSignRequest", e[e.PlayerSignResponse = 710] = "PlayerSignResponse", 
             e[e.ServerOverDayResponse = 711] = "ServerOverDayResponse", e[e.PlayerKillMonsterRequest = 712] = "PlayerKillMonsterRequest", 
             e[e.PlayerOverComeDungeonRequest = 713] = "PlayerOverComeDungeonRequest", e[e.GetCollectionBounsRequest = 714] = "GetCollectionBounsRequest", 
-            e[e.GetCollectionBounsResponse = 715] = "GetCollectionBounsResponse", e[e.PlayerSyncMoneyResponse = 716] = "PlayerSyncMoneyResponse", 
-            e[e.PlayerBuyBlackMarketRequest = 717] = "PlayerBuyBlackMarketRequest", e[e.PlayerBuyBlackMarketResponse = 718] = "PlayerBuyBlackMarketResponse", 
-            e[e.PlayerAttackMonsterRequest = 719] = "PlayerAttackMonsterRequest", e[e.PlayerAttackMonsterResponse = 720] = "PlayerAttackMonsterResponse", 
-            e[e.PlayerProduceMonsterGemResponse = 721] = "PlayerProduceMonsterGemResponse", 
-            e[e.PlayerApplyChatRoomRequest = 801] = "PlayerApplyChatRoomRequest", e[e.PlayerApplyChatRoomResponse = 802] = "PlayerApplyChatRoomResponse", 
-            e[e.PlayerChatRoomSendRequest = 803] = "PlayerChatRoomSendRequest", e[e.PlayerChatRoomSendResponse = 804] = "PlayerChatRoomSendResponse", 
-            e[e.SyncChatRoomMsgResponse = 805] = "SyncChatRoomMsgResponse", e[e.PlayerGetChatRoomListRequest = 806] = "PlayerGetChatRoomListRequest", 
-            e[e.PlayerGetChatRoomListResponse = 807] = "PlayerGetChatRoomListResponse", e[e.BlendMonsterGemRequest = 901] = "BlendMonsterGemRequest", 
-            e[e.BlendMonsterGemResponse = 902] = "BlendMonsterGemResponse", e[e.AddMonsterGemFromBagToEquipRequest = 903] = "AddMonsterGemFromBagToEquipRequest", 
+            e[e.GetCollectionBounsResponse = 715] = "GetCollectionBounsResponse", e[e.PlayerBuyBlackMarketRequest = 717] = "PlayerBuyBlackMarketRequest", 
+            e[e.PlayerBuyBlackMarketResponse = 718] = "PlayerBuyBlackMarketResponse", e[e.PlayerAttackMonsterRequest = 719] = "PlayerAttackMonsterRequest", 
+            e[e.PlayerAttackMonsterResponse = 720] = "PlayerAttackMonsterResponse", e[e.PlayerApplyChatRoomRequest = 801] = "PlayerApplyChatRoomRequest", 
+            e[e.PlayerApplyChatRoomResponse = 802] = "PlayerApplyChatRoomResponse", e[e.PlayerChatRoomSendRequest = 803] = "PlayerChatRoomSendRequest", 
+            e[e.PlayerChatRoomSendResponse = 804] = "PlayerChatRoomSendResponse", e[e.SyncChatRoomMsgResponse = 805] = "SyncChatRoomMsgResponse", 
+            e[e.PlayerGetChatRoomListRequest = 806] = "PlayerGetChatRoomListRequest", e[e.PlayerGetChatRoomListResponse = 807] = "PlayerGetChatRoomListResponse", 
+            e[e.BlendMonsterGemRequest = 901] = "BlendMonsterGemRequest", e[e.BlendMonsterGemResponse = 902] = "BlendMonsterGemResponse", 
+            e[e.AddMonsterGemFromBagToEquipRequest = 903] = "AddMonsterGemFromBagToEquipRequest", 
             e[e.AddMonsterGemFromBagToEquipResponse = 904] = "AddMonsterGemFromBagToEquipResponse", 
             e[e.AddMonsterGemFromEquipToBagRequest = 905] = "AddMonsterGemFromEquipToBagRequest", 
             e[e.AddMonsterGemFromEquipToBagResponse = 906] = "AddMonsterGemFromEquipToBagResponse", 
             e[e.AddEquipHoleRequest = 907] = "AddEquipHoleRequest", e[e.AddEquipHoleResponse = 908] = "AddEquipHoleResponse", 
-            e[e.AddMonsterGemResponse = 909] = "AddMonsterGemResponse", e[e.SyncReferUserResponse = 1001] = "SyncReferUserResponse", 
-            e[e.GetReferUserRewardRequest = 1002] = "GetReferUserRewardRequest", e[e.GetReferUserRewardResponse = 1003] = "GetReferUserRewardResponse";
+            e[e.AddMonsterGemResponse = 909] = "AddMonsterGemResponse", e[e.PlayerProduceMonsterGemResponse = 910] = "PlayerProduceMonsterGemResponse", 
+            e[e.SyncReferUserResponse = 1001] = "SyncReferUserResponse", e[e.GetReferUserRewardRequest = 1002] = "GetReferUserRewardRequest", 
+            e[e.GetReferUserRewardResponse = 1003] = "GetReferUserRewardResponse", e[e.PlayerSyncMoneyResponse = 1101] = "PlayerSyncMoneyResponse", 
+            e[e.PlayerSyncLevelResponse = 1102] = "PlayerSyncLevelResponse", e[e.PlayerSyncSpriteResponse = 1103] = "PlayerSyncSpriteResponse", 
+            e[e.PlayerSyncEquipResponse = 1104] = "PlayerSyncEquipResponse";
         }(a.MessageNo || (a.MessageNo = {})), function(e) {
             e[e.Error = 0] = "Error", e[e.Login = 1] = "Login", e[e.GamePlay = 2] = "GamePlay";
         }(a.MessageType || (a.MessageType = {})), cc._RF.pop();
@@ -5623,12 +6099,13 @@ window.__require = function e(t, a, n) {
             }, t.prototype.initMonsterDataByEntity = function(e, t) {
                 this.baseID = t;
                 var a = c.default.instance.monsterData[t];
-                this.init(e.strength, e.agile, e.power, e.energy, e.maxhp / 2, e.mp, 0, 0), this.init2(.5 * e.minDamage, .5 * e.maxDamage, 0, 0), 
-                this.attInterval = a.att_interval, this.hitVal = a.hit, this.blockVal = a.block, 
-                this.attAddHpPercent = a.att_add_hp, this.frozenDamage = a.frozen_damage, this.blazeDamage = a.blaze_damage, 
-                this.poisonDamage = a.poison_damage, this.lightDamage = a.light_damage, this.frozenDefence = a.frozen_defence, 
-                this.blazeDefence = a.blaze_defence, this.lightDefence = a.light_defence, this.poisonDefence = a.poison_defence, 
-                this.lv = e.lv, this.physicsDefenceRate = a.phyDef, this.LabelName.string = a.name + " Lv" + this.lv, 
+                this.init(e.strength, e.agile, e.power, e.energy, Math.floor(e.maxhp / 2), e.mp, 0, 0), 
+                this.init2(.5 * e.minDamage, .5 * e.maxDamage, 0, 0), this.attInterval = a.att_interval, 
+                this.hitVal = a.hit, this.blockVal = a.block, this.attAddHpPercent = a.att_add_hp, 
+                this.frozenDamage = a.frozen_damage, this.blazeDamage = a.blaze_damage, this.poisonDamage = a.poison_damage, 
+                this.lightDamage = a.light_damage, this.frozenDefence = a.frozen_defence, this.blazeDefence = a.blaze_defence, 
+                this.lightDefence = a.light_defence, this.poisonDefence = a.poison_defence, this.lv = e.lv, 
+                this.physicsDefenceRate = a.phyDef, this.LabelName.string = a.name + " Lv" + this.lv, 
                 this.SpriteCur.spriteFrame = u.default.instance.getMonsterSprite(a.icon_path), this.SpriteCur.node.setContentSize(100 * a.icon_scale, 100 * a.icon_scale), 
                 this.initMonster();
             }, t.prototype.setDiffChange = function(e) {
@@ -5663,7 +6140,7 @@ window.__require = function e(t, a, n) {
                     break;
 
                   case "伤害":
-                    this.addMinDamage(-100000000), this.addMaxDamage(-100000000);
+                    this.addMinDamage(t), this.addMaxDamage(t);
                     break;
 
                   case "生命":
@@ -5744,7 +6221,6 @@ window.__require = function e(t, a, n) {
                 var t = n.Config.ServerIP, a = new WebSocket(t);
                 console.log("开始连接：", t), a.onopen = function(t) {
                     console.log("Websocket连接成功");
-                    o.default.instance.token = "oWT_j5MWsnnGjKqJ8X_1vHmL3gqc"; // 设置登录账号
                     var a = {
                         Token: o.default.instance.token
                     };
@@ -5876,17 +6352,17 @@ window.__require = function e(t, a, n) {
                 this.labelOfflineExp.string = "获得经验：" + n.default.GetLargeNumStr(o) + " 等级：" + s + " -> " + l;
                 var D = "普通装备 X " + c;
                 u > 0 && (D += "[自动出售 X " + u + "]"), this.labelOfflineEquip1.string = D;
-                var P = "稀有装备 X " + d;
-                p > 0 && (P += "[自动出售 X " + p + "]"), this.labelOfflineEquip2.string = P;
-                var I = "卓越装备 X " + m;
-                f > 0 && (I += "[自动出售 X " + f + "]"), this.labelOfflineEquip3.string = I;
+                var I = "稀有装备 X " + d;
+                p > 0 && (I += "[自动出售 X " + p + "]"), this.labelOfflineEquip2.string = I;
+                var P = "卓越装备 X " + m;
+                f > 0 && (P += "[自动出售 X " + f + "]"), this.labelOfflineEquip3.string = P;
                 var B = "史诗装备 X " + g;
                 h > 0 && (B += "[自动出售 X " + h + "]"), this.labelOfflineEquip4.string = B;
                 var S = this.getMapNumGem(_);
                 if (this.conten.height = 400, S.length > 0) {
-                    for (var k in this.labelGem) {
-                        var R = Number(k) + 1;
-                        S[R] ? this.labelGem[k].string = this.selectGemLevel(Number(R)) + "魔晶 X " + S[R] : (this.labelGem[k].node.active = !1, 
+                    for (var R in this.labelGem) {
+                        var k = Number(R) + 1;
+                        S[k] ? this.labelGem[R].string = this.selectGemLevel(Number(k)) + "魔晶 X " + S[k] : (this.labelGem[R].node.active = !1, 
                         this.conten.height -= 35);
                     }
                     this.gemNode.active = !0;
@@ -5936,7 +6412,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "17d820wKvRNnq5dj/rvvxsp", "player_network"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../manager/dynamic_data_manager"), i = e("../manager/network_manager"), r = e("../common/message"), o = e("../common/emmiter"), s = e("../manager/game_manager"), l = e("../manager/skill_manager"), c = e("../manager/help_manager"), u = e("../manager/reward_manager"), d = e("../manager/sprite_manager"), p = e("../manager/random_event_manager"), m = e("../manager/blackmarket_manager"), f = e("../manager/data_manager"), g = e("../ui/battle_ui_manager"), h = e("../battle/battle_manager"), _ = e("../ui/offline_show_ui_manager"), y = e("../ui/item/ad_item"), v = e("../ui/changname_ui_manager"), b = e("../ui/tips_ui_manager"), D = e("../ui/sign_ui_manager"), P = e("../manager/achievenment_manager"), I = e("../ui/chat_ui_manager"), B = e("../common/allenum"), S = e("../ui/blackmarket_ui_manager"), k = e("../ui/learn_skill_manager"), R = e("../ui/bag_ui_manager"), M = e("../ui/gem_tip_ui_manager"), N = function() {
+        var n = e("../manager/dynamic_data_manager"), i = e("../manager/network_manager"), r = e("../common/message"), o = e("../common/emmiter"), s = e("../manager/game_manager"), l = e("../manager/skill_manager"), c = e("../manager/help_manager"), u = e("../manager/reward_manager"), d = e("../manager/sprite_manager"), p = e("../manager/random_event_manager"), m = e("../manager/blackmarket_manager"), f = e("../manager/data_manager"), g = e("../ui/battle_ui_manager"), h = e("../battle/battle_manager"), _ = e("../ui/item/ad_item"), y = e("../ui/changname_ui_manager"), v = e("../ui/sign_ui_manager"), b = e("../manager/achievenment_manager"), D = e("../ui/chat_ui_manager"), I = e("../common/allenum"), P = e("../ui/learn_skill_manager"), B = e("../ui/bag_ui_manager"), S = e("../ui/gem_tip_ui_manager"), R = e("../manager/effect_manager"), k = e("../manager/ui_manager"), A = function() {
             function e() {}
             return Object.defineProperty(e, "instance", {
                 get: function() {
@@ -5972,12 +6448,12 @@ window.__require = function e(t, a, n) {
                 o.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.PlayerProduceMonsterGemResponse, r.MessageType.GamePlay), this.PlayerProduceMonsterGemResponse, this), 
                 o.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.BlendMonsterGemResponse, r.MessageType.GamePlay), this.BlendMonsterGemResponse, this), 
                 o.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.SyncReferUserResponse, r.MessageType.GamePlay), this.SyncReferUserResponse, this), 
-                o.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.GetReferUserRewardResponse, r.MessageType.GamePlay), this.GetReferUserRewardResponse, this);
+                o.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.GetReferUserRewardResponse, r.MessageType.GamePlay), this.GetReferUserRewardResponse, this), 
+                o.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.PlayerSyncLevelResponse, r.MessageType.GamePlay), this.PlayerSyncLevelResponse, this);
             }, e.prototype.UpdatePlayerBaseData = function(e) {
                 void 0 === e && (e = !1);
                 var t = h.default.instance.curBeatCount;
                 e || (t -= 1);
-                // 关键 数据上传服务器
                 var a = n.default.instance.getMainPlayer(), o = {
                     Lv: a.lv,
                     Exp: a.exp,
@@ -5987,8 +6463,8 @@ window.__require = function e(t, a, n) {
                     DungeonDiff: n.default.instance.curDiff,
                     DungeonMaxDiffLevel: n.default.instance.playerMaxDiffLV,
                     DungeonMaxHellLevel: n.default.instance.playerMaxHellLV,
-                    MoneyNum: n.default.instance.goldNum, // 改不了
-                    DaimondNum: n.default.instance.daimondNum // 改不了
+                    MoneyNum: n.default.instance.goldNum,
+                    DaimondNum: n.default.instance.daimondNum
                 };
                 i.NetworkManager.SendMessage(r.MessageNo.UpdatePlayerDataRequest, r.MessageType.GamePlay, o);
             }, e.prototype.UpdatePlayerDataResponse = function(e, t) {}, e.prototype.PlayerBeingKickResponse = function(e, t) {
@@ -6002,22 +6478,23 @@ window.__require = function e(t, a, n) {
                 if (n.default.instance.EquipItemDataMap = {}, n.default.instance.BagItemDataMap = {}, 
                 n.default.instance.DepotItemDataMap = {}, d.default.instance.spritesMap = {}, p.default.instance.events = {}, 
                 u.default.instance.setDefault(), n.default.instance.AltarBuffData = [], m.default.instance.setDefault(), 
-                l.default.instance.skills = [], l.default.instance.setUpIndexs = [], a.lv = t.Lv, 
-                a.exp = t.Exp, a.addBaseStrength(t.StrPoint), a.addBasePower(t.PowPoint), a.addBaseAgile(t.AgiPoint), 
-                a.addBaseEnergy(t.EnePoint), a.unSeperatePoint = t.UnusePoint, a.fullfill(), n.default.instance.daimonNum = t.DaimondNum, 
-                n.default.instance.goldNum = t.MoneyNum, t.DungeonFloor && (h.default.instance.curBeatCount = t.DungeonFloor), 
-                t.DungeonLevel && (n.default.instance.curLevel = t.DungeonLevel), n.default.instance.playerMaxLV = t.DungeonMaxLevel, 
-                n.default.instance.newLiftCount = t.NewLiftCount, t.DungeonDiff && (n.default.instance.curDiff = t.DungeonDiff), 
-                t.DungeonMaxDiffLevel && (n.default.instance.playerMaxDiffLV = t.DungeonMaxDiffLevel), 
+                l.default.instance.skills = [], l.default.instance.setUpIndexs = [], n.default.instance.EquipItemAllDatas = {}, 
+                a.lv = t.Lv, a.exp = t.Exp, a.addBaseStrength(t.StrPoint), a.addBasePower(t.PowPoint), 
+                a.addBaseAgile(t.AgiPoint), a.addBaseEnergy(t.EnePoint), a.unSeperatePoint = t.UnusePoint, 
+                a.fullfill(), n.default.instance.daimonNum = t.DaimondNum, n.default.instance.goldNum = t.MoneyNum, 
+                t.DungeonFloor && (h.default.instance.curBeatCount = t.DungeonFloor), t.DungeonLevel && (n.default.instance.curLevel = t.DungeonLevel), 
+                n.default.instance.playerMaxLV = t.DungeonMaxLevel, n.default.instance.newLiftCount = t.NewLiftCount, 
+                t.DungeonDiff && (n.default.instance.curDiff = t.DungeonDiff), t.DungeonMaxDiffLevel && (n.default.instance.playerMaxDiffLV = t.DungeonMaxDiffLevel), 
                 t.DungeonMaxHellLevel && (n.default.instance.playerMaxHellLV = t.DungeonMaxHellLevel), 
                 t.ServerUnix && n.default.instance.UpdateServerTime(t.ServerUnix), t.LeftAdCount && (n.default.instance.playerLeftADShow = t.LeftAdCount), 
-                t.AchievementTitleType && (P.default.instance.curTitleType = t.AchievementTitleType), 
+                t.AchievementTitleType && (b.default.instance.curTitleType = t.AchievementTitleType), 
                 t.SignCount && (n.default.instance.signTotalCount = t.SignCount), 1 == t.CanSign && (n.default.instance.canSign = !0), 
-                D.default.instance.signInit(), t.IsGetCollectionBonus && (n.default.instance.isGetCollectionBonus = t.IsGetCollectionBonus), 
-                t.MonsterGemData) for (var o in t.MonsterGemData) t.MonsterGemData[o] && n.default.instance.AddGemItenByServer(Number(o), t.MonsterGemData[o]);
+                o.Emitter.fire(I.AlertType.SignAlert.toString()), t.IsGetCollectionBonus && (n.default.instance.isGetCollectionBonus = t.IsGetCollectionBonus), 
+                t.MonsterGemData) for (var c in t.MonsterGemData) t.MonsterGemData[c] && n.default.instance.AddGemItenByServer(Number(c), t.MonsterGemData[c]);
                 t.RoleName && (n.default.instance.roleName = t.RoleName), t.ID && (n.default.instance.id = t.ID), 
                 u.default.instance.initByNetwork(t.TotalGetRewardCount, t.TodayGetRewardCount, t.LastGetRewardTimestamp), 
                 t.ReferUserData && (n.default.instance.referUserData = t.ReferUserData), t.ChatRoomID && (n.default.instance.chatRoomID = t.ChatRoomID), 
+                t.EquipActiveIndex && (n.default.instance.curUseEquipPlanIndex = t.EquipActiveIndex), 
                 s.default.instance.RequireAllNetworkInitData();
             }, e.prototype.GetPlayerAltarBuffResponse = function(e, t) {
                 if (t.AltarDatas) for (var a in t.AltarDatas) n.default.instance.AddAltarByServer(t.AltarDatas[a]);
@@ -6047,14 +6524,14 @@ window.__require = function e(t, a, n) {
                 };
                 i.NetworkManager.SendMessage(r.MessageNo.PlayerSkillAddRequest, r.MessageType.GamePlay, t);
             }, e.prototype.PlayerSkillAddResponse = function(e, t) {
-                t.IsOk && k.default.instance.learnSkillSuccess();
+                t.IsOk && P.default.instance.learnSkillSuccess();
             }, e.prototype.PlayerSkillLevelUp = function(e) {
                 var t = {
                     ID: Number(e)
                 };
                 i.NetworkManager.SendMessage(r.MessageNo.PlayerSkillLevelUpRequest, r.MessageType.GamePlay, t);
             }, e.prototype.PlayerSkillLevelUpResponse = function(e, t) {
-                t.IsOk && k.default.instance.learnSkillSuccess();
+                t.IsOk && P.default.instance.learnSkillSuccess();
             }, e.prototype.PlayerUseSkill = function(e, t) {
                 var a = {
                     ID: Number(e),
@@ -6082,7 +6559,7 @@ window.__require = function e(t, a, n) {
                 i.NetworkManager.SendMessage(r.MessageNo.PlayerChangeNameRequest, r.MessageType.GamePlay, t);
             }, e.prototype.PlayerChangeNameResponse = function(e, t) {
                 t.Name && (t.IsOK ? (n.default.instance.roleName = t.Name, g.default.instance.updatePlayerName(), 
-                v.default.instance.hideUI()) : b.default.instance.showTipsByStr("包含敏感信息，请重新输入"));
+                y.default.instance.hideUI()) : k.default.instance.LoadTipsByStr("包含敏感信息，请重新输入"));
             }, e.prototype.PlayerReconnectRequest = function(e) {
                 var t = {
                     Token: e
@@ -6091,15 +6568,15 @@ window.__require = function e(t, a, n) {
             }, e.prototype.PlayerReconnectResponse = function(e, t) {
                 t.IsOk && s.default.instance.PlayerReconnectSuccee();
             }, e.prototype.OfflineMessageResponse = function(e, t) {
-                _.default.instance.showUI(t.OfflineTime, t.BeatCount, t.GoldNum, t.Exp, t.FromLv, t.ToLv, t.Equip1Num, t.Equip1SellNum, t.Equip2Num, t.Equip2SellNum, t.Equip3Num, t.Equip3SellNum, t.Equip4Num, t.Equip4SellNum, t.MonsterGem);
+                k.default.instance.LoadOfflineRewardInfoUI(t.OfflineTime, t.BeatCount, t.GoldNum, t.Exp, t.FromLv, t.ToLv, t.Equip1Num, t.Equip1SellNum, t.Equip2Num, t.Equip2SellNum, t.Equip3Num, t.Equip3SellNum, t.Equip4Num, t.Equip4SellNum, t.MonsterGem);
             }, e.prototype.PlayerShowAdRequest = function() {
                 i.NetworkManager.SendMessage(r.MessageNo.PlayerShowAdRequest, r.MessageType.GamePlay, {});
             }, e.prototype.PlayerShowAdResponse = function(e, t) {
-                t.LeftAdCount && (n.default.instance.playerLeftADShow = t.LeftAdCount, n.default.instance.playerLeftADShow <= 0 && y.default.instance.close());
+                t.LeftAdCount && (n.default.instance.playerLeftADShow = t.LeftAdCount, n.default.instance.playerLeftADShow <= 0 && _.default.instance.close());
             }, e.prototype.PlayerSignRequest = function() {
                 i.NetworkManager.SendMessage(r.MessageNo.PlayerSignRequest, r.MessageType.GamePlay, {});
             }, e.prototype.PlayerSignResponse = function(e, t) {
-                t.IsOk ? (console.log("签到成功" + t.SignCount), n.default.instance.canSign = !1, D.default.instance.getSignReward(n.default.instance.signTotalCount)) : console.log("请明天再签到");
+                t.IsOk ? (console.log("签到成功" + t.SignCount), n.default.instance.canSign = !1, v.default.instance.getSignReward(n.default.instance.signTotalCount)) : console.log("请明天再签到");
             }, e.prototype.PlayerKillMonsterRequest = function(e, t, a, n) {
                 var o = {
                     MonsterID: Number(e),
@@ -6116,19 +6593,20 @@ window.__require = function e(t, a, n) {
             }, e.prototype.GetCollectionBounsRequest = function() {
                 i.NetworkManager.SendMessage(r.MessageNo.GetCollectionBounsRequest, r.MessageType.GamePlay, {});
             }, e.prototype.GetCollectionBounsResponse = function(e, t) {
-                t.IsOk && (n.default.instance.isGetCollectionBonus = 1, b.default.instance.showTipsByStr("获得钻石: 200"));
+                t.IsOk && (n.default.instance.isGetCollectionBonus = 1, k.default.instance.LoadTipsByStr("获得钻石: 200"));
             }, e.prototype.ApplyChatRoomRequest = function(e) {
                 i.NetworkManager.SendMessage(r.MessageNo.PlayerApplyChatRoomRequest, r.MessageType.GamePlay, {
                     ChatRoomID: Number(e)
                 });
             }, e.prototype.PlayerApplyChatRoomResponse = function(e, t) {
                 if (t.IsOk) {
-                    if (n.default.instance.chatRoomID = t.ChatRoomID, I.default.instance.removeChatMessage(), 
-                    I.default.instance.closeSelectRoom(), t.Messages) for (var a = 0, i = t.Messages; a < i.length; a++) {
+                    if (n.default.instance.chatRoomID != t.ChatRoomID && (n.default.instance.chatRoomID = t.ChatRoomID, 
+                    n.default.instance.chatTemp = []), D.default.instance && (D.default.instance.removeChatMessage(), 
+                    D.default.instance.closeSelectRoom()), t.Messages) for (var a = 0, i = t.Messages; a < i.length; a++) {
                         var r = i[a];
-                        I.default.instance.otherAsk(r);
+                        n.default.instance.saveChatMessage(r);
                     }
-                } else I.default.instance.closeSelectRoom();
+                } else k.default.instance.LoadTipsByID("talk_station_tips"), D.default.instance.closeSelectRoom();
             }, e.prototype.PlayerChatRoomSendRequest = function(e) {
                 var t = {
                     Content: String(e)
@@ -6137,40 +6615,39 @@ window.__require = function e(t, a, n) {
             }, e.prototype.PlayerChatRoomSendResponseIDC = function(e, t) {
                 if (0 == t.Active) {
                     var a = Math.ceil(t.DeativeTime / 60);
-                    b.default.instance.showTipsByStr("您已被禁言" + a + "分钟");
+                    k.default.instance.LoadTipsByStr("您已被禁言" + a + "分钟");
                 }
             }, e.prototype.SyncChatRoomMsgResponseIDC = function(e, t) {
-                I.default.instance.otherAsk(t.Message);
+                n.default.instance.saveChatMessage(t.Message);
             }, e.prototype.PlayerGetChatRoomListRequest = function() {
                 i.NetworkManager.SendMessage(r.MessageNo.PlayerGetChatRoomListRequest, r.MessageType.GamePlay, {});
             }, e.prototype.PlayerGetChatRoomListResponse = function(e, t) {
-                I.default.instance.refreshSelectRoom(t);
+                D.default.instance.refreshSelectRoom(t);
             }, e.prototype.PlayerAttackMonsterRequest = function(e, t) {
                 i.NetworkManager.SendMessage(r.MessageNo.PlayerAttackMonsterRequest, r.MessageType.GamePlay, {
                     RewardType: Number(t),
                     Change: Number(e)
                 });
             }, e.prototype.PlayerAttackMonsterResponse = function(e, t) {}, e.prototype.playerSyncMoneyRequest = function() {}, 
-            e.prototype.PlayerBuyBlackMarketRequest = function(e, t) {
+            e.prototype.PlayerBuyBlackMarketRequest = function(e, t, a) {
                 i.NetworkManager.SendMessage(r.MessageNo.PlayerBuyBlackMarketRequest, r.MessageType.GamePlay, {
                     BlackMarketID: Number(e),
-                    isSprite: Boolean(t)
+                    isSprite: Boolean(t),
+                    BaseID: Number(a)
                 });
-            }, e.prototype.PlayerBuyBlackMarketResponse = function(e, t) {
-                t.IsOk && S.default.instance.bugSpriteOrEquipSuccess(t.IsSprite, t.BlackMarketID);
-            }, e.prototype.PlayerSyncMoneyResponseIDC = function(e, t) {
+            }, e.prototype.PlayerBuyBlackMarketResponse = function(e, t) {}, e.prototype.PlayerSyncMoneyResponseIDC = function(e, t) {
                 switch (t.ActionType) {
-                  case B.MoneyChangeType.KillMonster:
+                  case I.MoneyChangeType.KillMonster:
                     h.default.instance.getGoldByServer(t.MoneyType, t.Change);
                     break;
 
-                  case B.MoneyChangeType.AttackMonster:
-                    t.MoneyType == B.MoneyType.Coin ? n.default.instance.changeMissleadingGold(-t.Change) : t.MoneyType == B.MoneyType.Daimod ? n.default.instance.changeMissleadingDaimon(-t.Change) : console.log("无效的货币类型");
+                  case I.MoneyChangeType.AttackMonster:
+                    t.MoneyType == I.MoneyType.Coin ? n.default.instance.changeMissleadingGold(-t.Change) : t.MoneyType == I.MoneyType.Daimod ? n.default.instance.changeMissleadingDaimon(-t.Change) : console.log("无效的货币类型");
                     break;
 
-                  case B.MoneyChangeType.SignReward:
+                  case I.MoneyChangeType.SignReward:
                 }
-                t.MoneyType == B.MoneyType.Coin ? n.default.instance.goldNum = t.After : t.MoneyType == B.MoneyType.Daimod ? n.default.instance.daimonNum = t.After : console.log("无效的货币类型");
+                t.MoneyType == I.MoneyType.Coin ? n.default.instance.goldNum = t.After : t.MoneyType == I.MoneyType.Daimod ? n.default.instance.daimonNum = t.After : console.log("无效的货币类型");
             }, e.prototype.PlayerProduceMonsterGemResponse = function(e, t) {
                 t.MonsterGemID && h.default.instance.GetGemByServer(t.MonsterGemID);
             }, e.prototype.BlendMonsterGemRequest = function(e) {
@@ -6182,7 +6659,7 @@ window.__require = function e(t, a, n) {
                     var a = f.default.instance.monsterGemData[t.BaseID];
                     h.default.instance.GetGemByServer(a.next_id), n.default.instance.ChangeGemItem(t.BaseID, -a.combine_num);
                 }
-                R.default.instance.refreshBagUI(), M.default.instance.IsCurGemEnough();
+                B.default.instance.refreshBagUI(), S.default.instance.IsCurGemEnough();
             }, e.prototype.SyncReferUserResponse = function(e, t) {
                 t.UserID && (n.default.instance.referUserData[t.UserID] = !0);
             }, e.prototype.GetReferUserRewardRequest = function(e) {
@@ -6191,9 +6668,15 @@ window.__require = function e(t, a, n) {
                 });
             }, e.prototype.GetReferUserRewardResponse = function(e, t) {
                 t.IsOk && t.UserID && (n.default.instance.referUserData[t.UserID] = !1);
+            }, e.prototype.PlayerSyncLevelResponse = function(e, t) {
+                t.ActionType, I.ExpActionType.Sign, t.ActionType == I.ExpActionType.KillMonster && t.LvChange >= 1 && R.default.instance.PlayerLvUpEffect(), 
+                n.default.instance.getMainPlayer().exp = t.ExpAfter, t.LvChange >= 1 && (n.default.instance.getMainPlayer().addLV(t.LvChange), 
+                g.default.instance.updatePlayerHP(n.default.instance.getMainPlayer().hp, n.default.instance.getMainPlayer().maxhp), 
+                g.default.instance.updatePlayerMP(n.default.instance.getMainPlayer().mp, n.default.instance.getMainPlayer().maxmp), 
+                o.Emitter.fire(I.AlertType.RoleAlert.toString())), g.default.instance.updateLvExp(n.default.instance.getMainPlayer().lv, n.default.instance.getMainPlayer().exp);
             }, e._instance = null, e;
         }();
-        a.default = N, cc._RF.pop();
+        a.default = A, cc._RF.pop();
     }, {
         "../battle/battle_manager": "battle_manager",
         "../common/allenum": "allenum",
@@ -6203,6 +6686,7 @@ window.__require = function e(t, a, n) {
         "../manager/blackmarket_manager": "blackmarket_manager",
         "../manager/data_manager": "data_manager",
         "../manager/dynamic_data_manager": "dynamic_data_manager",
+        "../manager/effect_manager": "effect_manager",
         "../manager/game_manager": "game_manager",
         "../manager/help_manager": "help_manager",
         "../manager/network_manager": "network_manager",
@@ -6210,17 +6694,15 @@ window.__require = function e(t, a, n) {
         "../manager/reward_manager": "reward_manager",
         "../manager/skill_manager": "skill_manager",
         "../manager/sprite_manager": "sprite_manager",
+        "../manager/ui_manager": "ui_manager",
         "../ui/bag_ui_manager": "bag_ui_manager",
         "../ui/battle_ui_manager": "battle_ui_manager",
-        "../ui/blackmarket_ui_manager": "blackmarket_ui_manager",
         "../ui/changname_ui_manager": "changname_ui_manager",
         "../ui/chat_ui_manager": "chat_ui_manager",
         "../ui/gem_tip_ui_manager": "gem_tip_ui_manager",
         "../ui/item/ad_item": "ad_item",
         "../ui/learn_skill_manager": "learn_skill_manager",
-        "../ui/offline_show_ui_manager": "offline_show_ui_manager",
-        "../ui/sign_ui_manager": "sign_ui_manager",
-        "../ui/tips_ui_manager": "tips_ui_manager"
+        "../ui/sign_ui_manager": "sign_ui_manager"
     } ],
     playerbuff_manager: [ function(e, t, a) {
         "use strict";
@@ -6518,7 +7000,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "a0eca3I5b1PN4LV/axEaNeF", "random_event_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("./data_manager"), i = e("./dynamic_data_manager"), r = e("./skill_manager"), o = e("../common/emmiter"), s = e("../common/allenum"), l = e("../network/event_network"), c = e("../ui/messagebox_ui_manager"), u = e("../battle/battle_manager"), d = e("../ui/learn_skill_manager"), p = e("../ui/store_ui_manager"), m = e("../ui/blackmarket_ui_manager"), f = e("../ui/strengthen_ui_manager"), g = e("../ui/refresh_ui_manager"), h = e("../ui/battle_ui_manager"), _ = e("../ui/tips_ui_manager"), y = e("./lost_manager"), v = e("./blackmarket_manager"), b = e("./sprite_manager"), D = e("../ui/add_hole_select_ui_manager"), P = e("../ui/random_event_ui_manager"), I = function() {
+        var n = e("./data_manager"), i = e("./dynamic_data_manager"), r = e("./skill_manager"), o = e("../common/emmiter"), s = e("../common/allenum"), l = e("../network/event_network"), c = e("../battle/battle_manager"), u = e("../ui/battle_ui_manager"), d = e("./lost_manager"), p = e("./blackmarket_manager"), m = e("./sprite_manager"), f = e("../ui/random_event_ui_manager"), g = e("./ui_manager"), h = function() {
             function e() {
                 this.bonusNum = 0;
             }
@@ -6534,7 +7016,7 @@ window.__require = function e(t, a, n) {
                     o > 0 ? (this.nextFreshTime = o, this.status = 1) : (this.nextFreshTime = 3, this.status = 1);
                 } else this.nextFreshTime = t, this.status = 0, this.bonusNum = r;
             }, e;
-        }(), B = function() {
+        }(), _ = function() {
             function e() {
                 this.maxEventCount = 3, this.refreshTime = 60, this.events = {};
             }
@@ -6551,7 +7033,7 @@ window.__require = function e(t, a, n) {
             }, e.prototype.refreshEvent = function(e) {
                 l.default.instance.PlayerNewEventRequest(e, 0, 0);
             }, e.prototype.shareRefreshAllEvent = function(e) {
-                (e = !1), l.default.instance.ShareRefreshEventRequest(0, 0, 0, 0, 0, 0, e);
+                void 0 === e && (e = !1), l.default.instance.ShareRefreshEventRequest(0, 0, 0, 0, 0, 0, e);
             }, e.prototype.getBonusByEvent = function(e) {
                 var t = 0;
                 return 2 == e.type && ("gold" == e.param || "daimond" == e.param ? (t = Math.floor(e.bonus_param["倍数"] * i.default.instance.getMainPlayerLVParam() + e.bonus_param["基数"]), 
@@ -6567,7 +7049,7 @@ window.__require = function e(t, a, n) {
             }, e.prototype.addEventByNetwork = function(e, t, a, i, r, o) {
                 var s = n.default.instance.randomEventData[e];
                 if (s) {
-                    var l = new I();
+                    var l = new h();
                     l.refresh(s, t, i, o, a), this.events[r] = l;
                 } else console.error("================errrrr:" + e + "  nextime:" + t);
             }, e.prototype.getNewEvent = function() {
@@ -6604,7 +7086,16 @@ window.__require = function e(t, a, n) {
             }, e.prototype.hasCanTriggerEvent = function() {
                 if (this.events) for (var e in this.events) if (this.events[e].canTrigger()) return !0;
                 return !1;
-            }, e.prototype.triggerEvent = function(e) { // e为事件索引下标
+            }, e.prototype.isBonusTypeAndCanTrigger = function(e) {
+                if (this.events[e] && (2 == n.default.instance.randomEventData[this.events[e].curEventId].type && this.events[e].canTrigger())) return !0;
+                return !1;
+            }, e.prototype.isAltarEventAndCanTrigger = function(e) {
+                return !(!this.events[e] || 2 != this.events[e].curEventId || !this.events[e].canTrigger());
+            }, e.prototype.isBlackmarketEventAndCanTrigger = function(e) {
+                return !(!this.events[e] || 3 != this.events[e].curEventId || !this.events[e].canTrigger());
+            }, e.prototype.isRelifeEventAndCanTrigger = function(e) {
+                return !(!this.events[e] || 6 != this.events[e].curEventId || !this.events[e].canTrigger());
+            }, e.prototype.triggerEvent = function(e) {
                 this.events[e] ? l.default.instance.PlayerTriggerEventRequest(e) : console.error("no this event index :" + e);
             }, e.prototype.triggerCallBack = function(e) {
                 var t = e.Index;
@@ -6623,7 +7114,7 @@ window.__require = function e(t, a, n) {
                     break;
 
                   case 4:
-                    c.default.instance.showUI("探索【" + a.desc + "】", a.message, this.goToLevel, null, e.ID);
+                    g.default.instance.LoadMessageBox("探索【" + a.desc + "】", a.message, this.goToLevel, null, e.ID);
                     break;
 
                   case 5:
@@ -6636,43 +7127,43 @@ window.__require = function e(t, a, n) {
             }, e.prototype.goToLevel = function(e, t) {
                 if (e) {
                     var a = t, i = n.default.instance.randomEventData[a];
-                    u.default.instance.changeToTargetLevel(i.param);
+                    c.default.instance.changeToTargetLevel(i.param);
                 }
             }, e.prototype.useSkill = function(e) {
                 var t = +e;
-                u.default.instance.PlayerUserSkill(t);
+                c.default.instance.PlayerUserSkill(t);
             }, e.prototype.openUI = function(e) {
                 switch (e) {
                   case "skill":
-                    d.default.instance.showUI();
+                    g.default.instance.LoadLearnSkillUI();
                     break;
 
                   case "altar":
-                    p.default.instance.showUI();
+                    g.default.instance.LoadAltarUI();
                     break;
 
                   case "blackmarket":
-                    m.default.instance.showUI();
+                    g.default.instance.LoadBlackMarketUI();
                     break;
 
                   case "strengthen":
-                    f.default.instance.showUI();
+                    g.default.instance.LoadStrengthenUI();
                     break;
 
                   case "refresh":
-                    g.default.instance.showUI();
+                    g.default.instance.LoadRefreshUI();
                     break;
 
                   case "timetravel":
-                    h.default.instance.newlift();
+                    u.default.instance.newlift();
                     break;
 
                   case "reinit_event":
-                    c.default.instance.showUI("刷新所有事件", "刷新事件不计入总次数，点击确认则立即刷新，取消则丢弃这个事件。", this.refreshAllEventByCardCallback);
+                    g.default.instance.LoadMessageBox("刷新所有事件", "刷新事件不计入总次数，点击确认则立即刷新，取消则丢弃这个事件。", this.refreshAllEventByCardCallback);
                     break;
 
                   case "add_hole":
-                    console.log("打孔！"), D.default.instance.showUI();
+                    g.default.instance.LoadAddHoleSelectUI();
                     break;
 
                   default:
@@ -6683,26 +7174,26 @@ window.__require = function e(t, a, n) {
             }, e.prototype.getBonus = function(e, t, a) {
                 switch (e) {
                   case "gold":
-                    P.default.instance.playRandomEffect(a, "gold");
+                    f.default.instance.playRandomEffect(a, "gold");
                     break;
 
                   case "daimond":
-                    P.default.instance.playRandomEffect(a, "daimond");
+                    f.default.instance.playRandomEffect(a, "daimond");
                     break;
 
                   case "equipment":
-                    if (i.default.instance.isBagFull()) return void _.default.instance.showtips("bag_count_limit");
-                    var r = v.default.instance.getBlackMarketByPlayerLV(i.default.instance.getMainPlayerLVParam()), o = y.default.instance.getRamdomBaseBagItem(r.droplv);
-                    y.default.instance.addAttrToWhiteEquip(o, r.droplv, i.default.instance.getMainPlayer().addGetBetterEquip + 1), 
-                    _.default.instance.showTipsByStr("获得:" + n.default.instance.equipmentData[o.baseId].name), 
-                    P.default.instance.playRandomEffect(a, "equipment", n.default.instance.equipmentData[o.baseId].icon_path);
+                    if (i.default.instance.isBagFull()) return void g.default.instance.LoadTipsByID("bag_count_limit");
+                    var r = p.default.instance.getBlackMarketByPlayerLV(i.default.instance.getMainPlayerLVParam()), o = d.default.instance.getRamdomBaseBagItem(r.droplv);
+                    d.default.instance.addAttrToWhiteEquip(o, r.droplv, i.default.instance.getMainPlayer().addGetBetterEquip + 1), 
+                    g.default.instance.LoadTipsByStr("获得:" + n.default.instance.equipmentData[o.baseId].name), 
+                    f.default.instance.playRandomEffect(a, "equipment", n.default.instance.equipmentData[o.baseId].icon_path);
                     break;
 
                   case "sprite":
-                    if (b.default.instance.isFullSpriteBag()) return void _.default.instance.showtips("sprite_count_limit");
-                    var s = b.default.instance.addNewRandomSprite();
-                    _.default.instance.showTipsByStr("获得:" + n.default.instance.spriteData[s].name), 
-                    P.default.instance.playRandomEffect(a, "sprite", n.default.instance.spriteData[s].icon_path);
+                    if (m.default.instance.isFullSpriteBag()) return void g.default.instance.LoadTipsByID("sprite_count_limit");
+                    var s = m.default.instance.addNewRandomSprite();
+                    g.default.instance.LoadTipsByStr("获得:" + n.default.instance.spriteData[s].name), 
+                    f.default.instance.playRandomEffect(a, "sprite", n.default.instance.spriteData[s].icon_path);
                     break;
 
                   default:
@@ -6710,35 +7201,28 @@ window.__require = function e(t, a, n) {
                 }
             }, e._instance = null, e;
         }();
-        a.default = B, cc._RF.pop();
+        a.default = _, cc._RF.pop();
     }, {
         "../battle/battle_manager": "battle_manager",
         "../common/allenum": "allenum",
         "../common/emmiter": "emmiter",
         "../network/event_network": "event_network",
-        "../ui/add_hole_select_ui_manager": "add_hole_select_ui_manager",
         "../ui/battle_ui_manager": "battle_ui_manager",
-        "../ui/blackmarket_ui_manager": "blackmarket_ui_manager",
-        "../ui/learn_skill_manager": "learn_skill_manager",
-        "../ui/messagebox_ui_manager": "messagebox_ui_manager",
         "../ui/random_event_ui_manager": "random_event_ui_manager",
-        "../ui/refresh_ui_manager": "refresh_ui_manager",
-        "../ui/store_ui_manager": "store_ui_manager",
-        "../ui/strengthen_ui_manager": "strengthen_ui_manager",
-        "../ui/tips_ui_manager": "tips_ui_manager",
         "./blackmarket_manager": "blackmarket_manager",
         "./data_manager": "data_manager",
         "./dynamic_data_manager": "dynamic_data_manager",
         "./lost_manager": "lost_manager",
         "./skill_manager": "skill_manager",
-        "./sprite_manager": "sprite_manager"
+        "./sprite_manager": "sprite_manager",
+        "./ui_manager": "ui_manager"
     } ],
     random_event_ui_manager: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "f73f65I8+lLgpgc3ZCEJwzM", "random_event_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("./item/event_item"), i = e("./battle_ui_manager"), r = e("../manager/random_event_manager"), o = e("../common/emmiter"), s = e("../common/allenum"), l = e("../manager/wx_manager"), c = e("./messagebox_ui_manager"), u = e("../manager/reward_effect_manager"), d = cc._decorator, p = d.ccclass, m = d.property, f = function(e) {
+        var n = e("./item/event_item"), i = e("./battle_ui_manager"), r = e("../manager/random_event_manager"), o = e("../common/emmiter"), s = e("../common/allenum"), l = e("../manager/wx_manager"), c = e("../manager/reward_effect_manager"), u = e("../manager/ui_manager"), d = cc._decorator, p = d.ccclass, m = d.property, f = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.eventcard1 = null, t.eventcard2 = null, t.eventcard3 = null, t.btnClose = null, 
@@ -6751,6 +7235,8 @@ window.__require = function e(t, a, n) {
                 o.Emitter.register(s.AlertType.EventAlert.toString(), this.checkEventStatus, this);
             }, t.prototype.InitCards = function() {
                 this.eventcard1.onInit(), this.eventcard2.onInit(), this.eventcard3.onInit(), this.checkEventStatus();
+            }, t.prototype.getCardWordSpaceByIndex = function(e) {
+                return 0 == e ? this.eventcard1.node.parent.convertToWorldSpaceAR(this.eventcard1.node.position) : 1 == e ? this.eventcard2.node.parent.convertToWorldSpaceAR(this.eventcard2.node.position) : 2 == e ? this.eventcard3.node.parent.convertToWorldSpaceAR(this.eventcard3.node.position) : void 0;
             }, t.prototype.hideEvents = function() {
                 this.getComponent(cc.Animation).play("event_close"), this.btnClose.node.active = !1, 
                 this.btnShow.node.active = !0, i.default.instance.battleInfoUp(), this.checkEventStatus();
@@ -6759,27 +7245,31 @@ window.__require = function e(t, a, n) {
                 this.btnShow.node.active = !1, i.default.instance.battleInfoDown(), this.checkEventStatus();
             }, t.prototype.checkEventStatus = function() {
                 this.btnShow.node.active ? r.default.instance.hasCanTriggerEvent() && (this.nodeEventAlert.active = !0) : this.nodeEventAlert.active = !1;
+            }, t.prototype.getShowEventBtnWordSpace = function() {
+                return this.btnShow.node.parent.convertToWorldSpaceAR(this.btnShow.node.position);
+            }, t.prototype.IsOnshowEvent = function() {
+                return !this.btnShow.node.active;
             }, t.prototype.refreshAllEvent = function() {
-                c.default.instance.showUI("刷新所有事件", "点击确认分享给好友可以刷新事件，刷新事件不计入总次数，一天最多分享5次。", this.shareCallBack);
+                u.default.instance.LoadMessageBox("刷新所有事件", "点击确认分享给好友可以刷新事件，刷新事件不计入总次数，一天最多分享5次。", this.shareCallBack);
             }, t.prototype.shareCallBack = function(e) {
                 e && l.default.instance.shareAppMessage("refresh_randomevent", "");
             }, t.prototype.playRandomEffect = function(e, t, a) {
                 var n = this.getEventNode(e);
                 switch (t) {
                   case "gold":
-                    u.default.instance.createDaimondEffect(10, "金币", n.parent.convertToWorldSpaceAR(n.position));
+                    c.default.instance.createDaimondEffect(10, "金币", n.parent.convertToWorldSpaceAR(n.position));
                     break;
 
                   case "daimond":
-                    u.default.instance.createDaimondEffect(10, "钻石", n.parent.convertToWorldSpaceAR(n.position));
+                    c.default.instance.createDaimondEffect(10, "钻石", n.parent.convertToWorldSpaceAR(n.position));
                     break;
 
                   case "equipment":
-                    u.default.instance.createDaimondEffect(1, "装备", n.parent.convertToWorldSpaceAR(n.position), a);
+                    c.default.instance.createDaimondEffect(1, "装备", n.parent.convertToWorldSpaceAR(n.position), a);
                     break;
 
                   case "sprite":
-                    u.default.instance.createDaimondEffect(1, "精灵", n.parent.convertToWorldSpaceAR(n.position), a);
+                    c.default.instance.createDaimondEffect(1, "精灵", n.parent.convertToWorldSpaceAR(n.position), a);
                 }
             }, t.prototype.getEventNode = function(e) {
                 switch (e) {
@@ -6804,10 +7294,10 @@ window.__require = function e(t, a, n) {
         "../common/emmiter": "emmiter",
         "../manager/random_event_manager": "random_event_manager",
         "../manager/reward_effect_manager": "reward_effect_manager",
+        "../manager/ui_manager": "ui_manager",
         "../manager/wx_manager": "wx_manager",
         "./battle_ui_manager": "battle_ui_manager",
-        "./item/event_item": "event_item",
-        "./messagebox_ui_manager": "messagebox_ui_manager"
+        "./item/event_item": "event_item"
     } ],
     rand: [ function(e, t, a) {
         "use strict";
@@ -6833,7 +7323,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "34ba7YTMG1O9oSgHyo1HnAu", "refresh_tip"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../manager/data_manager"), i = e("../manager/pool_manager"), r = e("../util"), o = e("./item/attr_item"), s = e("./messagebox_ui_manager"), l = e("../manager/cost_manager"), c = e("../manager/help_manager"), u = e("../manager/dynamic_data_manager"), d = e("../manager/resource_manager"), p = e("../audio_manager"), m = e("../network/bag_network"), f = cc._decorator, g = f.ccclass, h = f.property, _ = function(e) {
+        var n = e("../manager/data_manager"), i = e("../manager/pool_manager"), r = e("../util"), o = e("./item/attr_item"), s = e("../manager/cost_manager"), l = e("../manager/help_manager"), c = e("../manager/dynamic_data_manager"), u = e("../manager/resource_manager"), d = e("../audio_manager"), p = e("../network/bag_network"), m = e("../manager/ui_manager"), f = cc._decorator, g = f.ccclass, h = f.property, _ = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.maskNode = null, t.nodeAttrs = null, t.labelName = null, t.labelDesc = null, 
@@ -6846,23 +7336,23 @@ window.__require = function e(t, a, n) {
             }, t.prototype.hideBagUI = function() {
                 this.node.active = !1;
             }, t.prototype.show = function(e) {
-                p.default.instance.PlayUISelect(), this.node.active = !0, this.curBagItemData = e;
+                d.default.instance.PlayUISelect(), this.node.active = !0, this.curBagItemData = e;
                 var t = n.default.instance.equipmentData[this.curBagItemData.baseId];
                 this.labelName.string = this.curBagItemData.getName(), this.labelName.node.color = this.curBagItemData.getNameColor(), 
                 this.labelDesc.string = t.desc, console.error("baseEquipData.icon_path:" + t.icon_path), 
-                this.spriteIcon.spriteFrame = d.default.instance.getEquipSprite(t.icon_path), this.spriteQualityGrid.spriteFrame = d.default.instance.getEquipSprite(this.curBagItemData.getQualitySpriteName());
-                for (var s = this.nodeAttrs.children, l = s.length - 1; l >= 0; l--) s[l].getComponent(o.default) ? i.default.instance.RemoveObjectByName("AttrItem", s[l]) : i.default.instance.RemoveLabel(s[l]);
-                var u = this.curBagItemData.getBaseAttr();
-                for (var m in u) {
+                this.spriteIcon.spriteFrame = u.default.instance.getEquipSprite(t.icon_path), this.spriteQualityGrid.spriteFrame = u.default.instance.getEquipSprite(this.curBagItemData.getQualitySpriteName());
+                for (var s = this.nodeAttrs.children, c = s.length - 1; c >= 0; c--) s[c].getComponent(o.default) ? i.default.instance.RemoveObjectByName("AttrItem", s[c]) : i.default.instance.RemoveLabel(s[c]);
+                var p = this.curBagItemData.getBaseAttr();
+                for (var m in p) {
                     var f = i.default.instance.CreateLabel(this.nodeAttrs);
-                    f.getComponent(cc.Label).string = c.default.instance.getAttrShowStr(m, u[m]), f.color = cc.Color.WHITE;
+                    f.getComponent(cc.Label).string = l.default.instance.getAttrShowStr(m, p[m]), f.color = cc.Color.WHITE;
                 }
                 if (r.default.len(this.curBagItemData.additionAttr)) {
                     var g = void 0;
                     for (g in this.curBagItemData.additionAttr) {
                         var h = n.default.instance.equipPrefixData[g];
                         h.name;
-                        var _ = i.default.instance.CreateObjectByName("AttrItem", this.nodeAttrs), y = n.default.instance.getEquipPrefixMinValById(g), v = n.default.instance.getEquipPrefixMaxValById(g), b = c.default.instance.getAttrShowStr(h.attrtype, this.curBagItemData.additionAttr[g]), D = " (" + c.default.instance.getAttrShowValueStr(h.attrtype, y) + " ~ " + c.default.instance.getAttrShowValueStr(h.attrtype, v) + " )";
+                        var _ = i.default.instance.CreateObjectByName("AttrItem", this.nodeAttrs), y = n.default.instance.getEquipPrefixMinValById(g), v = n.default.instance.getEquipPrefixMaxValById(g), b = l.default.instance.getAttrShowStr(h.attrtype, this.curBagItemData.additionAttr[g]), D = " (" + l.default.instance.getAttrShowValueStr(h.attrtype, y) + " ~ " + l.default.instance.getAttrShowValueStr(h.attrtype, v) + " )";
                         _.getComponent(o.default).init(b, D, g, a.instance.attrItemCallBack);
                     }
                 }
@@ -6870,29 +7360,28 @@ window.__require = function e(t, a, n) {
                 var t = n.default.instance.equipPrefixData[e].refresh_cost;
                 a.instance.curSelectRefreshAttr = e;
                 var i = a.instance.refreshEquipCallBack;
-                s.default.instance.showUI("重铸装备", "需要消耗以下资源来重铸:", i, t);
+                m.default.instance.LoadMessageBox("重铸装备", "需要消耗以下资源来重铸:", i, t);
             }, t.prototype.refreshEquipCallBack = function(e) {
                 if (e) {
                     var t = n.default.instance.equipPrefixData[a.instance.curSelectRefreshAttr].refresh_cost;
-                    if (l.default.instance.cost(t)) if (u.default.instance.IsEquiping(a.instance.curBagItemData)) {
-                        c.default.instance.RefreshEquipAttr(a.instance.curBagItemData, a.instance.curSelectRefreshAttr);
-                        var i = a.instance.curBagItemData.index, r = a.instance.curSelectRefreshAttr, o = a.instance.curBagItemData.additionAttr[r];
-                        m.default.instance.RefreshItemRequest(i, 2, r, o);
+                    if (s.default.instance.cost(t)) if (0 != c.default.instance.IsEquiping(a.instance.curBagItemData)) {
+                        var i = a.instance.curBagItemData.index, r = a.instance.curSelectRefreshAttr, o = n.default.instance.getEquipPrefixValById(r);
+                        p.default.instance.RefreshItemRequest(i, 2, r, o);
                     } else {
-                        c.default.instance.RefreshEquipAttr(a.instance.curBagItemData, a.instance.curSelectRefreshAttr);
-                        i = a.instance.curBagItemData.index, r = a.instance.curSelectRefreshAttr, o = a.instance.curBagItemData.additionAttr[r];
-                        m.default.instance.RefreshItemRequest(i, 1, r, o);
+                        i = a.instance.curBagItemData.index, r = a.instance.curSelectRefreshAttr, o = n.default.instance.getEquipPrefixValById(r);
+                        p.default.instance.RefreshItemRequest(i, 1, r, o);
                     }
                 }
             }, t.prototype.refreshEquipSuccess = function(e, t, n) {
-                var i, r;
-                for (var o in u.default.instance.EquipItemDataMap) if (e == u.default.instance.EquipItemDataMap[o].index) {
-                    i = u.default.instance.EquipItemDataMap[o], r = !0;
+                var i, r = 0;
+                for (var o in c.default.instance.EquipItemAllDatas) if (null != c.default.instance.EquipItemAllDatas[o]) for (var s in c.default.instance.EquipItemAllDatas[o]) if (e == c.default.instance.EquipItemAllDatas[o][s].index) {
+                    i = c.default.instance.EquipItemAllDatas[o][s], r = Number(o) == c.default.instance.curUseEquipPlanIndex ? 1 : 2;
                     break;
                 }
-                r ? (u.default.instance.removeEquipAttrToPlayer(i), c.default.instance.RefreshEquipAttr(i, t, n), 
-                a.instance.show(i), u.default.instance.addEquipAttrToPlayer(i)) : (c.default.instance.RefreshEquipAttr(u.default.instance.BagItemDataMap[e], t, n), 
-                a.instance.show(u.default.instance.BagItemDataMap[e]));
+                1 == r ? (c.default.instance.removeEquipAttrToPlayer(i), l.default.instance.RefreshEquipAttr(i, t, n), 
+                a.instance.show(i), c.default.instance.addEquipAttrToPlayer(i)) : 2 == r ? (l.default.instance.RefreshEquipAttr(i, t, n), 
+                a.instance.show(i)) : (l.default.instance.RefreshEquipAttr(c.default.instance.BagItemDataMap[e], t, n), 
+                a.instance.show(c.default.instance.BagItemDataMap[e]));
             }, t.instance = null, __decorate([ h(cc.Node) ], t.prototype, "maskNode", void 0), 
             __decorate([ h(cc.Node) ], t.prototype, "nodeAttrs", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelName", void 0), 
             __decorate([ h(cc.Label) ], t.prototype, "labelDesc", void 0), __decorate([ h(cc.Sprite) ], t.prototype, "spriteIcon", void 0), 
@@ -6907,10 +7396,10 @@ window.__require = function e(t, a, n) {
         "../manager/help_manager": "help_manager",
         "../manager/pool_manager": "pool_manager",
         "../manager/resource_manager": "resource_manager",
+        "../manager/ui_manager": "ui_manager",
         "../network/bag_network": "bag_network",
         "../util": "util",
-        "./item/attr_item": "attr_item",
-        "./messagebox_ui_manager": "messagebox_ui_manager"
+        "./item/attr_item": "attr_item"
     } ],
     refresh_ui_manager: [ function(e, t, a) {
         "use strict";
@@ -6930,12 +7419,12 @@ window.__require = function e(t, a, n) {
                 l.default.instance.PlayUISelect(), this.bagUINode.active = !0, this.refreshBagUI();
             }, t.prototype.refreshBagUI = function() {
                 for (var e = this.bagContentViewNode.children, t = e.length - 1; t >= 0; t--) i.default.instance.RemoveBagItem(e[t]);
-                if (null != n.default.instance.EquipItemDataMap) for (var t in n.default.instance.EquipItemDataMap) if (c.default.len(n.default.instance.EquipItemDataMap[t].additionAttr) > 0) {
-                    var a = i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default);
-                    a.reinit(n.default.instance.EquipItemDataMap[t], s.GridType.RefreshItem), a.setEquipingTag();
+                if (null != n.default.instance.EquipItemAllDatas) for (var a in n.default.instance.EquipItemAllDatas) if (null != a) for (var o in n.default.instance.EquipItemAllDatas[a]) {
+                    var l = i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default);
+                    l.reinit(n.default.instance.EquipItemAllDatas[a][o], s.GridType.RefreshItem), l.setEquipingTag(Number(a) + 1);
                 }
-                if (null != n.default.instance.BagItemDataMap) for (var t in n.default.instance.BagItemDataMap) {
-                    if (c.default.len(n.default.instance.BagItemDataMap[t].additionAttr)) i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default).reinit(n.default.instance.BagItemDataMap[t], s.GridType.RefreshItem);
+                if (null != n.default.instance.BagItemDataMap) for (var u in n.default.instance.BagItemDataMap) {
+                    if (c.default.len(n.default.instance.BagItemDataMap[u].additionAttr)) i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default).reinit(n.default.instance.BagItemDataMap[u], s.GridType.RefreshItem);
                 }
             }, t.prototype.showRefreshTip = function(e) {
                 this.refreshTip.show(e);
@@ -7031,7 +7520,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "244e5UYyY1NEoJSgufjnIYi", "reward_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("./data_manager"), i = e("./dynamic_data_manager"), r = e("./sprite_manager"), o = e("../data/bag_item_data"), s = e("./blackmarket_manager"), l = e("./lost_manager"), c = e("../ui/tips_ui_manager"), u = e("../network/player_network"), d = e("../ui/today_reward_ui"), p = e("../util"), m = function() {
+        var n = e("./data_manager"), i = e("./dynamic_data_manager"), r = e("./sprite_manager"), o = e("../data/bag_item_data"), s = e("./blackmarket_manager"), l = e("./lost_manager"), c = e("../network/player_network"), u = e("../ui/today_reward_ui"), d = e("../util"), p = e("./ui_manager"), m = function() {
             function e() {
                 this.curLeftTime = 0, this.curGetRewardCount = 0, this.curTodayRewardCount = 0, 
                 this.curRewardID = 0, this.curRewardType = 0, this.curBonusNum = 0, this.defaultRewardCount = 0, 
@@ -7073,7 +7562,7 @@ window.__require = function e(t, a, n) {
                 }
                 return 0;
             }, e.prototype.addNewReward = function() {
-                if (this.curTodayRewardCount >= this.reward_max_count) c.default.instance.showTipsByStr("今天次数已满"); else {
+                if (this.curTodayRewardCount >= this.reward_max_count) p.default.instance.LoadTipsByStr("今天次数已满"); else {
                     if (this.defaultRewardCount > this.curGetRewardCount) {
                         var e = this.curGetRewardCount + 1, t = n.default.instance.onlineRewardData[e];
                         this.curRewardID = t.id, this.curRewardType = t.type, this.curLeftTime = this.getNewLeftTimeByTodayCount(), 
@@ -7088,17 +7577,17 @@ window.__require = function e(t, a, n) {
                         var a = .2 * i.default.instance.getMainPlayerLVParam();
                         300 < a && (a = 300), this.curBonusNum = Math.floor(a);
                     }
-                    d.default.instance.refreshStatus();
+                    u.default.instance.refreshStatus();
                 }
             }, e.prototype.getRewardNumDesc = function() {
                 if (0 != this.curRewardID) {
                     var e = n.default.instance.onlineRewardData[this.curRewardID];
                     switch (e.type) {
                       case 1:
-                        return p.default.GetLargeNumStr(e.param);
+                        return d.default.GetLargeNumStr(e.param);
 
                       case 2:
-                        return p.default.GetLargeNumStr(e.param);
+                        return d.default.GetLargeNumStr(e.param);
 
                       case 3:
                         return "稀有精灵";
@@ -7138,9 +7627,9 @@ window.__require = function e(t, a, n) {
                         break;
 
                       case 4:
-                        var u = a.param;
-                        for (var p in u) {
-                            var m = u[p], f = new o.default(m, 1);
+                        var d = a.param;
+                        for (var p in d) {
+                            var m = d[p], f = new o.default(m, 1);
                             i.default.instance.AddBagItem(f);
                         }
                         t = this.curRewardID;
@@ -7160,27 +7649,27 @@ window.__require = function e(t, a, n) {
                     l.default.instance.addAttrToWhiteEquip(h, g.droplv, i.default.instance.getMainPlayer().addGetBetterEquip + 1), 
                     t = h.baseId;
                 }
-                return this.status = 2, this.curTodayRewardCount++, this.curGetRewardCount++, d.default.instance.getRewardShow(t), 
+                return this.status = 2, this.curTodayRewardCount++, this.curGetRewardCount++, u.default.instance.getRewardShow(t), 
                 this.curTodayRewardCount < this.reward_max_count && this.addNewReward(), t;
             }, e.prototype.getReward = function() {
                 if (this.canGetReward()) {
                     if (0 != this.curRewardID) switch (n.default.instance.onlineRewardData[this.curRewardID].type) {
                       case 3:
-                        if (r.default.instance.isFullSpriteBag()) return void c.default.instance.showtips("sprite_count_limit");
+                        if (r.default.instance.isFullSpriteBag()) return void p.default.instance.LoadTipsByID("sprite_count_limit");
                         break;
 
                       case 4:
-                        if (i.default.instance.isBagFull()) return void c.default.instance.showtips("bag_count_limit");
+                        if (i.default.instance.isBagFull()) return void p.default.instance.LoadTipsByID("bag_count_limit");
                     } else switch (this.curRewardType) {
                       case 3:
-                        if (r.default.instance.isFullSpriteBag()) return void c.default.instance.showtips("sprite_count_limit");
+                        if (r.default.instance.isFullSpriteBag()) return void p.default.instance.LoadTipsByID("sprite_count_limit");
                         break;
 
                       case 4:
-                        if (i.default.instance.isBagFull()) return void c.default.instance.showtips("bag_count_limit");
+                        if (i.default.instance.isBagFull()) return void p.default.instance.LoadTipsByID("bag_count_limit");
                     }
-                    u.default.instance.GetTodayRewardRequest(this.curRewardID);
-                } else c.default.instance.showtips("reward_time_limit");
+                    c.default.instance.GetTodayRewardRequest(this.curRewardID);
+                } else p.default.instance.LoadTipsByID("reward_time_limit");
                 return 0;
             }, e.prototype.update = function(e) {
                 0 == this.status && (this.curLeftTime -= e, this.curLeftTime < 0 && (this.status = 1));
@@ -7190,21 +7679,21 @@ window.__require = function e(t, a, n) {
     }, {
         "../data/bag_item_data": "bag_item_data",
         "../network/player_network": "player_network",
-        "../ui/tips_ui_manager": "tips_ui_manager",
         "../ui/today_reward_ui": "today_reward_ui",
         "../util": "util",
         "./blackmarket_manager": "blackmarket_manager",
         "./data_manager": "data_manager",
         "./dynamic_data_manager": "dynamic_data_manager",
         "./lost_manager": "lost_manager",
-        "./sprite_manager": "sprite_manager"
+        "./sprite_manager": "sprite_manager",
+        "./ui_manager": "ui_manager"
     } ],
     role_ui_manager: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "2a783PmV65Jt5kHuo2vi8eV", "role_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../manager/dynamic_data_manager"), i = e("./battle_ui_manager"), r = e("../util"), o = e("../manager/data_manager"), s = e("../common/emmiter"), l = e("../common/allenum"), c = e("../audio_manager"), u = e("../network/player_network"), d = e("./messagebox_ui_manager"), p = cc._decorator, m = p.ccclass, f = p.property, g = function(e) {
+        var n = e("../manager/dynamic_data_manager"), i = e("./battle_ui_manager"), r = e("../util"), o = e("../manager/data_manager"), s = e("../common/emmiter"), l = e("../common/allenum"), c = e("../audio_manager"), u = e("../network/player_network"), d = e("../network/bag_network"), p = e("./menu_ui_manager"), m = e("../manager/ui_manager"), f = cc._decorator, g = f.ccclass, h = f.property, _ = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.uiNode = null, t.maskNode = null, t.labelNewLiftCount = null, t.labelCombatEffect = null, 
@@ -7221,7 +7710,8 @@ window.__require = function e(t, a, n) {
                 t.labellightDamageAdd = null, t.labelpoisonDamage = null, t.labelpoisonDamageAdd = null, 
                 t.labelfronzenDefence = null, t.labelblazeDefence = null, t.labellightDefence = null, 
                 t.labelpoisonDefence = null, t.labelelementDamagePercent = null, t.labelelementDefence = null, 
-                t.labelGoldAdd = null, t.label_altar = null, t;
+                t.labelGoldAdd = null, t.label_altar = null, t.btn_equips = [], t.equipItemNode = null, 
+                t.btn_change_plan = null, t.node_cur_plan = [], t;
             }
             var a;
             return __extends(t, e), a = t, t.prototype.onLoad = function() {
@@ -7230,40 +7720,68 @@ window.__require = function e(t, a, n) {
                 this.buttonAdd100Pow.node.on("click", this.add100Power, this), this.buttonAddAgi.node.on("click", this.add1Agile, this), 
                 this.buttonAdd100Agi.node.on("click", this.add100Agile, this), this.buttonAddEne.node.on("click", this.add1Energy, this), 
                 this.buttonAdd100Ene.node.on("click", this.add100Energy, this), this.btnRecommendAddPoint.node.on("click", this.recommendAddPoint, this), 
-                this.uiNode.active && (this.uiNode.active = !1);
+                this.btn_equips[0].node.on("click", function(e) {
+                    this.onClickEquipBtn(0);
+                }, this), this.btn_equips[1].node.on("click", function(e) {
+                    this.onClickEquipBtn(1);
+                }, this), this.btn_equips[2].node.on("click", function(e) {
+                    this.onClickEquipBtn(2);
+                }, this), this.btn_equips[3].node.on("click", function(e) {
+                    this.onClickEquipBtn(3);
+                }, this), this.btn_equips[4].node.on("click", function(e) {
+                    this.onClickEquipBtn(4);
+                }, this), this.btn_change_plan.node.on("click", this.onClickChangePlan, this), this.uiNode.active && (this.uiNode.active = !1);
             }, t.prototype.hideUI = function() {
-                this.uiNode.active = !1;
-            }, t.prototype.showUI = function() {
-                c.default.instance.PlayUISelect(), this.uiNode.active = !0, this.updateBaseAttr(), 
-                this.updateAltar();
-            }, t.prototype.updateBaseAttr = function() {
-                this.labelNewLiftCount.string = "重生次数：" + n.default.instance.newLiftCount.toString();
-                var e = n.default.instance.getMainPlayer();
-                this.labelCombatEffect.string = e.battleValue.toString(), this.labelStength.string = e.strength.toString(), 
-                this.labelPower.string = e.power.toString(), this.labelAgile.string = e.agile.toString(), 
-                this.labelEnergy.string = e.energy.toString(), this.labelUnSeperate.string = e.unSeperatePoint.toString(), 
-                this.labelDamage.string = r.default.GetFloorNumStr(e.baseMinDamage) + " ~ " + r.default.GetFloorNumStr(e.baseMaxDamage), 
-                this.labelAddDamagePercent.string = this.getPercentStr(e.addDamagePercent), this.labelHP.string = r.default.GetFloorNumStr(e.maxhp), 
-                this.labelMP.string = r.default.GetFloorNumStr(e.maxmp), this.labelDefence.string = r.default.GetFloorNumStr(e.df), 
-                this.labelSt.string = this.getPercentStr(e.adddf), this.labelAttInterval.string = o.default.instance.getAttrValStr("攻击速度", e.attInterval), 
-                this.labelCritical.string = this.getPercentStr(e.criticalRate), this.labelHit.string = r.default.GetFloorNumStr(e.hitVal), 
-                this.labelBlock.string = r.default.GetFloorNumStr(e.blockVal), this.labelKillAddHP.string = r.default.GetFloorNumStr(e.killAddHp), 
-                this.labelKillAddMP.string = r.default.GetFloorNumStr(e.killAddMp), this.labelAttAddHP.string = this.getPercentStr(e.attAddHpPercent), 
-                this.labelAttAddMP.string = this.getPercentStr(e.attAddMpPercent), this.labelRealDamage.string = r.default.GetFloorNumStr(e.realDamage), 
-                this.labelRealDefence.string = r.default.GetFloorNumStr(e.realDefence), this.labelAddExp.string = this.getPercentStr(e.getAddExpRate), 
-                this.labelBetterEquip.string = this.getPercentStr(e.addGetBetterEquip), this.labelDizziDefence.string = this.getPercentStr(e.getDizzinessDefence()), 
-                this.labelfronzenDamage.string = r.default.GetFloorNumStr(e.baseFrozenDamage), this.labelfronzenDamageAdd.string = this.getPercentStr(e.frozenDamagePercent), 
-                this.labelblazeDamage.string = r.default.GetFloorNumStr(e.baseBlazeDamage), this.labelblazeDamageAdd.string = this.getPercentStr(e.blazeDamagePercent), 
-                this.labellightDamage.string = r.default.GetFloorNumStr(e.baseLightDamage), this.labellightDamageAdd.string = this.getPercentStr(e.lightDamagePercent), 
-                this.labelpoisonDamage.string = r.default.GetFloorNumStr(e.basePoisonDamage), this.labelpoisonDamageAdd.string = this.getPercentStr(e.poisonDamagePercent), 
-                this.labelfronzenDefence.string = this.getPercentStr(e.frozenDefence), this.labelblazeDefence.string = this.getPercentStr(e.blazeDefence), 
-                this.labellightDefence.string = this.getPercentStr(e.lightDefence), this.labelpoisonDefence.string = this.getPercentStr(e.poisonDefence), 
-                this.labelelementDamagePercent.string = this.getPercentStr(e.elementDamagePercent), 
-                this.labelelementDefence.string = this.getPercentStr(e.elementDefence), this.labelGoldAdd.string = this.getPercentStr(e.addGetCoin);
+                this.uiNode.active = !1, n.default.instance.isVirtual = !1, this.btn_equips[a.curChangeIndex].node.color = cc.Color.WHITE;
+            }, t.prototype.showUI = function(e) {
+                c.default.instance.PlayUISelect(), this.uiNode.active = !0, this.updateBaseAttr(e), 
+                this.updateAltar(), this.updateEquipBtn(), 0 == e || null == e ? (a.curChangeIndex = n.default.instance.curUseEquipPlanIndex, 
+                this.btn_equips[a.curChangeIndex].node.color = cc.Color.GREEN, this.btnRecommendAddPoint.node.active = !0, 
+                this.btn_change_plan.node.active = !1) : (this.btnRecommendAddPoint.node.active = !1, 
+                this.btn_change_plan.node.active = !0);
+                for (var t = 0, i = this.node_cur_plan; t < i.length; t++) {
+                    i[t].active = !1;
+                }
+                this.node_cur_plan[n.default.instance.curUseEquipPlanIndex].active = !0;
+            }, t.prototype.updateBaseAttr = function(e) {
+                var t;
+                this.labelNewLiftCount.string = "重生次数：" + n.default.instance.newLiftCount.toString(), 
+                t = 1 == e ? n.default.instance.virtualHero : n.default.instance.getMainPlayer(), 
+                this.labelCombatEffect.string = t.battleValue.toString(), this.labelStength.string = t.strength.toString(), 
+                this.labelPower.string = t.power.toString(), this.labelAgile.string = t.agile.toString(), 
+                this.labelEnergy.string = t.energy.toString(), this.labelUnSeperate.string = t.unSeperatePoint.toString(), 
+                this.labelDamage.string = r.default.GetFloorNumStr(t.baseMinDamage) + " ~ " + r.default.GetFloorNumStr(t.baseMaxDamage), 
+                this.labelAddDamagePercent.string = this.getPercentStr(t.addDamagePercent), this.labelHP.string = r.default.GetFloorNumStr(t.maxhp), 
+                this.labelMP.string = r.default.GetFloorNumStr(t.maxmp), this.labelDefence.string = r.default.GetFloorNumStr(t.df), 
+                this.labelSt.string = this.getPercentStr(t.adddf), this.labelAttInterval.string = o.default.instance.getAttrValStr("攻击速度", t.attInterval), 
+                this.labelCritical.string = this.getPercentStr(t.criticalRate), this.labelHit.string = r.default.GetFloorNumStr(t.hitVal), 
+                this.labelBlock.string = r.default.GetFloorNumStr(t.blockVal), this.labelKillAddHP.string = r.default.GetFloorNumStr(t.killAddHp), 
+                this.labelKillAddMP.string = r.default.GetFloorNumStr(t.killAddMp), this.labelAttAddHP.string = this.getPercentStr(t.attAddHpPercent), 
+                this.labelAttAddMP.string = this.getPercentStr(t.attAddMpPercent), this.labelRealDamage.string = r.default.GetFloorNumStr(t.realDamage), 
+                this.labelRealDefence.string = r.default.GetFloorNumStr(t.realDefence), this.labelAddExp.string = this.getPercentStr(t.getAddExpRate), 
+                this.labelBetterEquip.string = this.getPercentStr(t.addGetBetterEquip), this.labelDizziDefence.string = this.getPercentStr(t.getDizzinessDefence()), 
+                this.labelfronzenDamage.string = r.default.GetFloorNumStr(t.baseFrozenDamage), this.labelfronzenDamageAdd.string = this.getPercentStr(t.frozenDamagePercent), 
+                this.labelblazeDamage.string = r.default.GetFloorNumStr(t.baseBlazeDamage), this.labelblazeDamageAdd.string = this.getPercentStr(t.blazeDamagePercent), 
+                this.labellightDamage.string = r.default.GetFloorNumStr(t.baseLightDamage), this.labellightDamageAdd.string = this.getPercentStr(t.lightDamagePercent), 
+                this.labelpoisonDamage.string = r.default.GetFloorNumStr(t.basePoisonDamage), this.labelpoisonDamageAdd.string = this.getPercentStr(t.poisonDamagePercent), 
+                this.labelfronzenDefence.string = this.getPercentStr(t.frozenDefence), this.labelblazeDefence.string = this.getPercentStr(t.blazeDefence), 
+                this.labellightDefence.string = this.getPercentStr(t.lightDefence), this.labelpoisonDefence.string = this.getPercentStr(t.poisonDefence), 
+                this.labelelementDamagePercent.string = this.getPercentStr(t.elementDamagePercent), 
+                this.labelelementDefence.string = this.getPercentStr(t.elementDefence), this.labelGoldAdd.string = this.getPercentStr(t.addGetCoin);
+            }, t.prototype.updateEquipBtn = function() {
+                for (var e = n.default.instance.curUseEquipPlanNum, t = 0; t < 5; t++) this.btn_equips[t].node.active = t < e;
             }, t.prototype.onClickEquipBtn = function(e) {
-                console.log("=========" + e);
+                a.curChangeIndex != e ? (e != n.default.instance.curUseEquipPlanIndex ? n.default.instance.isVirtual = !0 : n.default.instance.isVirtual = !1, 
+                this.btn_equips[a.curChangeIndex].node.color = cc.Color.WHITE, a.curChangeIndex = e, 
+                this.btn_equips[a.curChangeIndex].node.color = cc.Color.GREEN, n.default.instance.ShowVirtualHeroData(a.curChangeIndex), 
+                p.default.instance.checkBagAlert()) : m.default.instance.LoadTipsByStr("当前方案已被选择");
+            }, t.prototype.onClickChangePlan = function() {
+                var e = "点击确认切换装备方案" + (a.curChangeIndex + 1);
+                m.default.instance.LoadMessageBox("切换方案", e, this.OnClickSureChangePlan);
+            }, t.prototype.OnClickSureChangePlan = function(e) {
+                e && (n.default.instance.isVirtual = !1, a.curChangeIndex != n.default.instance.curUseEquipPlanIndex && d.default.instance.ActiveEquipRequest(a.curChangeIndex));
             }, t.prototype.recommendAddPoint = function() {
-                d.default.instance.showUI("推荐加点", "将按照新手方案，力量:敏捷=1:1进行配置加点。", this.recommendAddPointCallback);
+                m.default.instance.LoadMessageBox("推荐加点", "将按照新手方案，力量:敏捷=1:1进行配置加点。", this.recommendAddPointCallback);
             }, t.prototype.recommendAddPointCallback = function(e) {
                 if (e) {
                     var t = n.default.instance.getMainPlayer(), i = t.strength, r = t.agile, o = t.unSeperatePoint, s = 0, l = 0;
@@ -7278,21 +7796,21 @@ window.__require = function e(t, a, n) {
             }, t.prototype.getPercentStr = function(e) {
                 return r.default.GetPercentStr(e);
             }, t.prototype.add1Streangth = function() {
-                this.addStrength(1);
+                1 != n.default.instance.isVirtual ? this.addStrength(1) : m.default.instance.LoadTipsByStr("查看方案时，无法加点");
             }, t.prototype.add100Streangth = function() {
-                this.addStrength(100);
+                1 != n.default.instance.isVirtual ? this.addStrength(100) : m.default.instance.LoadTipsByStr("查看方案时，无法加点");
             }, t.prototype.add1Power = function() {
-                this.addPower(1);
+                1 != n.default.instance.isVirtual ? this.addPower(1) : m.default.instance.LoadTipsByStr("查看方案时，无法加点");
             }, t.prototype.add100Power = function() {
-                this.addPower(100);
+                1 != n.default.instance.isVirtual ? this.addPower(100) : m.default.instance.LoadTipsByStr("查看方案时，无法加点");
             }, t.prototype.add1Agile = function() {
-                this.addAgile(1);
+                1 != n.default.instance.isVirtual ? this.addAgile(1) : m.default.instance.LoadTipsByStr("查看方案时，无法加点");
             }, t.prototype.add100Agile = function() {
-                this.addAgile(100);
+                1 != n.default.instance.isVirtual ? this.addAgile(100) : m.default.instance.LoadTipsByStr("查看方案时，无法加点");
             }, t.prototype.add1Energy = function() {
-                this.addEnergy(1);
+                1 != n.default.instance.isVirtual ? this.addEnergy(1) : m.default.instance.LoadTipsByStr("查看方案时，无法加点");
             }, t.prototype.add100Energy = function() {
-                this.addEnergy(100);
+                1 != n.default.instance.isVirtual ? this.addEnergy(100) : m.default.instance.LoadTipsByStr("查看方案时，无法加点");
             }, t.prototype.addStrength = function(e) {
                 n.default.instance.getMainPlayer().unSeperatePoint < 1 || (u.default.instance.PlayerAddPoint(1, e), 
                 n.default.instance.getMainPlayer().addBaseStrengthByPoint(e), this.updateBaseAttr(), 
@@ -7317,53 +7835,59 @@ window.__require = function e(t, a, n) {
                     a += cc.js.formatStr("<color=#ffffff>%s</color>", r.desc) + "\n";
                 }
                 this.label_altar.string = a;
-            }, t.instance = null, __decorate([ f(cc.Node) ], t.prototype, "uiNode", void 0), 
-            __decorate([ f(cc.Node) ], t.prototype, "maskNode", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelNewLiftCount", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelCombatEffect", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelStength", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelPower", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelAgile", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelEnergy", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelUnSeperate", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelDamage", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelAddDamagePercent", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelHP", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelMP", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelDefence", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelSt", void 0), 
-            __decorate([ f(cc.Button) ], t.prototype, "buttonAddStr", void 0), __decorate([ f(cc.Button) ], t.prototype, "buttonAdd100Str", void 0), 
-            __decorate([ f(cc.Button) ], t.prototype, "buttonAddPow", void 0), __decorate([ f(cc.Button) ], t.prototype, "buttonAdd100Pow", void 0), 
-            __decorate([ f(cc.Button) ], t.prototype, "buttonAddAgi", void 0), __decorate([ f(cc.Button) ], t.prototype, "buttonAdd100Agi", void 0), 
-            __decorate([ f(cc.Button) ], t.prototype, "buttonAddEne", void 0), __decorate([ f(cc.Button) ], t.prototype, "buttonAdd100Ene", void 0), 
-            __decorate([ f(cc.Button) ], t.prototype, "btnRecommendAddPoint", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelAttInterval", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelCritical", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelHit", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelBlock", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelKillAddHP", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelKillAddMP", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelAttAddHP", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelAttAddMP", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelRealDamage", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelRealDefence", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelAddExp", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelBetterEquip", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelDizziDefence", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelfronzenDamage", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelfronzenDamageAdd", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelblazeDamage", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelblazeDamageAdd", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labellightDamage", void 0), __decorate([ f(cc.Label) ], t.prototype, "labellightDamageAdd", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelpoisonDamage", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelpoisonDamageAdd", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelfronzenDefence", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelblazeDefence", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labellightDefence", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelpoisonDefence", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelelementDamagePercent", void 0), __decorate([ f(cc.Label) ], t.prototype, "labelelementDefence", void 0), 
-            __decorate([ f(cc.Label) ], t.prototype, "labelGoldAdd", void 0), __decorate([ f(cc.RichText) ], t.prototype, "label_altar", void 0), 
-            t = a = __decorate([ m ], t);
+            }, t.prototype.refreshAllEquipItem = function() {
+                this.equipItemNode.active = !1, this.equipItemNode.active = !0;
+            }, t.instance = null, t.curChangeIndex = 0, __decorate([ h(cc.Node) ], t.prototype, "uiNode", void 0), 
+            __decorate([ h(cc.Node) ], t.prototype, "maskNode", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelNewLiftCount", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelCombatEffect", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelStength", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelPower", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelAgile", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelEnergy", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelUnSeperate", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelDamage", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelAddDamagePercent", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelHP", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelMP", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelDefence", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelSt", void 0), 
+            __decorate([ h(cc.Button) ], t.prototype, "buttonAddStr", void 0), __decorate([ h(cc.Button) ], t.prototype, "buttonAdd100Str", void 0), 
+            __decorate([ h(cc.Button) ], t.prototype, "buttonAddPow", void 0), __decorate([ h(cc.Button) ], t.prototype, "buttonAdd100Pow", void 0), 
+            __decorate([ h(cc.Button) ], t.prototype, "buttonAddAgi", void 0), __decorate([ h(cc.Button) ], t.prototype, "buttonAdd100Agi", void 0), 
+            __decorate([ h(cc.Button) ], t.prototype, "buttonAddEne", void 0), __decorate([ h(cc.Button) ], t.prototype, "buttonAdd100Ene", void 0), 
+            __decorate([ h(cc.Button) ], t.prototype, "btnRecommendAddPoint", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelAttInterval", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelCritical", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelHit", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelBlock", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelKillAddHP", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelKillAddMP", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelAttAddHP", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelAttAddMP", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelRealDamage", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelRealDefence", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelAddExp", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelBetterEquip", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelDizziDefence", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelfronzenDamage", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelfronzenDamageAdd", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelblazeDamage", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelblazeDamageAdd", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labellightDamage", void 0), __decorate([ h(cc.Label) ], t.prototype, "labellightDamageAdd", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelpoisonDamage", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelpoisonDamageAdd", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelfronzenDefence", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelblazeDefence", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labellightDefence", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelpoisonDefence", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelelementDamagePercent", void 0), __decorate([ h(cc.Label) ], t.prototype, "labelelementDefence", void 0), 
+            __decorate([ h(cc.Label) ], t.prototype, "labelGoldAdd", void 0), __decorate([ h(cc.RichText) ], t.prototype, "label_altar", void 0), 
+            __decorate([ h(cc.Button) ], t.prototype, "btn_equips", void 0), __decorate([ h(cc.Node) ], t.prototype, "equipItemNode", void 0), 
+            __decorate([ h(cc.Button) ], t.prototype, "btn_change_plan", void 0), __decorate([ h(cc.Node) ], t.prototype, "node_cur_plan", void 0), 
+            t = a = __decorate([ g ], t);
         }(cc.Component);
-        a.default = g, cc._RF.pop();
+        a.default = _, cc._RF.pop();
     }, {
         "../audio_manager": "audio_manager",
         "../common/allenum": "allenum",
         "../common/emmiter": "emmiter",
         "../manager/data_manager": "data_manager",
         "../manager/dynamic_data_manager": "dynamic_data_manager",
+        "../manager/ui_manager": "ui_manager",
+        "../network/bag_network": "bag_network",
         "../network/player_network": "player_network",
         "../util": "util",
         "./battle_ui_manager": "battle_ui_manager",
-        "./messagebox_ui_manager": "messagebox_ui_manager"
+        "./menu_ui_manager": "menu_ui_manager"
     } ],
     sign_item: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "86741xFVvZJirxupC1npZTU", "sign_item"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../../manager/dynamic_data_manager"), i = e("../../manager/data_manager"), r = e("../../manager/resource_manager"), o = e("../../util"), s = e("../tips_ui_manager"), l = cc._decorator, c = l.ccclass, u = l.property, d = function(e) {
+        var n = e("../../manager/dynamic_data_manager"), i = e("../../manager/data_manager"), r = e("../../manager/resource_manager"), o = e("../../util"), s = e("../../manager/ui_manager"), l = cc._decorator, c = l.ccclass, u = l.property, d = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.labelDesc = null, t.labelBonusNum = null, t.spriteBg = null, t.nodeCheckTag = null, 
@@ -7376,7 +7900,7 @@ window.__require = function e(t, a, n) {
                 this.refreshItem();
             }, t.prototype.showInfo = function() {
                 var e = this.getSignID(), t = i.default.instance.signData[e];
-                t && s.default.instance.showTipsByStr(t.desc);
+                t && s.default.instance.LoadTipsByStr(t.desc);
             }, t.prototype.getSignID = function() {
                 return n.default.instance.canSign ? n.default.instance.signTotalCount >= a.SIGN_LOOP_START_INDEX ? a.SIGN_LOOP_START_INDEX + this.curIndex : this.curIndex + Math.floor(n.default.instance.signTotalCount / a.SIGN_LOOP_COUNT) * a.SIGN_LOOP_COUNT : n.default.instance.signTotalCount - 1 >= a.SIGN_LOOP_START_INDEX ? a.SIGN_LOOP_START_INDEX + this.curIndex : n.default.instance.signTotalCount >= 1 ? this.curIndex + Math.floor((n.default.instance.signTotalCount - 1) / a.SIGN_LOOP_COUNT) * a.SIGN_LOOP_COUNT : this.curIndex;
             }, t.prototype.refreshItem = function() {
@@ -7409,15 +7933,15 @@ window.__require = function e(t, a, n) {
         "../../manager/data_manager": "data_manager",
         "../../manager/dynamic_data_manager": "dynamic_data_manager",
         "../../manager/resource_manager": "resource_manager",
-        "../../util": "util",
-        "../tips_ui_manager": "tips_ui_manager"
+        "../../manager/ui_manager": "ui_manager",
+        "../../util": "util"
     } ],
     sign_ui_manager: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "68b7eGCTYxFZY2rtG6awBTs", "sign_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../manager/dynamic_data_manager"), i = e("./item/sign_item"), r = e("../network/player_network"), o = e("../common/emmiter"), s = e("../common/allenum"), l = e("../manager/data_manager"), c = e("../network/sprite_network"), u = e("./tips_ui_manager"), d = e("../manager/sprite_manager"), p = e("../manager/lost_manager"), m = e("../manager/reward_effect_manager"), f = cc._decorator, g = f.ccclass, h = f.property, _ = function(e) {
+        var n = e("../manager/dynamic_data_manager"), i = e("./item/sign_item"), r = e("../network/player_network"), o = e("../common/emmiter"), s = e("../common/allenum"), l = e("../manager/data_manager"), c = e("../network/sprite_network"), u = e("../manager/sprite_manager"), d = e("../manager/lost_manager"), p = e("../manager/reward_effect_manager"), m = e("../manager/ui_manager"), f = cc._decorator, g = f.ccclass, h = f.property, _ = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.uiNode = null, t.maskNode = null, t.btnSign = null, t.signItems = [], t.isSprite = !1, 
@@ -7430,7 +7954,7 @@ window.__require = function e(t, a, n) {
             }, t.prototype.hideUI = function() {
                 this.uiNode.active = !1;
             }, t.prototype.showUI = function() {
-                this.uiNode.active = !0, this.initData();
+                this.uiNode.active = !0, this.signInit();
             }, t.prototype.initData = function() {}, t.prototype.signInit = function() {
                 n.default.instance.canSign ? this.btnSign.interactable = !0 : this.btnSign.interactable = !1;
                 for (var e = 0, t = this.signItems; e < t.length; e++) {
@@ -7445,18 +7969,18 @@ window.__require = function e(t, a, n) {
                 var t = 0;
                 t = n.default.instance.signTotalCount > i.default.SIGN_LOOP_START_INDEX ? i.default.SIGN_LOOP_START_INDEX + n.default.instance.signTotalCount % i.default.SIGN_LOOP_COUNT + 1 : n.default.instance.signTotalCount + 1, 
                 n.default.instance.signTotalCount++, this.signInit(), this.getBonusBySignID(t), 
-                u.default.instance.showTipsByStr("领取成功！");
+                m.default.instance.LoadTipsByStr("领取成功！");
             }, t.prototype.checkCodition = function(e) {
                 var t = l.default.instance.signData[e];
                 if (!t) return !1;
                 switch (t.type) {
                   case 4:
-                    if (d.default.instance.isFullSpriteBag()) return u.default.instance.showtips("sprite_count_limit"), 
+                    if (u.default.instance.isFullSpriteBag()) return m.default.instance.LoadTipsByID("sprite_count_limit"), 
                     !1;
                     break;
 
                   case 5:
-                    if (n.default.instance.isBagFull()) return u.default.instance.showtips("bag_count_limit"), 
+                    if (n.default.instance.isBagFull()) return m.default.instance.LoadTipsByID("bag_count_limit"), 
                     !1;
                     break;
 
@@ -7468,15 +7992,15 @@ window.__require = function e(t, a, n) {
                 var t = l.default.instance.signData[e];
                 if (this.nowCount = (e - 1) % i.default.SIGN_LOOP_COUNT, t) switch (t.type) {
                   case 1:
-                    m.default.instance.createDaimondEffect(5, "金币", this.signItems[this.nowCount].node.parent.convertToWorldSpaceAR(this.signItems[this.nowCount].node.position));
+                    p.default.instance.createDaimondEffect(5, "金币", this.signItems[this.nowCount].node.parent.convertToWorldSpaceAR(this.signItems[this.nowCount].node.position));
                     break;
 
                   case 2:
-                    m.default.instance.createDaimondEffect(5, "钻石", this.signItems[this.nowCount].node.parent.convertToWorldSpaceAR(this.signItems[this.nowCount].node.position));
+                    p.default.instance.createDaimondEffect(5, "钻石", this.signItems[this.nowCount].node.parent.convertToWorldSpaceAR(this.signItems[this.nowCount].node.position));
                     break;
 
                   case 3:
-                    n.default.instance.getMainPlayer().addExpCrossLevel(t.bonus_param), r.default.instance.UpdatePlayerBaseData();
+                    r.default.instance.UpdatePlayerBaseData();
                     break;
 
                   case 4:
@@ -7484,7 +8008,7 @@ window.__require = function e(t, a, n) {
                     break;
 
                   case 5:
-                    var a = p.default.instance.getLostByID(t.bonus_param, 1, 1);
+                    var a = d.default.instance.getLostByID(t.bonus_param, 1, 1);
                     a && n.default.instance.AddBagItem(a), this.isEquip = !0;
                     break;
 
@@ -7493,8 +8017,8 @@ window.__require = function e(t, a, n) {
                 } else console.error("no this sign data :" + e);
                 return !0;
             }, t.prototype.playGetBonusAnim = function(e) {
-                1 == this.isEquip && (m.default.instance.createDaimondEffect(1, "装备", this.signItems[this.nowCount].node.parent.convertToWorldSpaceAR(this.signItems[this.nowCount].node.position), e), 
-                this.isEquip = !1), 1 == this.isSprite && (m.default.instance.createDaimondEffect(1, "精灵", this.signItems[this.nowCount].node.parent.convertToWorldSpaceAR(this.signItems[this.nowCount].node.position), e), 
+                1 == this.isEquip && (p.default.instance.createDaimondEffect(1, "装备", this.signItems[this.nowCount].node.parent.convertToWorldSpaceAR(this.signItems[this.nowCount].node.position), e), 
+                this.isEquip = !1), 1 == this.isSprite && (p.default.instance.createDaimondEffect(1, "精灵", this.signItems[this.nowCount].node.parent.convertToWorldSpaceAR(this.signItems[this.nowCount].node.position), e), 
                 this.isSprite = !1);
             }, t.instance = null, __decorate([ h(cc.Node) ], t.prototype, "uiNode", void 0), 
             __decorate([ h(cc.Node) ], t.prototype, "maskNode", void 0), __decorate([ h(cc.Button) ], t.prototype, "btnSign", void 0), 
@@ -7509,10 +8033,10 @@ window.__require = function e(t, a, n) {
         "../manager/lost_manager": "lost_manager",
         "../manager/reward_effect_manager": "reward_effect_manager",
         "../manager/sprite_manager": "sprite_manager",
+        "../manager/ui_manager": "ui_manager",
         "../network/player_network": "player_network",
         "../network/sprite_network": "sprite_network",
-        "./item/sign_item": "sign_item",
-        "./tips_ui_manager": "tips_ui_manager"
+        "./item/sign_item": "sign_item"
     } ],
     skill_item: [ function(e, t, a) {
         "use strict";
@@ -7555,14 +8079,14 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "8a39b8FAc5If6CwGTC2hRYB", "skill_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("./data_manager"), i = e("../util"), r = e("../battle/battle_manager"), o = e("../ui/tips_ui_manager"), s = e("../math/rand"), l = e("./dynamic_data_manager"), c = e("./help_manager"), u = function() {
+        var n = e("./data_manager"), i = e("../util"), r = e("../battle/battle_manager"), o = e("../math/rand"), s = e("./dynamic_data_manager"), l = e("./help_manager"), c = e("./ui_manager"), u = function() {
             function e() {
                 this.baseID = 0, this.lv = 1, this.cd = 0, this.status = 0;
             }
             return e.prototype.update = function(e) {
                 this.cd -= e, this.cd <= 0 && (this.use() ? this.cd = this.getCDDelta() : this.cd = 0);
             }, e.prototype.getCDDelta = function() {
-                var e = l.default.instance.getMainPlayer().buffData.getBuffValue("技能冷却");
+                var e = s.default.instance.getMainPlayer().buffData.getBuffValue("技能冷却");
                 return n.default.instance.skillData[this.baseID].cd * (1 + e);
             }, e.prototype.getCDPercent = function() {
                 return this.cd / this.getCDDelta();
@@ -7582,7 +8106,7 @@ window.__require = function e(t, a, n) {
                     var a = {};
                     for (var i in t.effect) null == a[i] ? a[i] = t.effect[i] : a[i] += t.effect[i];
                     for (var i in t.effect_up) null == a[i] ? a[i] = t.effect_up[i] * (this.lv - 1) : a[i] += t.effect_up[i] * (this.lv - 1);
-                    for (var i in a) e += c.default.instance.getAttrShowStr(i, a[i]) + "    ";
+                    for (var i in a) e += l.default.instance.getAttrShowStr(i, a[i]) + "    ";
                 }
                 return e + "  MP:" + this.getNeedMp().toString();
             }, e.prototype.setUp = function() {
@@ -7639,7 +8163,7 @@ window.__require = function e(t, a, n) {
             }, e.prototype.checkIndexSkillIsUsing = function(e) {
                 return !!this.skills[e] && this.skills[e].isUsing();
             }, e.prototype.setUpSkill = function(e) {
-                this.isSkillIndexFull() ? o.default.instance.showtips("skill_full_limit") : (this.skills[e] && this.skills[e].setUp(), 
+                this.isSkillIndexFull() ? c.default.instance.LoadTipsByID("skill_full_limit") : (this.skills[e] && this.skills[e].setUp(), 
                 this.setUpIndexs.push(e));
             }, e.prototype.dropUpSkill = function(e) {
                 this.skills[e] && this.skills[e].drop(), i.default.CutData(this.setUpIndexs, e);
@@ -7659,8 +8183,8 @@ window.__require = function e(t, a, n) {
                 if (t.length > 0) {
                     if (t.length <= 5) return t;
                     for (var r = 0; r < t.length; r++) {
-                        var o = s.default.getRandomNum(0, t.length - 1), l = t[o];
-                        t[o] = t[r], t[r] = l;
+                        var s = o.default.getRandomNum(0, t.length - 1), l = t[s];
+                        t[s] = t[r], t[r] = l;
                     }
                     return t = t.slice(0, 5);
                 }
@@ -7671,18 +8195,18 @@ window.__require = function e(t, a, n) {
     }, {
         "../battle/battle_manager": "battle_manager",
         "../math/rand": "rand",
-        "../ui/tips_ui_manager": "tips_ui_manager",
         "../util": "util",
         "./data_manager": "data_manager",
         "./dynamic_data_manager": "dynamic_data_manager",
-        "./help_manager": "help_manager"
+        "./help_manager": "help_manager",
+        "./ui_manager": "ui_manager"
     } ],
     skill_ui_manager: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "9a8f5zTBeJERJDw4MdElm/Z", "skill_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../manager/pool_manager"), i = e("../manager/skill_manager"), r = e("./item/store_item"), o = e("./tips_ui_manager"), s = e("./item/skill_item"), l = e("../audio_manager"), c = e("../network/player_network"), u = cc._decorator, d = u.ccclass, p = u.property, m = function(e) {
+        var n = e("../manager/pool_manager"), i = e("../manager/skill_manager"), r = e("./item/store_item"), o = e("./item/skill_item"), s = e("../audio_manager"), l = e("../network/player_network"), c = e("../manager/ui_manager"), u = cc._decorator, d = u.ccclass, p = u.property, m = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.uiNode = null, t.maskNode = null, t.nodeSkillInfo = null, t.nodeStatusMark = null, 
@@ -7697,7 +8221,7 @@ window.__require = function e(t, a, n) {
                 this.skill1.updateStatus(), this.skill2.updateStatus(), this.skill3.updateStatus(), 
                 this.skill4.updateStatus();
             }, t.prototype.showUI = function() {
-                l.default.instance.PlayUISelect(), this.uiNode.active = !0, this.refreshUI();
+                s.default.instance.PlayUISelect(), this.uiNode.active = !0, this.refreshUI();
             }, t.prototype.refreshUI = function() {
                 for (var e = this.contentNode.children, t = e.length - 1; t >= 0; t--) n.default.instance.RemoveObjectByName("StoreItem", e[t]);
                 var a, o = i.default.instance.skills;
@@ -7713,11 +8237,11 @@ window.__require = function e(t, a, n) {
                 if (i.default.instance.checkIndexSkillIsUsing(e)) {
                     i.default.instance.dropUpSkill(e);
                     var t = i.default.instance.getSkillByIndex(e).baseID;
-                    c.default.instance.PlayerUseSkill(t, !1);
-                } else if (i.default.instance.isSkillIndexFull()) o.default.instance.showtips("skill_full_limit"); else {
+                    l.default.instance.PlayerUseSkill(t, !1);
+                } else if (i.default.instance.isSkillIndexFull()) c.default.instance.LoadTipsByID("skill_full_limit"); else {
                     i.default.instance.setUpSkill(e);
                     t = i.default.instance.getSkillByIndex(e).baseID;
-                    c.default.instance.PlayerUseSkill(t, !0);
+                    l.default.instance.PlayerUseSkill(t, !0);
                 }
                 a.instance.refreshUI();
             }, t.prototype.resetSkillItem = function() {
@@ -7725,19 +8249,19 @@ window.__require = function e(t, a, n) {
             }, t.instance = null, __decorate([ p(cc.Node) ], t.prototype, "uiNode", void 0), 
             __decorate([ p(cc.Node) ], t.prototype, "maskNode", void 0), __decorate([ p(cc.Node) ], t.prototype, "nodeSkillInfo", void 0), 
             __decorate([ p(cc.Node) ], t.prototype, "nodeStatusMark", void 0), __decorate([ p(cc.Button) ], t.prototype, "btnSwitchSkillInfoShow", void 0), 
-            __decorate([ p(cc.Node) ], t.prototype, "contentNode", void 0), __decorate([ p(s.default) ], t.prototype, "skill1", void 0), 
-            __decorate([ p(s.default) ], t.prototype, "skill2", void 0), __decorate([ p(s.default) ], t.prototype, "skill3", void 0), 
-            __decorate([ p(s.default) ], t.prototype, "skill4", void 0), t = a = __decorate([ d ], t);
+            __decorate([ p(cc.Node) ], t.prototype, "contentNode", void 0), __decorate([ p(o.default) ], t.prototype, "skill1", void 0), 
+            __decorate([ p(o.default) ], t.prototype, "skill2", void 0), __decorate([ p(o.default) ], t.prototype, "skill3", void 0), 
+            __decorate([ p(o.default) ], t.prototype, "skill4", void 0), t = a = __decorate([ d ], t);
         }(cc.Component);
         a.default = m, cc._RF.pop();
     }, {
         "../audio_manager": "audio_manager",
         "../manager/pool_manager": "pool_manager",
         "../manager/skill_manager": "skill_manager",
+        "../manager/ui_manager": "ui_manager",
         "../network/player_network": "player_network",
         "./item/skill_item": "skill_item",
-        "./item/store_item": "store_item",
-        "./tips_ui_manager": "tips_ui_manager"
+        "./item/store_item": "store_item"
     } ],
     sound_item: [ function(e, t, a) {
         "use strict";
@@ -7776,7 +8300,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "41e5cmS9K9PHpZ0UM6AG2J2", "sprite_item"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../../manager/data_manager"), i = e("../../controller/ui/cost_items"), r = e("../../manager/sprite_manager"), o = e("../messagebox_ui_manager"), s = e("../sprite_ui_manager"), l = e("../../manager/resource_manager"), c = e("../../network/sprite_network"), u = cc._decorator, d = u.ccclass, p = u.property, m = function(e) {
+        var n = e("../../manager/data_manager"), i = e("../../controller/ui/cost_items"), r = e("../../manager/sprite_manager"), o = e("../sprite_ui_manager"), s = e("../../manager/resource_manager"), l = e("../../network/sprite_network"), c = e("../../manager/ui_manager"), u = cc._decorator, d = u.ccclass, p = u.property, m = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.btnBattle = null, t.btnRest = null, t.btnLvUp = null, t.btnDrop = null, 
@@ -7792,19 +8316,19 @@ window.__require = function e(t, a, n) {
                 null != i ? (this.labelTitle.string = i.name + " - LV" + r.default.instance.spritesMap[e].lv, 
                 this.labelDesc.string = i.desc, this.labelDescAbility.string = a.getAbilityDesc(), 
                 a.isBattling() ? (this.btnBattle.node.active = !1, this.btnRest.node.active = !0) : (this.btnBattle.node.active = !0, 
-                this.btnRest.node.active = !1), this.spriteIcon.spriteFrame = l.default.instance.getSpriteSprite(i.icon_path), 
+                this.btnRest.node.active = !1), this.spriteIcon.spriteFrame = s.default.instance.getSpriteSprite(i.icon_path), 
                 null != this.costItems && this.costItems.initByCostData(a.getLvUpCost())) : console.log("no this index data:" + e.toString());
             }, t.prototype.onBattle = function() {
-                r.default.instance.goBattle(this.curID), s.default.instance.refreshUI();
+                r.default.instance.goBattle(this.curID), o.default.instance.refreshUI();
             }, t.prototype.onRest = function() {
-                r.default.instance.goRest(this.curID), s.default.instance.refreshUI();
+                r.default.instance.goRest(this.curID), o.default.instance.refreshUI();
             }, t.prototype.onLVUp = function() {
                 r.default.instance.spriteLevelUp(this.curID);
             }, t.prototype.onDrop = function() {
-                o.default.instance.showUI("放生这个精灵？", "是否确认放生？", this.dropSprite, null, this.curID);
+                c.default.instance.LoadMessageBox("放生这个精灵？", "是否确认放生？", this.dropSprite, null, this.curID);
             }, t.prototype.dropSprite = function(e, t) {
-                e && (r.default.instance.removeSprite(t), c.default.instance.PlayerSpriteRemoveRequest(t), 
-                s.default.instance.reOrderSprite(), s.default.instance.refreshUI());
+                e && (r.default.instance.removeSprite(t), l.default.instance.PlayerSpriteRemoveRequest(t), 
+                o.default.instance.reOrderSprite(), o.default.instance.refreshUI());
             }, __decorate([ p(cc.Button) ], t.prototype, "btnBattle", void 0), __decorate([ p(cc.Button) ], t.prototype, "btnRest", void 0), 
             __decorate([ p(cc.Button) ], t.prototype, "btnLvUp", void 0), __decorate([ p(cc.Button) ], t.prototype, "btnDrop", void 0), 
             __decorate([ p(cc.Sprite) ], t.prototype, "spriteIcon", void 0), __decorate([ p(cc.Label) ], t.prototype, "labelTitle", void 0), 
@@ -7817,8 +8341,8 @@ window.__require = function e(t, a, n) {
         "../../manager/data_manager": "data_manager",
         "../../manager/resource_manager": "resource_manager",
         "../../manager/sprite_manager": "sprite_manager",
+        "../../manager/ui_manager": "ui_manager",
         "../../network/sprite_network": "sprite_network",
-        "../messagebox_ui_manager": "messagebox_ui_manager",
         "../sprite_ui_manager": "sprite_ui_manager"
     } ],
     sprite_manager: [ function(e, t, a) {
@@ -7826,7 +8350,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "7dacebHb/tH9qUGtzyFhF6u", "sprite_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("./data_manager"), i = e("../math/rand"), r = e("./cost_manager"), o = e("../ui/tips_ui_manager"), s = e("../battle/battle_manager"), l = e("./playerbuff_manager"), c = e("../common/emmiter"), u = e("../common/allenum"), d = e("../network/sprite_network"), p = e("../ui/sprite_ui_manager"), m = e("./help_manager"), f = function() {
+        var n = e("./data_manager"), i = e("../math/rand"), r = e("./cost_manager"), o = e("../battle/battle_manager"), s = e("./playerbuff_manager"), l = e("../common/emmiter"), c = e("../common/allenum"), u = e("../network/sprite_network"), d = e("../ui/sprite_ui_manager"), p = e("./help_manager"), m = e("./ui_manager"), f = function() {
             function e() {
                 this.index = 0, this.baseID = 0, this.lv = 1, this.lastLV = 0, this.status = 0;
             }
@@ -7836,7 +8360,7 @@ window.__require = function e(t, a, n) {
                     var a = {};
                     for (var i in t.base_attr) null == a[i] ? a[i] = t.base_attr[i] : a[i] += t.base_attr[i];
                     for (var i in t.lv_add_attr) null == a[i] ? a[i] = t.lv_add_attr[i] * (this.lv - 1) : a[i] += t.lv_add_attr[i] * (this.lv - 1);
-                    for (var i in a) e += m.default.instance.getAttrShowStr(i, a[i]) + "\n";
+                    for (var i in a) e += p.default.instance.getAttrShowStr(i, a[i]) + "\n";
                 }
                 return e;
             }, e.prototype.goBattle = function() {
@@ -7881,21 +8405,21 @@ window.__require = function e(t, a, n) {
                 configurable: !0
             }), Object.defineProperty(e.prototype, "maxBattleCount", {
                 get: function() {
-                    return this._maxBattleCount + l.default.instance.getBuffValue("精灵出战");
+                    return this._maxBattleCount + s.default.instance.getBuffValue("精灵出战");
                 },
                 enumerable: !0,
                 configurable: !0
             }), e.prototype.addSpriteByServer = function(e, t, a) {
                 if (void 0 === a && (a = 1), !this.isFullSpriteBag()) {
                     var n = new f();
-                    return n.index = e, n.baseID = t, n.lv = a, this.spritesMap[e] = n, c.Emitter.fire(u.AlertType.SpriteAlert.toString()), 
+                    return n.index = e, n.baseID = t, n.lv = a, this.spritesMap[e] = n, l.Emitter.fire(c.AlertType.SpriteAlert.toString()), 
                     !0;
                 }
                 return !1;
             }, e.prototype.addSprite = function(e) {
-                return !this.isFullSpriteBag() && (d.default.instance.PlayerAddSprite(e), !0);
+                return !this.isFullSpriteBag() && (u.default.instance.PlayerAddSprite(e), !0);
             }, e.prototype.removeSprite = function(e) {
-                delete this.spritesMap[e], s.default.instance.updateSpriteShow(), c.Emitter.fire(u.AlertType.SpriteAlert.toString());
+                delete this.spritesMap[e], o.default.instance.updateSpriteShow(), l.Emitter.fire(c.AlertType.SpriteAlert.toString());
             }, Object.defineProperty(e.prototype, "curCount", {
                 get: function() {
                     var e = 0;
@@ -7908,7 +8432,7 @@ window.__require = function e(t, a, n) {
                 return this.curCount >= this.maxCount;
             }, e.prototype.addNewRandomSprite = function() {
                 var e = this.getRandomSpriteByQuality(1);
-                return d.default.instance.PlayerAddSprite(e), e;
+                return u.default.instance.PlayerAddSprite(e), e;
             }, e.prototype.getBagCount = function() {
                 return this.curCount;
             }, e.prototype.getBattleCount = function() {
@@ -7922,31 +8446,29 @@ window.__require = function e(t, a, n) {
             }, e.prototype.goBattle = function(e) {
                 var t = 0;
                 for (var a in this.spritesMap) this.spritesMap[a].isBattling() && (t += 1);
-                t >= this.maxBattleCount ? o.default.instance.showtips("sprite_battle_full_limit") : (null != this.spritesMap[e] && this.spritesMap[e].goBattle(), 
-                s.default.instance.updateSpriteShow(), d.default.instance.PlayerUseSpriteRequest(e, !0), 
-                c.Emitter.fire(u.AlertType.SpriteAlert.toString()));
+                t >= this.maxBattleCount ? m.default.instance.LoadTipsByID("sprite_battle_full_limit") : (null != this.spritesMap[e] && this.spritesMap[e].goBattle(), 
+                o.default.instance.updateSpriteShow(), u.default.instance.PlayerUseSpriteRequest(e, !0), 
+                l.Emitter.fire(c.AlertType.SpriteAlert.toString()));
             }, e.prototype.goBattleByServer = function(e) {
                 if (this.spritesMap[e]) {
                     var t = 0;
                     for (var a in this.spritesMap) this.spritesMap[a].isBattling() && (t += 1);
-                    if (t >= this.maxBattleCount) return void o.default.instance.showtips("sprite_battle_full_limit");
-                    this.spritesMap[e].goBattle(), s.default.instance.updateSpriteShow(), c.Emitter.fire(u.AlertType.SpriteAlert.toString());
+                    if (t >= this.maxBattleCount) return void m.default.instance.LoadTipsByID("sprite_battle_full_limit");
+                    this.spritesMap[e].goBattle(), o.default.instance.updateSpriteShow(), l.Emitter.fire(c.AlertType.SpriteAlert.toString());
                 }
             }, e.prototype.goRest = function(e) {
-                null != this.spritesMap[e] && (this.spritesMap[e].goRest(), s.default.instance.updateSpriteShow(), 
-                d.default.instance.PlayerUseSpriteRequest(e, !1), c.Emitter.fire(u.AlertType.SpriteAlert.toString()));
+                null != this.spritesMap[e] && (this.spritesMap[e].goRest(), o.default.instance.updateSpriteShow(), 
+                u.default.instance.PlayerUseSpriteRequest(e, !1), l.Emitter.fire(c.AlertType.SpriteAlert.toString()));
             }, e.prototype.spriteLevelUp = function(e) {
                 if (null != this.spritesMap[e]) if (this.spritesMap[e].lv != this.spritesMap[e].lastLV) {
                     var t = n.default.instance.spriteData[this.spritesMap[e].baseID];
-                    if (this.spritesMap[e].lv >= t.max_lv) return o.default.instance.showtips("sprite_lv_limit"), 
+                    if (this.spritesMap[e].lv >= t.max_lv) return m.default.instance.LoadTipsByID("sprite_lv_limit"), 
                     !1;
                     var a = this.spritesMap[e].getLvUpCost();
-                    console.log("333333333333");
-                    console.log(e);
-                    d.default.instance.PlayerSpriteLevelUpRequest(e);
+                    r.default.instance.isEnough(a) && u.default.instance.PlayerSpriteLevelUpRequest(e);
                 } else console.log("=============精灵上一级和本级相同");
             }, e.prototype.spriteLevelUpByServer = function(e, t) {
-                null != this.spritesMap[e] && (this.spritesMap[e].lv = t, p.default.instance.refreshUI());
+                null != this.spritesMap[e] && (this.spritesMap[e].lv = t, d.default.instance.refreshUI());
             }, e.prototype.getRandomSpriteByQuality = function(e) {
                 var t, a = new Array();
                 for (t in n.default.instance.spriteData) n.default.instance.spriteData[t].quality == e && a.push(t);
@@ -7965,18 +8487,18 @@ window.__require = function e(t, a, n) {
         "../math/rand": "rand",
         "../network/sprite_network": "sprite_network",
         "../ui/sprite_ui_manager": "sprite_ui_manager",
-        "../ui/tips_ui_manager": "tips_ui_manager",
         "./cost_manager": "cost_manager",
         "./data_manager": "data_manager",
         "./help_manager": "help_manager",
-        "./playerbuff_manager": "playerbuff_manager"
+        "./playerbuff_manager": "playerbuff_manager",
+        "./ui_manager": "ui_manager"
     } ],
     sprite_network: [ function(e, t, a) {
         "use strict";
         cc._RF.push(t, "67a04CiyS5FdKOGDqTz4jCX", "sprite_network"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../common/emmiter"), i = e("../manager/network_manager"), r = e("../common/message"), o = e("../manager/sprite_manager"), s = e("../manager/game_manager"), l = e("../ui/sign_ui_manager"), c = e("../manager/data_manager"), u = function() {
+        var n = e("../common/emmiter"), i = e("../manager/network_manager"), r = e("../common/message"), o = e("../manager/sprite_manager"), s = e("../manager/game_manager"), l = e("../ui/sign_ui_manager"), c = e("../manager/data_manager"), u = e("../common/allenum"), d = e("../ui/blackmarket_ui_manager"), p = function() {
             function e() {}
             return Object.defineProperty(e, "instance", {
                 get: function() {
@@ -7989,7 +8511,8 @@ window.__require = function e(t, a, n) {
                 n.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.GetPlayerSpriteResponse, r.MessageType.GamePlay), this.GetPlayerSpriteResponse, this), 
                 n.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.PlayerSpriteRemoveResponse, r.MessageType.GamePlay), this.PlayerSpriteRemoveResponse, this), 
                 n.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.PlayerUseSpriteResponse, r.MessageType.GamePlay), this.PlayerUseSpriteResponse, this), 
-                n.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.PlayerSpriteLevelUpResponse, r.MessageType.GamePlay), this.PlayerSpriteLevelUpResponse, this);
+                n.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.PlayerSpriteLevelUpResponse, r.MessageType.GamePlay), this.PlayerSpriteLevelUpResponse, this), 
+                n.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.PlayerSyncSpriteResponse, r.MessageType.GamePlay), this.PlayerSyncSpriteResponse, this);
             }, e.prototype.PlayerAddSprite = function(e) {
                 var t = {
                     ID: Number(e)
@@ -8024,18 +8547,22 @@ window.__require = function e(t, a, n) {
                 };
                 i.NetworkManager.SendMessage(r.MessageNo.PlayerSpriteLevelUpRequest, r.MessageType.GamePlay, t);
             }, e.prototype.PlayerSpriteLevelUpResponse = function(e, t) {
-                console.log("----------\x3e PlayerSpriteLevelUpResponse:" + JSON.stringify(t)), 
-                o.default.instance.spriteLevelUpByServer(t.Index, t.Lv);
+                t.IsOk && o.default.instance.spriteLevelUpByServer(t.Index, t.Lv);
+            }, e.prototype.PlayerSyncSpriteResponse = function(e, t) {
+                t.ActionType == u.SpriteActionType.BuyBlackMarket && d.default.instance && d.default.instance.bugSpriteOrEquipSuccess(!0), 
+                o.default.instance.addSpriteByServer(t.Index, t.BaseID);
             }, e._instance = null, e;
         }();
-        a.default = u, cc._RF.pop();
+        a.default = p, cc._RF.pop();
     }, {
+        "../common/allenum": "allenum",
         "../common/emmiter": "emmiter",
         "../common/message": "message",
         "../manager/data_manager": "data_manager",
         "../manager/game_manager": "game_manager",
         "../manager/network_manager": "network_manager",
         "../manager/sprite_manager": "sprite_manager",
+        "../ui/blackmarket_ui_manager": "blackmarket_ui_manager",
         "../ui/sign_ui_manager": "sign_ui_manager"
     } ],
     sprite_ui_manager: [ function(e, t, a) {
@@ -8043,7 +8570,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "7a755ayIHlLWpD4UfLp7nBG", "sprite_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../util"), i = e("../manager/pool_manager"), r = e("../manager/sprite_manager"), o = e("./item/sprite_item"), s = e("../audio_manager"), l = e("./tips_ui_manager"), c = cc._decorator, u = c.ccclass, d = c.property, p = function(e) {
+        var n = e("../util"), i = e("../manager/pool_manager"), r = e("../manager/sprite_manager"), o = e("./item/sprite_item"), s = e("../audio_manager"), l = e("../manager/ui_manager"), c = cc._decorator, u = c.ccclass, d = c.property, p = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.uiNode = null, t.maskNode = null, t.contentNode = null, t.labelBattleStatus = null, 
@@ -8074,11 +8601,11 @@ window.__require = function e(t, a, n) {
                 this.labelBattleStatus.string = r.default.instance.getBattleCount().toString() + " / " + r.default.instance.maxBattleCount.toString(), 
                 this.labelBagStatus.string = r.default.instance.getBagCount().toString() + " / " + r.default.instance.maxCount.toString();
             }, t.prototype.lastPage = function() {
-                this.curPage <= 1 ? l.default.instance.showTipsByStr("没有更多记录") : (this.curPage--, 
+                this.curPage <= 1 ? l.default.instance.LoadTipsByStr("没有更多记录") : (this.curPage--, 
                 this.refreshUI());
             }, t.prototype.nextPage = function() {
                 var e = Math.floor((r.default.instance.getBagCount() - 1) / 4) + 1;
-                this.curPage >= e ? l.default.instance.showTipsByStr("没有更多记录") : (this.curPage++, 
+                this.curPage >= e ? l.default.instance.LoadTipsByStr("没有更多记录") : (this.curPage++, 
                 this.refreshUI());
             }, t.prototype.hideUI = function() {
                 this.uiNode.active = !1;
@@ -8093,9 +8620,9 @@ window.__require = function e(t, a, n) {
         "../audio_manager": "audio_manager",
         "../manager/pool_manager": "pool_manager",
         "../manager/sprite_manager": "sprite_manager",
+        "../manager/ui_manager": "ui_manager",
         "../util": "util",
-        "./item/sprite_item": "sprite_item",
-        "./tips_ui_manager": "tips_ui_manager"
+        "./item/sprite_item": "sprite_item"
     } ],
     store_item: [ function(e, t, a) {
         "use strict";
@@ -8253,11 +8780,12 @@ window.__require = function e(t, a, n) {
             }, t.prototype.strengthen = function() {
                 if (this.curBagItemData.canStrength()) {
                     var e = this.curBagItemData.getStrengthenCost();
-                    l.default.instance.cost(e) && (r.default.instance.IsEquiping(this.curBagItemData) ? p.default.instance.StengthItemRequest(this.curBagItemData.index, 2) : p.default.instance.StengthItemRequest(this.curBagItemData.index, 1));
+                    l.default.instance.cost(e) && (0 != r.default.instance.IsEquiping(this.curBagItemData) ? p.default.instance.StengthItemRequest(this.curBagItemData.index, 2) : p.default.instance.StengthItemRequest(this.curBagItemData.index, 1));
                 } else console.log("等级已经达到最高，不能强化了");
             }, t.prototype.strengthenSuccess = function() {
-                r.default.instance.IsEquiping(this.curBagItemData) ? (r.default.instance.removeEquipAttrToPlayer(this.curBagItemData), 
-                this.curBagItemData.strength(), this.initItemTipContent(), r.default.instance.addEquipAttrToPlayer(this.curBagItemData)) : (this.curBagItemData.strength(), 
+                0 == r.default.instance.IsEquiping(this.curBagItemData) ? (this.curBagItemData.strength(), 
+                this.initItemTipContent()) : 1 == r.default.instance.IsEquiping(this.curBagItemData) ? (r.default.instance.removeEquipAttrToPlayer(this.curBagItemData), 
+                this.curBagItemData.strength(), this.initItemTipContent(), r.default.instance.addEquipAttrToPlayer(this.curBagItemData)) : 2 == r.default.instance.IsEquiping(this.curBagItemData) && (this.curBagItemData.strength(), 
                 this.initItemTipContent());
             }, t.instance = null, __decorate([ g(cc.Node) ], t.prototype, "uiNode", void 0), 
             __decorate([ g(cc.Node) ], t.prototype, "maskNode", void 0), __decorate([ g(cc.Node) ], t.prototype, "nodeAttrs", void 0), 
@@ -8284,7 +8812,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "7c63b2FXulJyo8uAYiGx5e7", "strengthen_ui_manager"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../manager/dynamic_data_manager"), i = e("../manager/pool_manager"), r = e("./item/bag_item"), o = e("../common/allenum"), s = e("../audio_manager"), l = e("../util"), c = cc._decorator, u = c.ccclass, d = c.property, p = function(e) {
+        var n = e("../manager/dynamic_data_manager"), i = e("../manager/pool_manager"), r = e("./item/bag_item"), o = e("../common/allenum"), s = e("../audio_manager"), l = cc._decorator, c = l.ccclass, u = l.property, d = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.bagUINode = null, t.maskNode = null, t.bagContentViewNode = null, t;
@@ -8296,26 +8824,26 @@ window.__require = function e(t, a, n) {
                 s.default.instance.PlayUISelect(), this.bagUINode.active = !0, this.refreshBagUI();
             }, t.prototype.refreshBagUI = function() {
                 for (var e = this.bagContentViewNode.children, t = e.length - 1; t >= 0; t--) i.default.instance.RemoveBagItem(e[t]);
-                if (null != n.default.instance.EquipItemDataMap) for (var t in n.default.instance.EquipItemDataMap) if (l.default.len(n.default.instance.EquipItemDataMap[t])) {
-                    var a = i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default);
-                    a.reinit(n.default.instance.EquipItemDataMap[t], o.GridType.StrengthenItem), a.setEquipingTag();
+                if (null != n.default.instance.EquipItemAllDatas) for (var a in n.default.instance.EquipItemAllDatas) if (null != a) for (var s in n.default.instance.EquipItemAllDatas[a]) {
+                    var l = i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default);
+                    l.reinit(n.default.instance.EquipItemAllDatas[a][s], o.GridType.StrengthenItem), 
+                    l.setEquipingTag(Number(a) + 1);
                 }
-                if (null != n.default.instance.BagItemDataMap) for (var t in n.default.instance.BagItemDataMap) {
-                    i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default).reinit(n.default.instance.BagItemDataMap[t], o.GridType.StrengthenItem);
+                if (null != n.default.instance.BagItemDataMap) for (var c in n.default.instance.BagItemDataMap) {
+                    i.default.instance.CreateBagItem(this.bagContentViewNode).getComponent(r.default).reinit(n.default.instance.BagItemDataMap[c], o.GridType.StrengthenItem);
                 }
             }, t.prototype.showRefreshTip = function(e) {}, t.prototype.hideBagUI = function() {
                 this.bagUINode.active = !1;
-            }, t.instance = null, __decorate([ d(cc.Node) ], t.prototype, "bagUINode", void 0), 
-            __decorate([ d(cc.Node) ], t.prototype, "maskNode", void 0), __decorate([ d(cc.Node) ], t.prototype, "bagContentViewNode", void 0), 
-            t = a = __decorate([ u ], t);
+            }, t.instance = null, __decorate([ u(cc.Node) ], t.prototype, "bagUINode", void 0), 
+            __decorate([ u(cc.Node) ], t.prototype, "maskNode", void 0), __decorate([ u(cc.Node) ], t.prototype, "bagContentViewNode", void 0), 
+            t = a = __decorate([ c ], t);
         }(cc.Component);
-        a.default = p, cc._RF.pop();
+        a.default = d, cc._RF.pop();
     }, {
         "../audio_manager": "audio_manager",
         "../common/allenum": "allenum",
         "../manager/dynamic_data_manager": "dynamic_data_manager",
         "../manager/pool_manager": "pool_manager",
-        "../util": "util",
         "./item/bag_item": "bag_item"
     } ],
     tips_ui_manager: [ function(e, t, a) {
@@ -8383,7 +8911,7 @@ window.__require = function e(t, a, n) {
         cc._RF.push(t, "be86cX/l9JDEZmO71QA2fPC", "today_reward_ui"), Object.defineProperty(a, "__esModule", {
             value: !0
         });
-        var n = e("../manager/reward_manager"), i = e("../manager/resource_manager"), r = e("../manager/reward_effect_manager"), o = e("../manager/data_manager"), s = e("./tips_ui_manager"), l = e("../util"), c = cc._decorator, u = c.ccclass, d = c.property, p = function(e) {
+        var n = e("../manager/reward_manager"), i = e("../manager/resource_manager"), r = e("../manager/reward_effect_manager"), o = e("../manager/data_manager"), s = e("../util"), l = e("../manager/ui_manager"), c = cc._decorator, u = c.ccclass, d = c.property, p = function(e) {
             function t() {
                 var t = null !== e && e.apply(this, arguments) || this;
                 return t.labelLeftTime = null, t.labelRewardNum = null, t.nodeCanGet = null, t.spriteBg = null, 
@@ -8397,19 +8925,19 @@ window.__require = function e(t, a, n) {
                 if (0 != e) if (1 == t) r.default.instance.createDaimondEffect(10, "金币", this.node.parent.convertToWorldSpaceAR(this.node.position)); else if (2 == t) r.default.instance.createDaimondEffect(10, "钻石", this.node.parent.convertToWorldSpaceAR(this.node.position)); else if (3 == t) {
                     var i = o.default.instance.spriteData[e].icon_path;
                     r.default.instance.createDaimondEffect(1, "精灵", this.node.parent.convertToWorldSpaceAR(this.node.position), i), 
-                    s.default.instance.showTipsByStr("获得:" + o.default.instance.spriteData[e].name);
+                    l.default.instance.LoadTipsByStr("获得:" + o.default.instance.spriteData[e].name);
                 } else if (4 == t) if (0 != a) {
-                    var l = o.default.instance.onlineRewardData[a].param;
-                    for (var c in l) {
-                        var u = l[c];
+                    var s = o.default.instance.onlineRewardData[a].param;
+                    for (var c in s) {
+                        var u = s[c];
                         i = o.default.instance.equipmentData[u].icon_path;
                         r.default.instance.createDaimondEffect(1, "装备", this.node.parent.convertToWorldSpaceAR(this.node.position), i), 
-                        s.default.instance.showTipsByStr("获得:" + o.default.instance.equipmentData[u].name);
+                        l.default.instance.LoadTipsByStr("获得:" + o.default.instance.equipmentData[u].name);
                     }
                 } else {
                     i = o.default.instance.equipmentData[e].icon_path;
                     r.default.instance.createDaimondEffect(1, "装备", this.node.parent.convertToWorldSpaceAR(this.node.position), i), 
-                    s.default.instance.showTipsByStr("获得:" + o.default.instance.equipmentData[e].name);
+                    l.default.instance.LoadTipsByStr("获得:" + o.default.instance.equipmentData[e].name);
                 }
             }, t.prototype.getReward = function() {
                 n.default.instance.getReward();
@@ -8419,7 +8947,7 @@ window.__require = function e(t, a, n) {
                     this.spriteBg.spriteFrame = i.default.instance.getCommonSprite(e), this.labelRewardNum.string = n.default.instance.getRewardNumDesc();
                 }
             }, t.prototype.update = function() {
-                i.default.instance.Inited && (n.default.instance.isWaitingToGet() && (this.labelLeftTime.string = l.default.getTimeFormat(n.default.instance.getLeftTime())), 
+                i.default.instance.Inited && (n.default.instance.isWaitingToGet() && (this.labelLeftTime.string = s.default.getTimeFormat(n.default.instance.getLeftTime())), 
                 this.lastStatus != n.default.instance.status && (this.lastStatus = n.default.instance.status, 
                 this.isStatusChange = !0), this.isStatusChange && (this.refreshStatus(), this.isStatusChange = !1));
             }, t.instance = null, __decorate([ d(cc.Label) ], t.prototype, "labelLeftTime", void 0), 
@@ -8433,8 +8961,205 @@ window.__require = function e(t, a, n) {
         "../manager/resource_manager": "resource_manager",
         "../manager/reward_effect_manager": "reward_effect_manager",
         "../manager/reward_manager": "reward_manager",
-        "../util": "util",
-        "./tips_ui_manager": "tips_ui_manager"
+        "../manager/ui_manager": "ui_manager",
+        "../util": "util"
+    } ],
+    ui_manager: [ function(e, t, a) {
+        "use strict";
+        cc._RF.push(t, "e9f38YbSClDxZq1NtR5En/0", "ui_manager"), Object.defineProperty(a, "__esModule", {
+            value: !0
+        });
+        var n = e("../ui/map_ui_manager"), i = e("./canvas_manager"), r = e("../ui/bag_ui_manager"), o = e("../ui/messagebox_ui_manager"), s = e("../ui/achievement_ui_manager"), l = e("../ui/boss_come_effect_manager"), c = e("../ui/equipinfo_tip_manager"), u = e("../ui/bag_control_ui_manager"), d = e("../ui/gem_tip_ui_manager"), p = e("../ui/role_ui_manager"), m = e("../ui/depot_ui_manager"), f = e("../ui/offline_show_ui_manager"), g = e("../ui/invite_friend_ui_manager"), h = e("../ui/changname_ui_manager"), _ = e("../ui/sprite_ui_manager"), y = e("../ui/help_ui_manager"), v = e("../ui/notice_ui_manager"), b = e("../ui/sign_ui_manager"), D = e("../ui/strengthen_ui_manager"), I = e("../ui/strengthen_tip_manager"), P = e("../ui/blackmarket_ui_manager"), B = e("../ui/refresh_ui_manager"), S = e("../ui/learn_skill_manager"), R = e("../ui/store_ui_manager"), k = e("../ui/add_hole_select_ui_manager"), A = e("../ui/gem_equip_ui_manager"), M = e("../ui/tips_ui_manager"), N = e("../ui/chat_ui_manager"), w = cc._decorator, E = w.ccclass, T = (w.property, 
+        function(e) {
+            function t() {
+                return null !== e && e.apply(this, arguments) || this;
+            }
+            var a;
+            return __extends(t, e), a = t, Object.defineProperty(t, "instance", {
+                get: function() {
+                    return null == this._instance && (this._instance = new a()), this._instance;
+                },
+                enumerable: !0,
+                configurable: !0
+            }), t.prototype.LoadRoleUI = function(e) {
+                p.default.instance ? p.default.instance.showUI(e) : cc.loader.loadRes("ui/role_ui", function(t, n) {
+                    var r = cc.instantiate(n);
+                    i.default.instance.node.addChild(r, a.Z_ORDER_2), p.default.instance.showUI(e);
+                });
+            }, t.prototype.LoadSpriteUI = function() {
+                _.default.instance ? _.default.instance.showUI() : cc.loader.loadRes("ui/sprite_ui", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_2), _.default.instance.showUI();
+                });
+            }, t.prototype.LoadSignUI = function() {
+                b.default.instance ? b.default.instance.showUI() : cc.loader.loadRes("ui/sign", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_2), b.default.instance.showUI();
+                });
+            }, t.prototype.LoadStrengthenUI = function() {
+                D.default.instance ? D.default.instance.showUI() : cc.loader.loadRes("ui/strengthen_ui", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_2), D.default.instance.showUI();
+                });
+            }, t.prototype.LoadMapUI = function() {
+                n.default.instance ? n.default.instance.showUI() : cc.loader.loadRes("ui/map_ui", function(e, t) {
+                    var r = cc.instantiate(t);
+                    i.default.instance.node.addChild(r, a.Z_ORDER_2), n.default.instance.showUI();
+                });
+            }, t.prototype.LoadBlackMarketUI = function() {
+                P.default.instance ? P.default.instance.showUI() : cc.loader.loadRes("ui/blackmarket_ui", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_2), P.default.instance.showUI();
+                });
+            }, t.prototype.LoadLearnSkillUI = function() {
+                S.default.instance ? S.default.instance.showUI() : cc.loader.loadRes("ui/learn_skill_ui", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_2), S.default.instance.showUI();
+                });
+            }, t.prototype.LoadAltarUI = function() {
+                R.default.instance ? R.default.instance.showUI() : cc.loader.loadRes("ui/store_ui", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_2), R.default.instance.showUI();
+                });
+            }, t.prototype.LoadAddHoleSelectUI = function() {
+                k.default.instance ? k.default.instance.showUI() : cc.loader.loadRes("ui/add_hole_select_ui", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_2), k.default.instance.showUI();
+                });
+            }, t.prototype.LoadGemEquipUI = function() {
+                A.default.instance ? A.default.instance.showUI() : cc.loader.loadRes("ui/gem_equip_ui", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_2), A.default.instance.showUI();
+                });
+            }, t.prototype.LoadRefreshUI = function() {
+                B.default.instance ? B.default.instance.showUI() : cc.loader.loadRes("ui/refresh_ui", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_2), B.default.instance.showUI();
+                });
+            }, t.prototype.LoadBagUI = function() {
+                r.default.instance ? r.default.instance.showUI() : cc.loader.loadRes("ui/bag_ui", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_2), r.default.instance.showUI();
+                });
+            }, t.prototype.LoadDepotUI = function() {
+                m.default.instance ? m.default.instance.showUI() : cc.loader.loadRes("ui/depot_ui", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_2), m.default.instance.showUI();
+                });
+            }, t.prototype.LoadInviteFriendUI = function() {
+                g.default.instance ? g.default.instance.ShowInviteFrinedUI() : cc.loader.loadRes("ui/invite_friends_ui", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_2), g.default.instance.ShowInviteFrinedUI();
+                });
+            }, t.prototype.LoadAchievementUI = function() {
+                s.default.instance ? s.default.instance.showUI() : cc.loader.loadRes("ui/achievement_ui", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_2), s.default.instance.showUI();
+                });
+            }, t.prototype.LoadNoticeUI = function() {
+                v.default.instance ? v.default.instance.showUI() : cc.loader.loadRes("ui/notice", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_3), v.default.instance.showUI();
+                });
+            }, t.prototype.LoadHelpUI = function(e) {
+                y.default.instance ? y.default.instance.showHelp(e) : cc.loader.loadRes("ui/help_ui", function(t, n) {
+                    var r = cc.instantiate(n);
+                    i.default.instance.node.addChild(r, a.Z_ORDER_3), y.default.instance.showHelp(e);
+                });
+            }, t.prototype.LoadStrengthenTip = function(e) {
+                I.default.instance ? I.default.instance.showItemTip(e) : cc.loader.loadRes("ui/strengthen_tip", function(t, n) {
+                    var r = cc.instantiate(n);
+                    i.default.instance.node.addChild(r, a.Z_ORDER_3), I.default.instance.showItemTip(e);
+                });
+            }, t.prototype.LoadGemTipUI = function(e, t) {
+                d.default.instance ? d.default.instance.showGemItemTip(e, t) : cc.loader.loadRes("ui/gem_tip", function(n, r) {
+                    var o = cc.instantiate(r);
+                    i.default.instance.node.addChild(o, a.Z_ORDER_3), d.default.instance.showGemItemTip(e, t);
+                });
+            }, t.prototype.LoadEquipInfoTips = function(e) {
+                c.default.instance ? c.default.instance.showEquipTip(e) : cc.loader.loadRes("ui/equipinfo_tip", function(t, n) {
+                    var r = cc.instantiate(n);
+                    i.default.instance.node.addChild(r, a.Z_ORDER_3), c.default.instance.showEquipTip(e);
+                });
+            }, t.prototype.LoadBagControlUI = function(e) {
+                u.default.instance ? u.default.instance.showUI(e) : cc.loader.loadRes("ui/bag_control_ui", function(t, n) {
+                    var r = cc.instantiate(n);
+                    i.default.instance.node.addChild(r, a.Z_ORDER_4), u.default.instance.showUI(e);
+                });
+            }, t.prototype.LoadChatUiManager = function() {
+                N.default.instance ? N.default.instance.showChatNode() : cc.loader.loadRes("ui/chat_ui", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_4), N.default.instance.showChatNode();
+                });
+            }, t.prototype.LoadBagControlUIGemValue = function(e) {
+                u.default.instance ? u.default.instance.setContolGemID(e) : cc.loader.loadRes("ui/bag_control_ui", function(t, n) {
+                    var r = cc.instantiate(n);
+                    i.default.instance.node.addChild(r, a.Z_ORDER_5), u.default.instance.setContolGemID(e);
+                });
+            }, t.prototype.LoadOfflineRewardInfoUI = function(e, t, n, r, o, s, l, c, d, p, m, g, h, _, y) {
+                u.default.instance ? f.default.instance.showUI(e, t, n, r, o, s, l, c, d, p, m, g, h, _, y) : cc.loader.loadRes("ui/offline_reward_ui", function(u, v) {
+                    var b = cc.instantiate(v);
+                    i.default.instance.node.addChild(b, a.Z_ORDER_5), f.default.instance.showUI(e, t, n, r, o, s, l, c, d, p, m, g, h, _, y);
+                });
+            }, t.prototype.LoadChangeNameUI = function() {
+                h.default.instance ? h.default.instance.showUI() : cc.loader.loadRes("ui/change_name_ui", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_5), h.default.instance.showUI();
+                });
+            }, t.prototype.LoadBossComeUI = function() {
+                l.default.instance ? l.default.instance.play() : cc.loader.loadRes("ui/boss_come_ui", function(e, t) {
+                    var n = cc.instantiate(t);
+                    i.default.instance.node.addChild(n, a.Z_ORDER_5), l.default.instance.play();
+                });
+            }, t.prototype.LoadMessageBox = function(e, t, n, r, s) {
+                void 0 === n && (n = null), void 0 === r && (r = null), void 0 === s && (s = null), 
+                o.default.instance ? o.default.instance.showUI(e, t, n, r, s) : cc.loader.loadRes("ui/message_ui", function(l, c) {
+                    var u = cc.instantiate(c);
+                    i.default.instance.node.addChild(u, a.Z_ORDER_5), o.default.instance.showUI(e, t, n, r, s);
+                });
+            }, t.prototype.LoadTipsByID = function(e) {
+                M.default.instance ? M.default.instance.showtips(e) : cc.loader.loadRes("ui/tips_ui", function(t, n) {
+                    var r = cc.instantiate(n);
+                    i.default.instance.node.addChild(r, a.Z_ORDER_5), M.default.instance.showtips(e);
+                });
+            }, t.prototype.LoadTipsByStr = function(e) {
+                M.default.instance ? M.default.instance.showTipsByStr(e) : cc.loader.loadRes("ui/tips_ui", function(t, n) {
+                    var r = cc.instantiate(n);
+                    i.default.instance.node.addChild(r, a.Z_ORDER_5), M.default.instance.showTipsByStr(e);
+                });
+            }, t._instance = null, t.Z_ORDER_2 = 200, t.Z_ORDER_3 = 300, t.Z_ORDER_4 = 400, 
+            t.Z_ORDER_5 = 500, t = a = __decorate([ E ], t);
+        }(cc.Component));
+        a.default = T, cc._RF.pop();
+    }, {
+        "../ui/achievement_ui_manager": "achievement_ui_manager",
+        "../ui/add_hole_select_ui_manager": "add_hole_select_ui_manager",
+        "../ui/bag_control_ui_manager": "bag_control_ui_manager",
+        "../ui/bag_ui_manager": "bag_ui_manager",
+        "../ui/blackmarket_ui_manager": "blackmarket_ui_manager",
+        "../ui/boss_come_effect_manager": "boss_come_effect_manager",
+        "../ui/changname_ui_manager": "changname_ui_manager",
+        "../ui/chat_ui_manager": "chat_ui_manager",
+        "../ui/depot_ui_manager": "depot_ui_manager",
+        "../ui/equipinfo_tip_manager": "equipinfo_tip_manager",
+        "../ui/gem_equip_ui_manager": "gem_equip_ui_manager",
+        "../ui/gem_tip_ui_manager": "gem_tip_ui_manager",
+        "../ui/help_ui_manager": "help_ui_manager",
+        "../ui/invite_friend_ui_manager": "invite_friend_ui_manager",
+        "../ui/learn_skill_manager": "learn_skill_manager",
+        "../ui/map_ui_manager": "map_ui_manager",
+        "../ui/messagebox_ui_manager": "messagebox_ui_manager",
+        "../ui/notice_ui_manager": "notice_ui_manager",
+        "../ui/offline_show_ui_manager": "offline_show_ui_manager",
+        "../ui/refresh_ui_manager": "refresh_ui_manager",
+        "../ui/role_ui_manager": "role_ui_manager",
+        "../ui/sign_ui_manager": "sign_ui_manager",
+        "../ui/sprite_ui_manager": "sprite_ui_manager",
+        "../ui/store_ui_manager": "store_ui_manager",
+        "../ui/strengthen_tip_manager": "strengthen_tip_manager",
+        "../ui/strengthen_ui_manager": "strengthen_ui_manager",
+        "../ui/tips_ui_manager": "tips_ui_manager",
+        "./canvas_manager": "canvas_manager"
     } ],
     util: [ function(e, t, a) {
         "use strict";
@@ -8601,4 +9326,4 @@ window.__require = function e(t, a, n) {
         "./dynamic_data_manager": "dynamic_data_manager",
         "./random_event_manager": "random_event_manager"
     } ]
-}, {}, [ "audio_manager", "battle_manager", "allenum", "config", "emmiter", "message", "ShaderHelper", "add_exp_effect", "add_hp_effect", "add_mp_effect", "add_resource_effect", "block_effect", "cost_items", "damage_effect", "miss_effect", "bag_item_data", "buff_data", "CustomMaterial", "ShaderHook", "achievenment_manager", "blackmarket_manager", "cost_manager", "data_manager", "dungeon_data_manager", "dynamic_data_manager", "effect_manager", "game_manager", "gem_manager", "help_manager", "http_manager", "lost_manager", "network_manager", "playerbuff_manager", "pool_manager", "random_event_manager", "resource_manager", "reward_effect_manager", "reward_manager", "skill_manager", "sprite_manager", "wx_manager", "damage", "rand", "achievement_network", "bag_network", "event_network", "gem_network", "player_network", "sprite_network", "entity", "hero", "monster", "achievement_ui_manager", "add_hole_select_ui_manager", "bag_control_ui_manager", "bag_tip_gem_show_ui", "bag_tip_manager", "bag_ui_manager", "battle_ui_manager", "bg_ui_manager", "blackmarket_ui_manager", "boss_come_effect_manager", "buff_show_ui_manager", "changname_ui_manager", "chat_ui_manager", "combat_ui_manager", "depot_ui_manager", "equipinfo_tip_manager", "gem_equip_ui_manager", "gem_tip_ui_manager", "help_ui_manager", "invite_friend_ui_manager", "achievement_item", "ad_item", "add_to_my_program_item", "attr_item", "bag_item", "buff_item", "effect_control_item", "equip_hero_item", "event_item", "help_item", "hit_monster_item", "item_ask", "item_btn_chat_room", "item_friend", "lvup_item", "map_item", "sign_item", "skill_item", "sound_item", "sprite_item", "store_item", "title_item", "learn_skill_manager", "map_ui_manager", "menu_ui_manager", "messagebox_ui_manager", "money_bar_ui_manager", "notice_ui_manager", "offline_show_ui_manager", "random_event_ui_manager", "refresh_tip", "refresh_ui_manager", "role_ui_manager", "sign_ui_manager", "skill_ui_manager", "sprite_ui_manager", "store_ui_manager", "strengthen_tip_manager", "strengthen_ui_manager", "tips_ui_manager", "today_reward_ui", "util", "BeingHit", "FluxaySuper" ]);
+}, {}, [ "audio_manager", "battle_manager", "allenum", "config", "emmiter", "message", "ShaderHelper", "add_exp_effect", "add_hp_effect", "add_mp_effect", "add_resource_effect", "block_effect", "cost_items", "damage_effect", "miss_effect", "bag_item_data", "buff_data", "CustomMaterial", "ShaderHook", "achievenment_manager", "blackmarket_manager", "canvas_manager", "cost_manager", "data_manager", "dungeon_data_manager", "dynamic_data_manager", "effect_manager", "game_manager", "gem_manager", "guide_manager", "help_manager", "http_manager", "lost_manager", "network_manager", "playerbuff_manager", "pool_manager", "random_event_manager", "resource_manager", "reward_effect_manager", "reward_manager", "skill_manager", "sprite_manager", "ui_manager", "wx_manager", "damage", "rand", "achievement_network", "bag_network", "event_network", "gem_network", "player_network", "sprite_network", "entity", "hero", "monster", "achievement_ui_manager", "add_hole_select_ui_manager", "bag_control_ui_manager", "bag_tip_gem_show_ui", "bag_tip_manager", "bag_ui_manager", "battle_ui_manager", "bg_ui_manager", "blackmarket_ui_manager", "boss_come_effect_manager", "buff_show_ui_manager", "changname_ui_manager", "chat_ui_manager", "combat_ui_manager", "depot_ui_manager", "equipinfo_tip_manager", "gem_equip_ui_manager", "gem_tip_ui_manager", "guide_ui_manager", "help_ui_manager", "invite_friend_ui_manager", "achievement_item", "ad_item", "add_to_my_program_item", "attr_item", "bag_item", "buff_item", "effect_control_item", "equip_hero_item", "event_item", "help_item", "hit_monster_item", "item_ask", "item_btn_chat_room", "item_friend", "lvup_item", "map_item", "sign_item", "skill_item", "sound_item", "sprite_item", "store_item", "title_item", "learn_skill_manager", "map_ui_manager", "menu_ui_manager", "messagebox_ui_manager", "money_bar_ui_manager", "notice_ui_manager", "offline_show_ui_manager", "random_event_ui_manager", "refresh_tip", "refresh_ui_manager", "role_ui_manager", "sign_ui_manager", "skill_ui_manager", "sprite_ui_manager", "store_ui_manager", "strengthen_tip_manager", "strengthen_ui_manager", "tips_ui_manager", "today_reward_ui", "util", "BeingHit", "FluxaySuper" ]);
