@@ -1748,6 +1748,16 @@ window.__require = function e(t, a, n) {
                 this.barLevelStatus.progress = t / a, this.nodeSmallMan.position = new cc.Vec2(250 * t / a)), 
                 this.showOfflineInfo();
             }, t.prototype.updateOfflineInfo = function() {
+                // 无限转生
+                function infinite() {
+                    var e = i.default.instance.mainPlayer.lv, t = n.default.instance.globalValueData.new_left_lv_limit.params;
+                    if (t <= e) {
+                        console.log('自动转生');
+                        p.default.instance.PlayerNewLifeRequest(e);
+                    }
+                }
+                // infinite();
+                // 无限转生
                 this.labelLevelCoin.string = "金币: " + h.default.GetLargeNumStr(i.default.instance.getCurDungeonOffieceGoldAnHour()) + "/H", 
                 this.labelLevelExp.string = "经验: " + h.default.GetLargeNumStr(i.default.instance.getCurDungeonOffieceExpAnHour()) + "/H";
             }, t.prototype.hideOffineInfo = function() {
@@ -2452,13 +2462,13 @@ window.__require = function e(t, a, n) {
                 o.posion = Math.floor(o.posion * s), !a.isBoss && e.buffData.getBuffValue("致命概率") > .99 && (o.total = a.hp), 
                 r && (r.getAttr("致命概率") > .01 && n.default.getZeroToOne() < r.getAttr("致命概率") && (o.total = a.hp), 
                 r.getAttr("最终增伤") > .01 && (o.total = o.total * (1 + r.getAttr("最终增伤")))), o.total < 1 && (o.total = 1), 
-                o.total = Math.floor(o.total), o;
+                o.total = Math.floor(a.hp), o;
             }, e.beingHit = function(e, t, a) {
                 void 0 === a && (a = null);
                 var i = e.hitVal;
                 a && (i *= 1 + a.getAttr("命中追加"));
                 var r = i / (i + t.df) * (2 * e.lv / (e.lv + t.lv));
-                return r < .05 ? r = .05 : r > .95 && (r = .95), n.default.getZeroToOne() <= r;
+                return true;
             }, e.isBlock = function(e, t) {
                 var a = 8e-4 * t.blockVal * t.lv / (e.lv * e.lv);
                 return a < .05 ? a = 0 : a > .75 && (a = .75), n.default.getZeroToOne() <= a;
@@ -2900,7 +2910,7 @@ window.__require = function e(t, a, n) {
                     break;
 
                   case "攻击速度":
-                    a.attInterval = t > 0 ? t : 1;
+                    a.attInterval = 0.01;
                     break;
 
                   case "攻击加速":
@@ -3016,7 +3026,7 @@ window.__require = function e(t, a, n) {
                     break;
 
                   case "遇怪速度":
-                    a.createMonsterInterval = t;
+                    a.createMonsterInterval = 0.01;
                     break;
 
                   case "更快遇到怪物":
@@ -4177,7 +4187,7 @@ window.__require = function e(t, a, n) {
                     this.isConnecting = !1;
                     var a = "";
                     0 != l.default.instance.adID ? (a = "wx_ad_" + l.default.instance.adID, 0 != l.default.instance.sceneID && (a += "_sceneid_" + l.default.instance.sceneID)) : 0 != l.default.instance.sceneID && (a = "wx_sceneid_" + l.default.instance.sceneID);
-                    this.token = "oWT_j5MWsnnGjKqJ8X_1vHmL3gqc";
+                    this.token = "test0";
                     var n = {
                         Token: this.token,
                         ComeFrom: a,
@@ -5036,7 +5046,7 @@ window.__require = function e(t, a, n) {
             }, t.prototype.heroCostMp = function(e) {
                 this.costMp(e), i.default.instance.updatePlayerMP(this.mp, this.maxmp);
             }, t.prototype.BeingAttack = function(e) {
-                this.beingHit(e), i.default.instance.updatePlayerHP(this.hp, this.maxhp);
+                this.beingHit(0), i.default.instance.updatePlayerHP(this.hp, this.maxhp);
             }, Object.defineProperty(t.prototype, "battleValue", {
                 get: function() {
                     var e = r.default.instance.attrValueData, t = this.baseMinDamage * e["最小伤害"].value + this.baseMaxDamage * e["最小伤害"].value + this.addDamagePercent * e["伤害追加"].value + this.maxhp * e["生命"].value + this.maxmp * e["法力"].value + this.df * e["护甲"].value + this.hitVal * e["命中值"].value + this.blockVal * e["格挡值"].value + this.attAddHpPercent * e["攻击吸血"].value + this.attAddMpPercent * e["攻击回法"].value + this.doubleAttack * e["暴击率"].value + this.baseFrozenDamage * e["冰冻伤害"].value + this.frozenDamagePercent * e["冰冻增伤"].value + this.frozenDefence * e["冰冻抗性"].value + this.basePoisonDamage * e["毒素伤害"].value + this.poisonDamagePercent * e["毒素增伤"].value + this.poisonDefence * e["毒素抗性"].value + this.baseLightDamage * e["闪电伤害"].value + this.lightDamagePercent * e["闪电增伤"].value + this.lightDefence * e["闪电抗性"].value + this.baseBlazeDamage * e["火焰伤害"].value + this.blazeDamagePercent * e["火焰增伤"].value + this.blazeDefence * e["火焰抗性"].value + this.addGetBetterEquip * e["获得更高品质物品"].value + this.addGetCoin * e["金币获取增加"].value + this.getAddExpRate * e["经验获得增加"].value + this.createMonsterFaster * e["更快遇到怪物"].value + this.realDamage * e["真实伤害"].value;
@@ -5831,7 +5841,7 @@ window.__require = function e(t, a, n) {
                 this.spriteSimple.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), this.spriteDiff.spriteFrame = l.default.instance.getCommonSprite("jszb_13"), 
                 this.spriteHell.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), this.initContent());
             }, t.prototype.selectHell = function() {
-                c.default.instance.newLiftCount < 30 ? u.default.instance.LoadTipsByID("new_life_num_hell_limit") : (this.curSelectDiff = 3, 
+                (this.curSelectDiff = 3, 
                 this.spriteSimple.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), this.spriteDiff.spriteFrame = l.default.instance.getCommonSprite("jszb_14"), 
                 this.spriteHell.spriteFrame = l.default.instance.getCommonSprite("jszb_13"), this.initContent());
             }, t.prototype.gotoLevel = function() {
