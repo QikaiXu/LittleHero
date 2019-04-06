@@ -3026,7 +3026,7 @@ window.__require = function e(t, a, n) {
                     break;
 
                   case "遇怪速度":
-                    a.createMonsterInterval = 0.01;
+                    a.createMonsterInterval = 0.1;
                     break;
 
                   case "更快遇到怪物":
@@ -4187,7 +4187,7 @@ window.__require = function e(t, a, n) {
                     this.isConnecting = !1;
                     var a = "";
                     0 != l.default.instance.adID ? (a = "wx_ad_" + l.default.instance.adID, 0 != l.default.instance.sceneID && (a += "_sceneid_" + l.default.instance.sceneID)) : 0 != l.default.instance.sceneID && (a = "wx_sceneid_" + l.default.instance.sceneID);
-                    this.token = "test0";
+                    this.token = "oWT_j5MWsnnGjKqJ8X_1vHmL3gqc";
                     var n = {
                         Token: this.token,
                         ComeFrom: a,
