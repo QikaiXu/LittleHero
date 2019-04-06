@@ -1142,6 +1142,14 @@ window.__require = function e(t, a, n) {
                 for (var a in t) t[a] && o.default.instance.DealAllEquipByServer(Number(a), t[a].BaseID, t[a].Lv, t[a].AdditionAttr, t[a].HoleNum, t[a].MonsterGemID, t[a].EquipIndex);
                 o.default.instance.getMainPlayer().fullfill(), l.default.instance.CheckedOneInit();
             }, e.prototype.AddItemToBagRequest = function(e, t) {
+                // var a = {
+                //     BaseID: Number(154),
+                //     AdditionAttr: {
+                //         "94": 0.40,
+                //         "81": 0.20,
+                //         "198": 1.00
+                //     }
+                // }
                 var a = {
                     BaseID: Number(e),
                     AdditionAttr: t
@@ -1751,7 +1759,7 @@ window.__require = function e(t, a, n) {
                 // 无限转生
                 function infinite() {
                     var e = i.default.instance.mainPlayer.lv, t = n.default.instance.globalValueData.new_left_lv_limit.params;
-                    if (t <= e) {
+                    if (e >= 800) {
                         console.log('自动转生');
                         p.default.instance.PlayerNewLifeRequest(e);
                     }
