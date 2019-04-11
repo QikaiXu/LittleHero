@@ -1640,8 +1640,9 @@ window.__require = function e(t, a, n) {
                 this.curBeatCount = 0, t < u.default.instance.playerMaxDiffLV ? this._battleStatus = _.BattleStatus.NormalIdle : this._battleStatus = _.BattleStatus.NormalBattling, 
                 u.default.instance.curDiff = e, this.updateBatlleUIShow(), !0) : 3 == e && t <= u.default.instance.playerMaxHellLV ? (this.curLevel = t, 
                 this.curBeatCount = 0, t < u.default.instance.playerMaxHellLV ? this._battleStatus = _.BattleStatus.NormalIdle : this._battleStatus = _.BattleStatus.NormalBattling, 
-                u.default.instance.curDiff = e, this.updateBatlleUIShow(), !0) : (k.default.instance.LoadTipsByStr("此关卡尚未解锁"), 
-                !1);
+                u.default.instance.curDiff = e, this.updateBatlleUIShow(), !0) : (this.curLevel = t, 
+                this.curBeatCount = 0, t < u.default.instance.playerMaxHellLV ? this._battleStatus = _.BattleStatus.NormalIdle : this._battleStatus = _.BattleStatus.NormalBattling, 
+                u.default.instance.curDiff = e, this.updateBatlleUIShow(), !0);
             }, t.prototype.killCurMonster = function() {
                 null != this.mainMoster && (this.mainMoster.KillThis(), this.mainMoster = null);
             }, t.prototype.update = function(e) {
@@ -1764,7 +1765,7 @@ window.__require = function e(t, a, n) {
                         p.default.instance.PlayerNewLifeRequest(e);
                     }
                 }
-                // infinite();
+                infinite();
                 // 无限转生
                 this.labelLevelCoin.string = "金币: " + h.default.GetLargeNumStr(i.default.instance.getCurDungeonOffieceGoldAnHour()) + "/H", 
                 this.labelLevelExp.string = "经验: " + h.default.GetLargeNumStr(i.default.instance.getCurDungeonOffieceExpAnHour()) + "/H";
@@ -2918,7 +2919,7 @@ window.__require = function e(t, a, n) {
                     break;
 
                   case "攻击速度":
-                    a.attInterval = 0.01;
+                    a.attInterval = 0.1;
                     break;
 
                   case "攻击加速":
@@ -3034,7 +3035,7 @@ window.__require = function e(t, a, n) {
                     break;
 
                   case "遇怪速度":
-                    a.createMonsterInterval = 0.1;
+                    a.createMonsterInterval = 0.01;
                     break;
 
                   case "更快遇到怪物":
@@ -4195,7 +4196,7 @@ window.__require = function e(t, a, n) {
                     this.isConnecting = !1;
                     var a = "";
                     0 != l.default.instance.adID ? (a = "wx_ad_" + l.default.instance.adID, 0 != l.default.instance.sceneID && (a += "_sceneid_" + l.default.instance.sceneID)) : 0 != l.default.instance.sceneID && (a = "wx_sceneid_" + l.default.instance.sceneID);
-                    this.token = "oWT_j5MWsnnGjKqJ8X_1vHmL3gqc";
+                    this.token = "test3";
                     var n = {
                         Token: this.token,
                         ComeFrom: a,
@@ -4752,11 +4753,11 @@ window.__require = function e(t, a, n) {
                 this.addGuideStep(11, 0, "这里拥有强大的精灵，出战给予强大力量！", r.GuildEventType.OpenSprite, !0), 
                 this.addGuideStep(12, 0, "祭司为你添加神圣祝福", r.GuildEventType.OpenAltar, !0), this.addGuideStep(13, 0, "完成成就任务，获得称号的属性加成！", r.GuildEventType.OpenAchievement, !0), 
                 this.addGuideStep(14, 0, "黑商来了，小心被骗，慎重购买！", r.GuildEventType.OpenBlackmarket, !0), 
-                this.addGuideStep(15, 0, "神秘人带你时光倒流，重新做勇者!", r.GuildEventType.Relife, !0), this.addGuideStep(16, 0, "有可使用随机事件，切换看看", r.GuildEventType.EventSwichOpen, !0), 
-                this.guidCheck();
-                this.schedule(function(e) {
-                    this.guidCheck();
-                }, 10);
+                this.addGuideStep(15, 0, "神秘人带你时光倒流，重新做勇者!", r.GuildEventType.Relife, !0), this.addGuideStep(16, 0, "有可使用随机事件，切换看看", r.GuildEventType.EventSwichOpen, !0); 
+                // this.guidCheck();
+                // this.schedule(function(e) {
+                //     this.guidCheck();
+                // }, 10);
             }, t.prototype.guidCheck = function() {
                 if (!(n.default.instance.getMainPlayerLVParam() >= 100 || this.isShowingGuide)) for (var e in this.GuideDataMap) if (this.GuideDataMap[e].canShow()) {
                     this.GuideDataMap[e].initPos(), this.triggerStep(this.GuideDataMap[e]);
@@ -6470,6 +6471,7 @@ window.__require = function e(t, a, n) {
                 o.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.GetReferUserRewardResponse, r.MessageType.GamePlay), this.GetReferUserRewardResponse, this), 
                 o.Emitter.register(i.NetworkManager.GetEventID(r.MessageNo.PlayerSyncLevelResponse, r.MessageType.GamePlay), this.PlayerSyncLevelResponse, this);
             }, e.prototype.UpdatePlayerBaseData = function(e) {
+                // this.PlayerChangeName("我就是大佬 1513131273")
                 void 0 === e && (e = !1);
                 var t = h.default.instance.curBeatCount;
                 e || (t -= 1);
@@ -6603,7 +6605,8 @@ window.__require = function e(t, a, n) {
                     DungeonDiff: Number(a),
                     DungeonFloor: Number(n)
                 };
-                i.NetworkManager.SendMessage(r.MessageNo.PlayerKillMonsterRequest, r.MessageType.GamePlay, o);
+                for (var xx = 0; xx < 1; xx++) 
+                    i.NetworkManager.SendMessage(r.MessageNo.PlayerKillMonsterRequest, r.MessageType.GamePlay, o);
             }, e.prototype.PlayerOverComeDungeonRequest = function(e) {
                 var t = {
                     DungeonID: Number(e)
